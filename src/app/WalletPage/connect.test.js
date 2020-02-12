@@ -9,20 +9,14 @@ jest.mock('../../store/models/walletPage');
 jest.mock('../../store/models/layout');
 
 const selectorData = {
-  etherBalance: 'etherBalance',
   balancesLoading: 'balancesLoading',
-  WETHBalance: 'WETHBalance',
-  WETHAllowance: 'WETHAllowance',
   tokenData: 'tokenData',
   quoteTokens: 'quoteTokens',
   baseTokens: 'baseTokens',
   accountAddress: 'accountAddress',
   authenticated: 'authenticated',
-  currentBlock: 'currentBlock',
   showHelpModal: 'showHelpModal',
   connected: 'connected',
-  gas: 'gas',
-  gasPrice: 'gasPrice'
 }
 
 describe('connect(Component)', () => {
@@ -34,7 +28,6 @@ describe('connect(Component)', () => {
       expect(props).toHaveProperty('loading');
       expect(props).toHaveProperty('tokenTableSelector');
       expect(props).toHaveProperty('authenticated');
-      expect(props).toHaveProperty('pvtKeyLocked');
       return null;
     });
 

@@ -26,7 +26,6 @@ storiesOf('TxNotification', module)
             receipt={receipt}
             status="valid"
             statusMessage="Transaction Valid"
-            gas={21000}
           />
         </Card>
       </div>

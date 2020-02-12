@@ -14,7 +14,6 @@ export default function tokenBalanceChartSelector(state: State) {
 
   Object.keys(tokenBalances).forEach(symbol => {
     let token = tokens[symbol]
-    if (symbol === 'WETH') token = tokens['ETH']
 
     let rate = getExchangeRate(currency.name, token)
     let balance = round(tokenBalances[symbol].balance, 4)

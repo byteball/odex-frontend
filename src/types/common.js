@@ -9,14 +9,11 @@ export type TxHash = string;
 export type TokenSymbol = string;
 
 export type TxReceipt = {
-  blockHash: string,
-  blockNumber: string,
-  gasLimit: Object,
   hash: string,
 };
 
 export type Token = {
-  address: string,
+  asset: string,
   symbol: string,
   decimals: number,
 };

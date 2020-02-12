@@ -12,21 +12,9 @@ type Props = {
   goToFirstStep: void => void,
   goToSecondStep: void => void,
   goToThirdStep: void => void,
-  userHasETH: boolean,
-  userHasWETH: boolean,
-  userHasApprovedWETH: boolean,
-  handleConvertETH: void => void,
-  handleApproveWETH: void => void,
-  ETHBalance: number,
-  WETHBalance: number,
-  convertAmount: number,
-  convertFraction: number,
-  changeConvertETHFraction: number => void,
-  ETHAddress: string,
-  approveTxStatus: string,
-  approveTxHash: string,
-  convertTxStatus: string,
-  convertTxHash: string,
+  userHasBytes: boolean,
+  GBYTEBalance: number,
+  address: string,
   handleClose: void => void,
   redirectToTradingPage: void => void,
   redirectToFAQPage: void => void,
@@ -70,12 +58,11 @@ const Thirdstep = (props: Props) => {
               </ButtonBox>
               <ButtonBox>
                 <Button intent={Intent.PRIMARY} onClick={goToFirstStep}>
-                  Go back to introduction modal
+                  Go back to introduction page
                 </Button>
               </ButtonBox>
             </ButtonGroupBox>
             <ContactLinksBox>
-              <p>Contact us at support@proofsuite.com</p>
               <p>Join our <a href={DISCORD_URL}>Discord</a> channel</p>
             </ContactLinksBox>
           </Box>

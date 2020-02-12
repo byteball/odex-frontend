@@ -13,7 +13,7 @@ type Props = {
 };
 
 const TransferTokensModal = (props: Props) => (
-  <Modal title="Send Ether or Tokens" icon="info-sign" isOpen={props.isOpen} onClose={props.handleClose}>
+  <Modal title="Withdraw Tokens" width="400px" icon="info-sign" isOpen={props.isOpen} onClose={props.handleClose}>
     <TransferTokensFormContainer token={props.token} tokens={props.tokens} />
   </Modal>
 );

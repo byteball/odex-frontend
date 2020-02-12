@@ -2,31 +2,27 @@
 import { connect } from 'react-redux';
 
 import getGetStartedModalSelector, { 
-  convertETH, 
-  approveWETH, 
   redirectToTradingPage,
   redirectToFAQPage,
 } from '../../store/models/getStartedModal'
+import getDepositFormSelector from '../../store/models/depositForm';
 
 import type { State } from '../../types';
 
 export const mapStateToProps = (state: State, ownProps: Object) => {
   const selector = getGetStartedModalSelector(state)
+  const depositFormSelector = getDepositFormSelector(state);
 
   return {
-    ETHBalance: selector.ETHBalance(),
-    ETHAddress: selector.ETHAddress(),
-    WETHBalance: selector.WETHBalance(),
-    WETHAllowance: selector.WETHAllowance(),
-    approveTxState: selector.approveTxState(),
-    convertTxState: selector.convertTxState(),
+    tokens: depositFormSelector.rankedTokens(),
+    balances: depositFormSelector.balances(),
+    GBYTEBalance: selector.GBYTEBalance(),
+    address: selector.address(),
     closeModal: ownProps.closeHelpModal,
   }
 }
 
 const mapDispatchToProps = {
-  convertETH,
-  approveWETH,
   redirectToTradingPage,
   redirectToFAQPage
 }

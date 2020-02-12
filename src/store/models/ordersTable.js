@@ -4,14 +4,14 @@ import { getOrdersDomain, getAccountDomain } from '../domains';
 import type { State, ThunkAction } from '../../types'
 
 import { parseCancelOrderError } from '../../config/errors'
-import { getSigner } from '../services/signer'
 
 export default function ordersTableSelector(state: State) {
-  let { authenticated } = getAccountDomain(state)
+  let { authenticated, address } = getAccountDomain(state)
   let ordersDomain = getOrdersDomain(state)
 
   return {
     orders: ordersDomain.lastOrders(50),
+    address,
     authenticated
   };
 }
@@ -21,8 +21,8 @@ export const cancelOrder = (hash: string): ThunkAction => {
     mixpanel.track('trading-page/cancel-order');
 
     try {
-      let signer = getSigner()
-      let orderCancelPayload = await signer.createOrderCancel(hash)
+      let { sessionId } = getAccountDomain(getState())
+      let orderCancelPayload = {orderHash: hash, sessionId}
 
       dispatch(notifierActionCreators.addSuccessNotification({ message: `Cancelling order ...` }))
       socket.sendNewOrderCancelMessage(orderCancelPayload)

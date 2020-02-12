@@ -43,6 +43,7 @@ const TokenBalanceChartRenderer = (props: Props) => {
     <ResponsiveContainer height={300} width="100%">
       <PieChart>
         <Pie
+          dataKey="value"
           data={data}
           activeIndex={activeIndex}
           activeShape={renderActiveShape}
@@ -55,7 +56,7 @@ const TokenBalanceChartRenderer = (props: Props) => {
           onMouseEnter={onPieEnter}
         >
           {
-          	data.map((entry, index) => <Cell fill={colors[p * index]}/>)
+          	data.map((entry, index) => <Cell fill={colors[p * index]} key={index}/>)
           }
         </Pie>
       </PieChart>

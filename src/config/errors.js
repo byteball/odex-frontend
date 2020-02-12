@@ -14,8 +14,6 @@ export const errorMessages = {
   invalidValueInputArgument: 'invalid input argument (arg="_value", reason="invalid number value"',
   invalidDecimalValue: 'invalid decimal value (arg="value"',
   cannotReadLowerCaseOfUndefined: "Cannot read property 'toLowerCase' of undefined",
-  gasRequiredExceedsAllowance: 'gas required exceeds allowance or always failing transaction',
-  metamaskUserDeniedSignature: 'MetaMask Message Signature: User denied message signature.',
   ioTimeout: 'timeout',
   callException: 'call exception',
   contractNotDeployed: 'contract not deployed'
@@ -25,11 +23,9 @@ export const errorMessages = {
 export const parseQueryAccountDataError = (error: Error) => {
   let errorMessage = error.message
 
-  if (errorMessage.includes(errorMessages.invalidJSON)) return 'Could not connect to Ethereum network'
-  if (errorMessage.includes(errorMessages.contractNotDeployed)) return 'Metamask connection slow. All balances could not be retrieved.'
-  if (errorMessage.includes(errorMessages.callException)) return 'Metamask connection slow. All balances could not be retrieved.'
+  if (errorMessage.includes(errorMessages.invalidJSON)) return 'Could not connect to the server'
 
-  return 'Could not connect to Ethereum network'
+  return errorMessage
 }
 
 export const parseQueryMarketDataError = (error: Error) => {
@@ -39,31 +35,7 @@ export const parseQueryMarketDataError = (error: Error) => {
 }
 
 
-export const parseTransferEtherError = (error: Error) => {
-  let errorMessage = error.message
 
-  if (errorMessage.includes(errorMessages.invalidAddressInputArgument)) return 'Invalid Receiver Address'
-  if (errorMessage.includes(errorMessages.cannotReadLowerCaseOfUndefined)) return 'Invalid Receiver Address'
-  if (errorMessage.includes(errorMessages.invalidValueInputArgument)) return 'Invalid Transaction Value'
-  if (errorMessage.includes(errorMessages.gasRequiredExceedsAllowawnce)) return 'Insufficient Balance'
-  if (errorMessage.includes(errorMessages.invalidDecimalValue)) return 'Invalid Transaction Value'
-  if (errorMessage.includes(errorMessages.metamaskUserDeniedSignature)) return 'Message signature denied'
-
-  return errorMessage
-}
-
-export const parseTransferTokensError = (error: Error) => {
-  let errorMessage = error.message
-
-  if (errorMessage.includes(errorMessages.invalidAddressInputArgument)) return 'Invalid Receiver Address'
-  if (errorMessage.includes(errorMessages.cannotReadLowerCaseOfUndefined)) return 'Invalid Receiver Address'
-  if (errorMessage.includes(errorMessages.invalidValueInputArgument)) return 'Invalid Transaction Amount'
-  if (errorMessage.includes(errorMessages.gasRequiredExceedsAllowance)) return 'Insufficient Balance'
-  if (errorMessage.includes(errorMessages.invalidDecimalValue)) return 'Invalid Transaction Value'
-  if (errorMessage.includes(errorMessages.metamaskUserDeniedSignature)) return 'Message signature denied'
-
-  return errorMessage
-}
 
 
 export const parseNewOrderError = (error: Error) => {
@@ -73,7 +45,6 @@ export const parseNewOrderError = (error: Error) => {
 
   if (errorMessage.includes(errorMessages.invalidJSON)) return 'Connection error'
   if (errorMessage.includes(errorMessages.ioTimeout)) return 'Connection was broken and re-opened. Please try again'
-  if (errorMessage.includes(errorMessages.metamaskUserDeniedSignature)) return 'Message signature denied'
 
 
   return errorMessage
@@ -84,16 +55,7 @@ export const parseCancelOrderError = (error: Error) => {
 
   if (errorMessage.includes(errorMessages.invalidJSON)) return 'Connection error'
   if (errorMessage.includes(errorMessages.ioTimeout)) return 'Connection was broken and re-opened. Please try again'
-  if (errorMessage.includes(errorMessages.metamaskUserDeniedSignature)) return 'Message signature denied'
 
   return errorMessage
 }
 
-
-export const parseRequestSignatureError = (error: Error) => {
-  let errorMessage = error.message
-
-  if (errorMessage.includes(errorMessages.metamaskUserDeniedSignature)) return 'Message signature denied'
-
-  return errorMessage
-}

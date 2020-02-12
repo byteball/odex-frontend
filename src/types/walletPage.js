@@ -1,11 +1,12 @@
 // @flow
 
-import type { AccountAllowance, AccountAllowances, AccountBalance, AccountBalances } from './accountBalances';
+import type { AccountBalance, AccountBalances } from './accountBalances';
 import type { TokenPairs, Tokens, TokenRates } from './tokens'
+import type { Tx } from './transactions'
 
 export type UpdateWalletPageDataAction = {
   type: 'walletPage/UPDATE_WALLET_PAGE_DATA',
-  payload: { currentBlock: number, tokens: Tokens, pairs: TokenPairs, exchangeAddress: string, exchangeRates: TokenRates }
+  payload: {  tokens: Tokens, pairs: TokenPairs, exchangeAddress: string, operatorAddress: string, transactions:  Array<Tx>}
 }
 
 export type UpdateAccountBalanceAction = {
@@ -23,21 +24,6 @@ export type UpdateAccountBalancesAction = {
   payload: { balances: AccountBalances },
 };
 
-export type UpdateAccountAllowanceAction = {
-  type: 'walletPage/UPDATE_ALLOWANCE',
-  payload: AccountAllowance,
-};
-
-export type UpdateAllowancePendingAction = {
-  type: 'walletPage/UPDATE_ALLOWANCE_PENDING',
-  payload: { symbol: string },
-}
-
-export type UpdateAccountAllowancesAction = {
-  type: 'walletPage/UPDATE_ALLOWANCES',
-  payload: { allowances: AccountAllowances },
-};
-
 export type UpdateCurrentPairAction = {
   type: 'walletPage/UPDATE_CURRENT_PAIR',
   payload: { pair: string },
@@ -51,8 +37,5 @@ export type WalletPageActions =
   | UpdateCurrentPairAction
   | UpdateAccountBalanceAction
   | UpdateAccountBalancesAction
-  | UpdateAccountAllowanceAction
-  | UpdateAccountAllowancesAction
   | UnsubscribeAccountBalanceAction
-  | UpdateAllowancePendingAction
   | UpdateWalletPageDataAction

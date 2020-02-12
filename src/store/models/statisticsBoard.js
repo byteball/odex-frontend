@@ -6,6 +6,7 @@ import {
     getTokenDomain,
     getStatsDomain
 } from '../domains'
+import type { State } from '../../types'
 
 
 export default function statisticsBoardSelector(state: State) {

@@ -1,32 +1,32 @@
 // @flow
 import React from 'react';
 import RecentTxTableRenderer from './RecentTxTableRenderer';
-import type Trade from '../../types/trades';
+//import type Trade from '../../types/trades';
 
 import type { Tx } from '../../types/transactions';
 
-import { ETHERSCAN_TX_URL } from '../../config/urls'
+import { EXPLORER_URL } from '../../config/urls'
 
 type Props = {
   transactions: Array<Tx>,
 };
 
-class RecentTxTable extends React.PureComponent<Props, State> {
+class RecentTxTable extends React.PureComponent<Props> {
 
-  openEtherscanLink = (txHash: string) => {
-    if (txHash !== "") window.open(`${ETHERSCAN_TX_URL}/${txHash}`)
+  openExplorerLink = (txHash: string) => {
+    if (txHash !== "") window.open(`${EXPLORER_URL}#${txHash}`)
   }
 
   render() {
     const {
       props: { transactions },
-      openEtherscanLink
+      openExplorerLink
     } = this;
 
     return (
       <RecentTxTableRenderer
         transactions={transactions}
-        openEtherscanLink={openEtherscanLink}
+        openExplorerLink={openExplorerLink}
       />
     );
   }

@@ -2,13 +2,17 @@
 import React from 'react'
 import OrderFormRenderer from './OrderFormRenderer'
 import { formatNumber, unformat } from 'accounting-js'
-import { utils } from 'ethers'
 import { Menu, MenuItem, ContextMenuTarget } from '@blueprintjs/core'
+import { MATCHER_FEE } from '../../config/environment';
+
 type Props = {
   authenticated: boolean,
   side: 'BUY' | 'SELL',
   askPrice: number,
   bidPrice: number,
+  bestAskMatcher: string,
+  bestBidMatcher: string,
+  tokensBySymbol: Object,
   baseTokenBalance: number,
   quoteTokenBalance: number,
   baseTokenSymbol: string,
@@ -16,13 +20,10 @@ type Props = {
   baseTokenDecimals: number,
   quoteTokenDecimals: number,
   loggedIn: boolean,
-  makeFee: string,
-  takeFee: string,
-  pairIsAllowed: boolean,
-  pairAllowanceIsPending: boolean,
+  address: string,
+  operatorAddress: string,
+  exchangeAddress: string,
   selectedOrder: Object,
-  unlockPair: (string, string) => void,
-  sendNewOrder: (string, number, number) => void,
   onCollapse: string => void,
   onExpand: string => void,
   onResetDefaultLayout: void => void,
@@ -72,7 +73,7 @@ class OrderForm extends React.PureComponent<Props, State> {
     const { side } = this.state
     const { price, total } = selectedOrder;
 
-    if ((side === 'BUY' && price > bidPrice) || (side === 'SELL' && price < askPrice)) {
+    if (1 || (side === 'BUY' && price > bidPrice) || (side === 'SELL' && price < askPrice)) {
       this.setState({
         price: price,
         amount: total,
@@ -111,7 +112,7 @@ class OrderForm extends React.PureComponent<Props, State> {
     amount = unformat(amount)
     price = unformat(price)
 
-    this.props.sendNewOrder(side, amount, price)
+    //this.props.sendNewOrder(side, amount, price)
   }
 
   handleUpdateAmountFraction = (fraction: number) => {
@@ -158,17 +159,25 @@ class OrderForm extends React.PureComponent<Props, State> {
   handlePriceChange = (price: string) => {
     let { amount } = this.state
 
+    let fPrice = unformat(price);
+    if (!fPrice)
+      return this.setState({price, total: '0'})
+    let rounded_price = fPrice.toPrecision(8); // drop the excessive precision
+    let fRoundedPrice = parseFloat(rounded_price);
+    if (fRoundedPrice !== fPrice)
+      price = fRoundedPrice.toString();
+
     amount = unformat(amount)
     let total = amount * unformat(price)
 
     this.setState({
       total: formatNumber(total, { precision: 3 }),
-      amount: formatNumber(amount, { precision: 3 }),
+      //amount: formatNumber(amount, { precision: 3 }),
       price: price
     })
   }
 
-  handleSideChange = (side: string) => {
+  handleSideChange = (side: 'BUY' | 'SELL') => {
     this.setState({ side })
   }
 
@@ -196,7 +205,6 @@ class OrderForm extends React.PureComponent<Props, State> {
 
     this.setState({
       total: formatNumber(total, { precision: 3 }),
-      price: formatNumber(price, { precision: 3 }),
       amount: amount
     })
   }
@@ -224,11 +232,6 @@ class OrderForm extends React.PureComponent<Props, State> {
     })
   }
 
-  handleUnlockPair = () => {
-    const { baseTokenSymbol, quoteTokenSymbol } = this.props
-    
-    this.props.unlockPair(baseTokenSymbol, quoteTokenSymbol)
-  }
 
   handleChangeOrderType = (tabId: string) => {
     const { side } = this.state
@@ -299,18 +302,21 @@ class OrderForm extends React.PureComponent<Props, State> {
         quoteTokenSymbol,
         baseTokenBalance, 
         quoteTokenBalance, 
-        makeFee, 
-        takeFee, 
         baseTokenDecimals, 
         quoteTokenDecimals, 
-        pairIsAllowed,
-        pairAllowanceIsPending,
+        address,
+        operatorAddress,
+        exchangeAddress,
+        askPrice,
+        bidPrice,
+        bestAskMatcher,
+        bestBidMatcher,
+        tokensBySymbol,
         authenticated
       },
       onInputChange,
       handleChangeOrderType,
       handleSendOrder,
-      handleUnlockPair,
       handleSideChange,
       toggleCollapse,
       renderContextMenu
@@ -319,33 +325,25 @@ class OrderForm extends React.PureComponent<Props, State> {
 
     //TODO REFACTOR REFACTOR REFACTOR REFACTOR REFACTOR REFACTOR REFACTOR 
     let maxAmount
-    let formattedMakeFee = utils.formatUnits(makeFee, quoteTokenDecimals)
-    let maxQuoteTokenAmount = quoteTokenBalance - Number(formattedMakeFee)
+    let quoteTokenFee = unformat(amount) * unformat(price) * MATCHER_FEE;
+    let maxQuoteTokenAmount = quoteTokenBalance - Number(quoteTokenFee)
 
-    if (price !== '0.000') {
+    //if (price !== '0.000') {
       if (side === 'BUY') {
-        maxAmount = formatNumber(maxQuoteTokenAmount / unformat(price), { decimals: 3 })
+        maxAmount = (price !== '0.000') ? formatNumber(maxQuoteTokenAmount / unformat(price), { decimals: 3 }) : '0.000'
       } else {
         maxAmount = formatNumber(baseTokenBalance, { decimals: 3 })
       }
-    } else {
-      maxAmount = '0.0'
-    }
+    //} else {
+    //  maxAmount = '0.0'
+    //}
 
     let insufficientBalance = (unformat(amount) > unformat(maxAmount))
     
     let buttonType = authenticated
-      ? pairIsAllowed
-        ? side === "BUY"
-          ? "BUY"
-          : "SELL"
-        : pairAllowanceIsPending
-          ? side === "BUY"
-            ? "BUY_UNLOCK_PENDING"
-            : "SELL_UNLOCK_PENDING"
-          : side === "BUY"
-            ? "BUY_UNLOCK"
-            : "SELL_UNLOCK"
+      ? side === "BUY"
+        ? "BUY"
+        : "SELL"
       : side === "BUY"
         ? "BUY_LOGIN"
         : "SELL_LOGIN"
@@ -369,13 +367,16 @@ class OrderForm extends React.PureComponent<Props, State> {
         toggleCollapse={toggleCollapse}
         handleChangeOrderType={handleChangeOrderType}
         handleSendOrder={handleSendOrder}
-        handleUnlockPair={handleUnlockPair}
-        makeFee={makeFee}
-        takeFee={takeFee}
         baseTokenDecimals={baseTokenDecimals}
         quoteTokenDecimals={quoteTokenDecimals}
-        pairIsAllowed={pairIsAllowed}
-        pairAllowanceIsPending={pairAllowanceIsPending}
+        address={address}
+        operatorAddress={operatorAddress}
+        exchangeAddress={exchangeAddress}
+        askPrice={askPrice}
+        bidPrice={bidPrice}
+        bestAskMatcher={bestAskMatcher}
+        bestBidMatcher={bestBidMatcher}
+        tokensBySymbol={tokensBySymbol}
         handleSideChange={handleSideChange}
         expand={this.expand}
         onContextMenu={renderContextMenu}

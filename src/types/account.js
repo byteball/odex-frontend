@@ -1,18 +1,16 @@
 //@flow
 export type AccountState = {
   +loaded: boolean,
+  +sessionId: ?string,
   +address: ?string,
-  +privateKey: ?string,
-  +currentBlock: ?string,
   +showHelpModal: boolean,
   +exchangeAddress: string,
+  +operatorAddress: string,
   +referenceCurrency: ReferenceCurrency,
 };
 
 export type AccountParams = {
   address?: ?string,
-  privateKey?: ?string,
-  currentBlock?: ?string,
   showHelpModal?: ?boolean,
   exchangeAddress?: ?string,
   referenceCurrency?: ?ReferenceCurrency,

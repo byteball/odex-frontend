@@ -1,7 +1,6 @@
 import accountBalancesDomain from './accountBalances';
 import * as eventCreators from './accountBalances';
 
-const MAX_ALLOWANCE = '115792089237316195423570985008687907853269984665640564039457.584007913129639935';
 
 function getDomain(events) {
   const state = events.reduce((state, event) => event(state), undefined);
@@ -22,7 +21,6 @@ it('handles subscribed event properly', () => {
 
   expect(domain.get('REQ')).toEqual(null);
   expect(domain.isSubscribed('REQ')).toEqual(true);
-  expect(domain.isAllowed('REQ')).toEqual(false);
 });
 
 it('handles updated event properly', () => {
@@ -35,35 +33,12 @@ it('handles updated event properly', () => {
   expect(domain.get('TRX')).toEqual(2000);
   expect(domain.isSubscribed('REQ')).toEqual(false);
   expect(domain.isSubscribed('TRX')).toEqual(false);
-  expect(domain.isAllowed('REQ')).toEqual(false);
-  expect(domain.isAllowed('TRX')).toEqual(false);
   expect(domain.balancesArray()).toEqual([
-    { symbol: 'REQ', balance: "1,000.00", allowed: false },
-    { symbol: 'TRX', balance: "2,000.00", allowed: false },
+    { symbol: 'REQ', balance: "1,000.00" },
+    { symbol: 'TRX', balance: "2,000.00" },
   ]);
 });
 
-it('handles allowances event properly', () => {
-  const domain = getDomain([
-    eventCreators.initialized(),
-    eventCreators.updated([{ symbol: 'REQ', balance: 1000 }, { symbol: 'TRX', balance: 2000 }]),
-    eventCreators.allowancesUpdated([
-      { symbol: 'REQ', allowance: MAX_ALLOWANCE },
-      { symbol: 'TRX', allowance: MAX_ALLOWANCE },
-    ]),
-  ]);
-
-  expect(domain.get('REQ')).toEqual(1000);
-  expect(domain.get('TRX')).toEqual(2000);
-  expect(domain.isSubscribed('REQ')).toEqual(false);
-  expect(domain.isSubscribed('TRX')).toEqual(false);
-  expect(domain.isAllowed('REQ')).toEqual(true);
-  expect(domain.isAllowed('TRX')).toEqual(true);
-  expect(domain.balancesArray()).toEqual([
-    { symbol: 'REQ', balance: "1,000.00", allowed: true },
-    { symbol: 'TRX', balance: "2,000.00", allowed: true },
-  ]);
-});
 
 it('handles unsubscribed event properly', () => {
   const domain = getDomain([

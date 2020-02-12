@@ -12,19 +12,18 @@ type Props = {
   receipt: Object,
   status: string,
   statusMessage: string,
-  gas: number,
   title: ?string,
 };
 
 const TxNotification = (props: Props) => {
-  const { hash, receipt, status, statusMessage, gas, title } = props;
+  const { hash, receipt, status, statusMessage, title } = props;
   switch (status) {
     case 'incomplete':
       return null;
     case 'invalid':
-      return renderValidityNotification('invalid', statusMessage, gas);
+      return renderValidityNotification('invalid', statusMessage);
     case 'valid':
-      return renderValidityNotification('valid', statusMessage, gas);
+      return renderValidityNotification('valid', statusMessage);
     case 'sent':
       return renderTxPendingNotification(hash, title);
     case 'confirmed':
@@ -47,8 +46,8 @@ const renderErrorNotification = (statusMessage: string, receipt: Object, title: 
   return <TxErrorNotification error={statusMessage} receipt={receipt} title={title} />;
 };
 
-const renderValidityNotification = (status: string, statusMessage: string, gas: number) => {
-  return <TxValidityNotification status={status} statusMessage={statusMessage} gas={gas} />;
+const renderValidityNotification = (status: string, statusMessage: string) => {
+  return <TxValidityNotification status={status} statusMessage={statusMessage}  />;
 };
 
 const renderTxPendingNotification = (hash: string, title: ?string) => {

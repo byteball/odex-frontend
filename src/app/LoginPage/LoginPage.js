@@ -2,48 +2,48 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import LoginPageRenderer from './LoginPageRenderer';
-import { createWalletFromJSON } from '../../store/services/wallet';
-import type { LoginWithWallet } from '../../types/loginPage';
 
 type Props = {
   authenticated: boolean,
-  loginWithMetamask: () => void,
-  loginWithLedger: () => void,
-  loginWithWallet: LoginWithWallet => void,
+  sessionId: string,
+  loginWithApp: () => void,
   removeNotification: any => void,
 };
 
 //TODO: Remove Notification handling
 
+function dec2hex(dec) {
+  return ('0' + dec.toString(16)).substr(-2)
+}
+
+// generateRandomString :: Integer -> String
+function generateRandomString(len) {
+  var arr = new Uint8Array((len || 40) / 2)
+  window.crypto.getRandomValues(arr)
+  return Array.from(arr, dec2hex).join('')
+}
+
 type State = {
   view: string,
-  metamaskStatus: 'unlocked' | 'locked' | 'undefined',
+  //sessionId: string,
 };
 
 class LoginPage extends React.PureComponent<Props, State> {
   state = {
     view: 'loginMethods',
-    metamaskStatus: 'undefined',
+    //sessionId: ''
   };
+
+  /*constructor(props: Object){
+    super(props);
+    this.state.sessionId = this.state.sessionId || generateRandomString();
+  }*/
 
   componentDidMount = () => {
-    typeof window.web3 === 'undefined'
-      ? this.setState({ metamaskStatus: 'undefined' })
-      : typeof window.web3.eth.defaultAccount === 'undefined'
-        ? this.setState({ metamaskStatus: 'locked' })
-        : this.setState({ metamaskStatus: 'unlocked' });
-  };
-
-  showWalletLoginForm = () => {
-    this.setState({ view: 'wallet' });
   };
 
   showLoginMethods = () => {
     this.setState({ view: 'loginMethods' });
-  };
-
-  showCreateWallet = () => {
-    this.setState({ view: 'createWallet' });
   };
 
   hideModal = () => {
@@ -54,27 +54,16 @@ class LoginPage extends React.PureComponent<Props, State> {
     // this.props.removeNotification({ id: 1 });
   };
 
-  walletCreated = async (props: Object) => {
-    const { password, encryptedWallet, storeWallet, storePrivateKey } = props;
-    var { wallet } = await createWalletFromJSON(encryptedWallet, password);
-
-    if (wallet) this.props.loginWithWallet({ wallet, encryptedWallet, storeWallet, storePrivateKey });
-  };
-
   render() {
     const {
       props: { 
-        loginWithMetamask, 
-        loginWithWallet, 
-        loginWithLedger,
-        authenticated
+        loginWithApp,
+        authenticated,
+        sessionId
       },
-      state: { view, metamaskStatus },
-      showWalletLoginForm,
+      state: { view },
       showLoginMethods,
-      showCreateWallet,
       hideModal,
-      walletCreated,
     } = this;
 
     if (authenticated) {
@@ -84,14 +73,9 @@ class LoginPage extends React.PureComponent<Props, State> {
       <div>
         <LoginPageRenderer
           view={view}
-          metamaskStatus={metamaskStatus}
-          loginWithWallet={loginWithWallet}
-          loginWithLedger={loginWithLedger}
-          loginWithMetamask={loginWithMetamask}
-          showCreateWallet={showCreateWallet}
+          sessionId={sessionId}
+          loginWithApp={loginWithApp}
           hideModal={hideModal}
-          walletCreated={walletCreated}
-          showWalletLoginForm={showWalletLoginForm}
           showLoginMethods={showLoginMethods}
         />
       </div>

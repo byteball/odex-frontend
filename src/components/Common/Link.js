@@ -1,9 +1,10 @@
 // @flow 
 import React from 'react'
+import type { Node } from 'react';
 
 type Props = {
   url: string,
-  children: React.Node
+  children: Node
 }
 
 const Link = ({ url, children }: Props) => {

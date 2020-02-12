@@ -2,7 +2,7 @@
 import { quoteTokens } from '../../config/quotes'
 import { tokens } from '../../config/tokens'
 import { generateTokenPairs, getPairSymbol, getBaseToken } from '../../utils/tokens'
-import type { Token, TokenPair, TokenPairs, TokenPairState, TokenPairDataMap } from '../../types/tokens'
+import type { Token, TokenPair, TokenPairs, TokenPairState, TokenPairData } from '../../types/tokens'
 
 const defaultTokenPairs = generateTokenPairs(quoteTokens, tokens)
 
@@ -10,7 +10,7 @@ const defaultInitialState = {
   byPair: defaultTokenPairs,
   data: {},
   favorites: [],
-  currentPair: 'WETH/USDC',
+  currentPair: 'GBYTE/USDC',
   sortedPairs: [],
 }
 
@@ -41,12 +41,10 @@ export const tokenPairsUpdated = (pairs: TokenPairs) => {
           pair: pairSymbol,
           baseTokenSymbol: pair.baseTokenSymbol,
           quoteTokenSymbol: pair.quoteTokenSymbol,
-          baseTokenAddress: pair.baseTokenAddress,
-          quoteTokenAddress: pair.quoteTokenAddress,
+          baseAsset: pair.baseAsset,
+          quoteAsset: pair.quoteAsset,
           baseTokenDecimals: pair.baseTokenDecimals,
           quoteTokenDecimals: pair.quoteTokenDecimals,
-          makeFee: pair.makeFee,
-          takeFee: pair.takeFee,
           listed: pair.listed,
           active: pair.active,
           rank: pair.rank
@@ -85,12 +83,10 @@ export const tokenPairsReset = (pairs: TokenPairs) => {
           pair: pairSymbol,
           baseTokenSymbol: pair.baseTokenSymbol,
           quoteTokenSymbol: pair.quoteTokenSymbol,
-          baseTokenAddress: pair.baseTokenAddress,
-          quoteTokenAddress: pair.quoteTokenAddress,
+          baseAsset: pair.baseAsset,
+          quoteAsset: pair.quoteAsset,
           baseTokenDecimals: pair.baseTokenDecimals,
           quoteTokenDecimals: pair.quoteTokenDecimals,
-          makeFee: pair.makeFee,
-          takeFee: pair.takeFee,
           listed: pair.listed,
           active: pair.active,
           rank: pair.rank
@@ -134,7 +130,7 @@ export const tokenPairRemoved = (baseToken: Token) => {
 }
 
 export const tokenPairDataUpdated = (tokenPairData: Array<TokenPairData>) => {
-  const event = (state: TokenPairDataMap) => {
+  const event = (state: TokenPairState) => {
 
     let data = tokenPairData.reduce((result, item) => {
       return {

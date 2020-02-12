@@ -3,56 +3,40 @@ import React from 'react';
 import styled from 'styled-components';
 import { Button, ControlGroup, InputGroup, Label, Callout } from '@blueprintjs/core';
 import TokenSelect from '../TokenSelect';
-import GasSettings from '../GasSettings';
-import TxNotification from '../TxNotification';
 import { ModalBody } from '../Common'
+import { PROTOCOL } from '../../config/urls'
 
 type Props = {
-  loading: boolean,
-  status: string,
-  statusMessage: string,
-  gas: number,
-  gasPrice: number,
-  hash: string,
-  receipt: Object,
   tokens: Array<Object>,
   token: Object,
   amount: number,
-  receiver: string,
+  address: string,
+  exchangeAddress: string,
+  base64data: string,
   handleChange: (SyntheticInputEvent<>) => void,
   handleTokenChange: (SyntheticEvent<>) => void,
-  handleSubmit: (SyntheticEvent<>) => void,
 };
 
 const TransferTokensFormRenderer = (props: Props) => {
   const {
-    loading,
-    status,
-    statusMessage,
-    gas,
-    gasPrice,
-    hash,
-    receipt,
     tokens,
     token,
     amount,
-    receiver,
+    address,
     handleChange,
     handleTokenChange,
-    handleSubmit,
+    exchangeAddress,
+    base64data
   } = props;
 
   return (
     <ModalBody>
-      <ImportantNoticeCallout icon="warning-sign" intent="success" title="Important Notice">
-        <p>Double check the entered transaction information is correct. Proof Suite has no control
-          over your transactions. Your are fully responsible for your funds and assets.</p>
-      </ImportantNoticeCallout>
-      <Label helpertext="(in ether or in token decimals)" text="Amount to Send">
+      <Label helpertext="(in token decimals)" text="Amount to withdraw">
         <ControlGroup fill vertical={false}>
           <InputGroup
-            icon="filter"
-            placeholder="Ex: 1.0 for 1 ether"
+            //icon="filter"
+            type="number"
+            placeholder="Amount"
             name="amount"
             value={amount}
             onChange={handleChange}
@@ -61,30 +45,22 @@ const TransferTokensFormRenderer = (props: Props) => {
         </ControlGroup>
       </Label>
       <br />
-      <Label text="Receiver Address" helpertext="(should start with 0x)">
-        <InputGroup placeholder="Receiver" name="receiver" value={receiver} onChange={handleChange} />
-      </Label>
-      <br />
-      <GasSettings gas={gas} gasPrice={gasPrice} handleChange={handleChange} />
-      <TxNotificationBox>
-        <TxNotification
-          loading={loading}
-          hash={hash}
-          receipt={receipt}
-          status={status}
-          statusMessage={statusMessage}
-          gas={gas}
-        />
-      </TxNotificationBox>
-      <Button text="Send Transaction" intent="primary" large type="submit" fill onClick={handleSubmit} />
+      <WithdrawLinkBox>
+        <a href={PROTOCOL + exchangeAddress + "?amount=10000&base64data=" + encodeURIComponent(base64data) + "&from_address=" + address}>Withdraw {amount} {token.symbol}</a>
+      </WithdrawLinkBox>
+      {/*<Button text="Withdraw" intent="primary" large type="submit" fill onClick={handleSubmit} />*/}
     </ModalBody>
   );
 };
 
 
-const ImportantNoticeCallout = styled(Callout)`
+
+const WithdrawLinkBox = styled.div`
+  margin-top: 10px;
   margin-bottom: 20px;
-`
+  width: 100%;
+  text-align: center;
+`;
 
 const TxNotificationBox = styled.div`
   margin-top: 10px;

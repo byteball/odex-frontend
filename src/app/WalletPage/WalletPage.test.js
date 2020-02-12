@@ -3,10 +3,10 @@ import { shallow } from 'enzyme';
 import WalletPage from './WalletPage';
 
 const tokenTableData = [
-  { symbol: 'EOS', balance: '10.0000', allowed: true },
-  { symbol: 'ZRX', balance: '1.00000', allowed: false },
-  { symbol: 'EOS', balance: '5.00000', allowed: false },
-  { symbol: 'EOS', balance: '8.00000', allowed: true },
+  { symbol: 'EOS', balance: '10.0000' },
+  { symbol: 'ZRX', balance: '1.00000' },
+  { symbol: 'EOS', balance: '5.00000' },
+  { symbol: 'EOS', balance: '8.00000' },
 ];
 
 it('renders without crashing', () => {

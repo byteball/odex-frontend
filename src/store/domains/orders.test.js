@@ -137,7 +137,7 @@ it('return correct current positions by token', () => {
       taker: '0x1',
       maker: '0x2',
       pair: 'OMG/WETH',
-      status: 'PARTIALLY_FILLED'
+      status: 'PARTIAL_FILLED'
     },
     {
       amount: 100,
@@ -181,7 +181,7 @@ it('return correct current positions by token', () => {
       taker: '0x1',
       maker: '0x2',
       pair: 'OMG/WETH',
-      status: 'PARTIALLY_FILLED'
+      status: 'PARTIAL_FILLED'
     }
   ]);
 
@@ -196,7 +196,7 @@ it('return correct current positions by token', () => {
       taker: '0x1',
       maker: '0x2',
       pair: 'OMG/WETH',
-      status: 'PARTIALLY_FILLED'
+      status: 'PARTIAL_FILLED'
     }
   ]);
 
@@ -231,7 +231,7 @@ it('return correct locked balance by token', () => {
       taker: '0x1',
       maker: '0x2',
       pair: 'OMG/WETH',
-      status: 'PARTIALLY_FILLED'
+      status: 'PARTIAL_FILLED'
     },
     {
       amount: 100,
@@ -267,5 +267,5 @@ it('return correct locked balance by token', () => {
   ]);
 
   expect(ordersDomain.lockedBalanceByToken('OMG')).toEqual(5);
-  expect(ordersDomain.lockedBalanceByToken('DAI')).toEqual(1000);
+  expect(ordersDomain.lockedBalanceByToken('DAI')).toEqual(100000);
 });

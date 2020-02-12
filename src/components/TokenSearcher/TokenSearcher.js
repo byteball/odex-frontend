@@ -7,11 +7,11 @@ import { ContextMenuTarget, Menu, MenuItem } from '@blueprintjs/core'
 //TODO not sure exactly where to define this type.
 type Token = {
   pair: string,
-  lastPrice: string,
+  lastPrice: number,
   change: string,
-  low: string,
-  high: string,
-  volume: string,
+  low: number,
+  high: number,
+  volume: number,
   base: string,
   quote: string,
   favorited: boolean,

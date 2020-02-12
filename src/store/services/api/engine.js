@@ -26,9 +26,9 @@ const request = (endpoint, options) => {
   })
 }
 
-export const createPairs = async (tokenAddress: string) => {
+export const createPairs = async (asset: string) => {
   const response = await request(`/pairs/create`, {
-    body: JSON.stringify({ address: tokenAddress }),
+    body: JSON.stringify({ asset: asset }),
     method: 'POST'
   })
 
@@ -74,8 +74,8 @@ export const fetchTokens = async () => {
   return data
 }
 
-export const fetchToken = async (address: string) => {
-  const response = await request(`/tokens/${address}`)
+export const fetchToken = async (asset: string) => {
+  const response = await request(`/tokens/${encodeURIComponent(asset)}`)
 
   if (response.status !== 200) {
     throw new Error('Error')
@@ -97,7 +97,7 @@ export const fetchPairs = async () => {
 }
 
 export const fetchPair = async (baseToken: string, quoteToken: string) => {
-  const response = await request(`/pair?baseToken=${baseToken}&quoteToken=${quoteToken}`)
+  const response = await request(`/pair?baseToken=${encodeURIComponent(baseToken)}&quoteToken=${encodeURIComponent(quoteToken)}`)
 
 
   if (response.status === 400) {
@@ -157,8 +157,8 @@ export const fetchOrderHistory = async (address: string) => {
   return data
 }
 
-export const fetchOrderPositions = async (address: string) => {
-  const response = await request(`/orders/positions?address=${address}`)
+export const fetchCurrentOrders = async (address: string) => {
+  const response = await request(`/orders/current?address=${address}`)
 
   if (response.status === 400) {
     const { error } = await response.json()
@@ -174,7 +174,7 @@ export const fetchOrderPositions = async (address: string) => {
 }
 
 export const fetchTokenPairTrades = async (baseToken: string, quoteToken: string) => {
-  const response = await request(`/trades/pair?baseToken=${baseToken}&quoteToken=${quoteToken}`)
+  const response = await request(`/trades/pair?baseToken=${encodeURIComponent(baseToken)}&quoteToken=${encodeURIComponent(quoteToken)}`)
   const data = await response.json()
 
   if (response.status === 400) {
@@ -206,7 +206,7 @@ export const fetchAddressTrades = async (address: string) => {
 }
 
 export const fetchOrderBook = async (baseToken: string, quoteToken: string) => {
-  const response = await request(`/orderbook?baseToken=${baseToken}&quoteToken=${quoteToken}`)
+  const response = await request(`/orderbook?baseToken=${encodeURIComponent(baseToken)}&quoteToken=${encodeURIComponent(quoteToken)}`)
 
   if (response.status === 400) {
     const { error } = await response.json()
@@ -222,7 +222,7 @@ export const fetchOrderBook = async (baseToken: string, quoteToken: string) => {
 }
 
 export const fetchRawOrderBook = async (baseToken: string, quoteToken: string) => {
-  const response = await request(`/orderbook/raw?baseToken=${baseToken}&quoteToken=${quoteToken}`)
+  const response = await request(`/orderbook/raw?baseToken=${encodeURIComponent(baseToken)}&quoteToken=${encodeURIComponent(quoteToken)}`)
 
   if (response.status === 400) {
     const { error } = await response.json()
@@ -281,12 +281,43 @@ export const createAccount = async (address: string) => {
   return data
 }
 
+export const getBalances = async (address: string) => {
+  const response = await request(`/account/balances/${address}`)
 
-export const getToken = async(tokenAddress: string) => {
-  let tokens = await fetchToken(tokenAddress)
+  if (response.status === 400) {
+    const { error } = await response.json()
+    throw new Error(error)
+  }
+
+  if (response.status !== 200) {
+    throw new Error('Server error')
+  }
+
+  const { data } = await response.json()
+  return data
+}
+
+
+export const getToken = async(asset: string) => {
+  let tokens = await fetchToken(asset)
   let parsedToken
 
   if (tokens) parsedToken = parseToken(tokens)
+  
+  return parsedToken
+}
+
+export const checkToken = async(asset: string) => {
+  const response = await request(`/tokens/check/${encodeURIComponent(asset)}`)
+
+  if (response.status !== 200) {
+    throw new Error('Error')
+  }
+
+  const { data } = await response.json()
+  let parsedToken
+
+  if (data) parsedToken = parseToken(data)
   
   return parsedToken
 }
@@ -310,16 +341,16 @@ export const getOrders = async (userAddress: string, pairs: Object): Orders => {
 }
 
 export const getTrades = async (pair: TokenPair): Trades => {
-  let { baseTokenAddress, quoteTokenAddress } = pair
-  let trades = await fetchTokenPairTrades(baseTokenAddress, quoteTokenAddress)
+  let { baseAsset, quoteAsset } = pair
+  let trades = await fetchTokenPairTrades(baseAsset, quoteAsset)
   let parsedTrades = parseTrades(trades, pair)
 
   return parsedTrades
 }
 
 export const getOrderBookData = async (pair: TokenPair) => {
-  let { baseTokenAddress, quoteTokenAddress } = pair
-  let orderbook = await fetchOrderBook(baseTokenAddress, quoteTokenAddress)
+  let { baseAsset, quoteAsset } = pair
+  let orderbook = await fetchOrderBook(baseAsset, quoteAsset)
   let { asks, bids } = parseOrderBookData(orderbook, pair)
 
   return { asks, bids }
@@ -330,6 +361,13 @@ export const getExchangeAddress = async () => {
   let exchangeAddress = data.exchangeAddress
 
   return exchangeAddress
+}
+
+export const getOperatorAddress = async () => {
+  let data = await fetchInfo()
+  let operatorAddress = data.operatorAddress
+
+  return operatorAddress
 }
 
 

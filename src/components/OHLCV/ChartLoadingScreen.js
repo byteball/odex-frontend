@@ -3,13 +3,14 @@ import React from 'react';
 import Chart from './Chart';
 import styled from 'styled-components';
 
-import { Loading, AMPLogo, Centered, LargeText } from '../Common';
+import { Loading, OdexLogo, Centered, LargeText } from '../Common';
 import { TypeChooser } from 'react-stockcharts/lib/helper';
 import { AutoSizer } from 'react-virtualized'
 
 import type { Node } from 'react'
 
 type Props = {
+  baseSymbol: string,
   macd: Object,
   volume: Object,
   indicatorHeight: number,
@@ -37,6 +38,7 @@ export default class ChartLoadingScreen extends React.PureComponent<Props> {
       atr,
       forceIndex,
       data,
+      baseSymbol,
     } = this.props;
 
     if (!data) {
@@ -47,7 +49,7 @@ export default class ChartLoadingScreen extends React.PureComponent<Props> {
       return (
         <React.Fragment>
           <Centered>
-            <AMPLogo height="150em" width="150em" />
+            <OdexLogo height="150em" width="150em" />
             <LargeText muted>No trades during this period. Make the first one!</LargeText>
           </Centered>
         </React.Fragment>
@@ -72,6 +74,7 @@ export default class ChartLoadingScreen extends React.PureComponent<Props> {
                     atr={atr ? atr : nullIndicator}
                     forceIndex={forceIndex ? forceIndex : nullIndicator}
                     data={data}
+                    baseSymbol={baseSymbol}
                     noOfCandles={noOfCandles}
                     width={width}
                 />

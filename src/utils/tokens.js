@@ -14,7 +14,6 @@ export const generateTokenPairs = (quoteTokens, tokens) => {
   let tokenPairs = {};
 
   tokens.forEach(token => {
-    if (token.symbol === 'ETH') return;
     quoteTokens.forEach(quoteToken => {
       if (token.symbol !== quoteToken.symbol) {
         let pairSymbol = getPairSymbol(token.symbol, quoteToken.symbol);
@@ -22,8 +21,8 @@ export const generateTokenPairs = (quoteTokens, tokens) => {
           pair: pairSymbol,
           baseTokenSymbol: token.symbol,
           quoteTokenSymbol: quoteToken.symbol,
-          baseTokenAddress: token.address,
-          quoteTokenAddress: quoteToken.address,
+          baseAsset: token.asset,
+          quoteAsset: quoteToken.asset,
           baseTokenDecimals: token.decimals,
           quoteTokenDecimals: quoteToken.decimals,
         };

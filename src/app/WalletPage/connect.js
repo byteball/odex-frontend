@@ -2,7 +2,6 @@
 import { connect } from 'react-redux';
 import getWalletPageSelector, {
   queryAccountData,
-  toggleAllowance,
   redirectToTradingPage,
 } from '../../store/models/walletPage';
 
@@ -23,7 +22,6 @@ export function mapStateToProps(state: State ) {
 export const mapDispatchToProps = {
   queryAccountData,
   removeNotification,
-  toggleAllowance,
   redirectToTradingPage,
   closeHelpModal
 };

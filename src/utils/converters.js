@@ -1,5 +1,5 @@
 /**
- * for Example ETH => WEI
+ * for Example GBYTE => byte
  * @param value
  * @param decimals
  * @returns {string}
@@ -46,6 +46,3 @@ export function toDate(timeStamp) {
   return new Date(timeStamp).toLocaleDateString().replace(/\//g, '-');
 }
 
-export function toWEI(number) {
-  return parseFloat(number) * 1000000000000000000;
-}

@@ -33,15 +33,16 @@ import {
   isNotNull
 } from '../../utils/helpers'
 
+import type { Node } from 'react'
 
 
 type Token = {
   pair: string,
-  lastPrice: string,
+  lastPrice: number,
   change: string,
-  high: string,
-  low: string,
-  volume: string,
+  high: number,
+  low: number,
+  volume: number,
   base: string,
   quote: string,
   favorited: boolean
@@ -69,7 +70,7 @@ type Props = {
   changeSelectedToken: Token => void,
   toggleCollapse: () => void,
   expand: () => void,
-  onContextMenu: () => void
+  onContextMenu: () => Node
 }
 
 const TokenSearchRenderer = (props: Props) => {
@@ -240,7 +241,7 @@ type TokenRowProps = {
 }
 
 const TokenRow = ({ index, token, updateFavorite, isFavoriteTokensList, changeSelectedToken }: TokenRowProps) => {
-  const { favorited, price, change, base, pair } = token
+  const { favorited, lastPrice, change, base, pair } = token
   return (
     <li key={pair} className="row">
       <ColoredCryptoIcon size={25} name={base} />
@@ -254,7 +255,7 @@ const TokenRow = ({ index, token, updateFavorite, isFavoriteTokensList, changeSe
         className="lastPrice" 
         onClick={() => changeSelectedToken(token)}
       >
-        {price ? formatNumber(price, { precision: 3 }) : 'N.A'}
+        {lastPrice ? formatNumber(lastPrice, { precision: 3 }) : 'N.A'}
       </SmallText>
       <Change24H 
         change={change} 
@@ -327,7 +328,7 @@ const SelectedPair = (props: *) => {
 
   const { 
     pair, 
-    price, 
+    lastPrice, 
     volume, 
     high, 
     low, 
@@ -356,19 +357,19 @@ const SelectedPair = (props: *) => {
       <List>
         <Item>
           <SmallTextDiv>Price:</SmallTextDiv>
-          <SmallTextDiv>{ price ? `${ formatNumber(price, { precision: 5 }) } ${quote}` : 'N.A'}</SmallTextDiv>
+          <SmallTextDiv>{ lastPrice ? `${ formatNumber((lastPrice), { precision: 5 }) } ${quote}` : 'N.A'}</SmallTextDiv>
         </Item>
         <Item>
           <SmallTextDiv>Volume:</SmallTextDiv>
-          <SmallTextDiv>{volume ? formatNumber(volume, { precision: 2 }) : 'N.A'  }</SmallTextDiv>
+          <SmallTextDiv>{volume ? formatNumber(volume, { precision: 2 }) + " " + base : 'N.A'  }</SmallTextDiv>
         </Item>
         <Item>
           <SmallTextDiv>High:</SmallTextDiv>
-          <SmallTextDiv>{high ? formatNumber(high, { precision: 2 }) : 'N.A' }</SmallTextDiv>
+          <SmallTextDiv>{high ? formatNumber(high, { precision: 2 }) + " " + quote : 'N.A' }</SmallTextDiv>
         </Item>
         <Item>
           <SmallTextDiv>Low:</SmallTextDiv>
-          <SmallTextDiv>{low ? formatNumber(low, { precision: 2 }) : 'N.A'}</SmallTextDiv>
+          <SmallTextDiv>{low ? formatNumber(low, { precision: 2 }) + " " + quote : 'N.A'}</SmallTextDiv>
         </Item>
       </List>
     </SelectedPairCard>

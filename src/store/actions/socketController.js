@@ -17,7 +17,9 @@ import type {
   InitOHLCVAction,
   UpdateOHLCVAction,
   InitOrderBookAction,
-  UpdateOrderBookAction
+  UpdateOrderBookAction,
+  SubscribeLoginAction,
+  LoginAction,
 } from '../../types/socketController'
 
 const actionTypes = {
@@ -39,7 +41,10 @@ const actionTypes = {
   subscribeOrderbook: 'socketController/SUBSCRIBE_ORDERBOOK',
   unsubscribeOrderbook: 'socketController/UNSUBSCRIBE_ORDERBOOK',
   initOrderBook: 'socketController/INIT_ORDERBOOK',
-  updateOrderBook: 'socketController/UPDATE_ORDERBOOK'
+  updateOrderBook: 'socketController/UPDATE_ORDERBOOK',
+
+  subscribeLogin: 'socketController/SUBSCRIBE_LOGIN',
+  login: 'socketController/LOGIN',
 }
 
 export function createConnection(): CreateConnectionAction {
@@ -153,6 +158,20 @@ export function updateOrderBook(bids: Array<Object>, asks: Array<Object>): Updat
   return {
     type: actionTypes.updateOrderBook,
     payload: { bids, asks }
+  }
+}
+
+export function subscribeLogin(sessionId: string): SubscribeLoginAction {
+  return {
+    type: actionTypes.subscribeLogin,
+    payload: { sessionId }
+  }
+}
+
+export function login(address: string): LoginAction {
+  return {
+    type: actionTypes.login,
+    payload: { address }
   }
 }
 

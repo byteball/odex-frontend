@@ -5,10 +5,10 @@ const actionTypes = {
 };
 
 //deprecated
-export function updateTokens(address: string, symbol: string) {
+export function updateTokens(asset: string, symbol: string) {
   return {
     type: actionTypes.updateTokens,
-    payload: { address, symbol },
+    payload: { asset, symbol },
   };
 }
 

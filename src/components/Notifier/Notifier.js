@@ -1,7 +1,7 @@
 import React from 'react';
 import { Position, Toaster } from '@blueprintjs/core';
 import { formatNumber } from 'accounting-js'
-import { ETHERSCAN_TX_URL } from '../../config/urls'
+import { EXPLORER_URL } from '../../config/urls'
 
 // eslint-disable-next-line
 type Props = {
@@ -37,9 +37,9 @@ const NotificationFactory = (type, options) => {
     case "orderPending":
       return {
         action: {
-          href: `${ETHERSCAN_TX_URL}/${options.txHash}`,
+          href: `${EXPLORER_URL}#${options.txHash}`,
           target: "_blank",
-          text: <strong>View on Etherscan</strong>
+          text: <strong>View on Explorer</strong>
         },
         message: (
             <React.Fragment>
@@ -57,9 +57,9 @@ const NotificationFactory = (type, options) => {
     case "orderSuccess":
       return {
         action: {
-          href: `${ETHERSCAN_TX_URL}/${options.txHash}`,
+          href: `${EXPLORER_URL}#${options.txHash}`,
           target: "_blank",
-          text: <strong>View on Etherscan</strong>,
+          text: <strong>View on Explorer</strong>,
         },
         message: (
           <React.Fragment>
@@ -94,126 +94,6 @@ const NotificationFactory = (type, options) => {
         icon: 'tick',
         intent: 'success',
         timeout: 3000,
-      }
-    case "unlockTokenPending":
-      return {
-        action: {
-          href: `${ETHERSCAN_TX_URL}/${options.txHash}`,
-          target: "_blank",
-          text: <strong>View on Etherscan</strong>
-        },
-        message: (
-          <React.Fragment>
-            Unlocking {options.symbol}. You will be able to trade {options.symbol} after the transaction is confirmed.
-          </React.Fragment>
-        ),
-        icon: 'tick',
-        intent: 'success',
-      }
-    case "lockTokenPending":
-      return {
-        action: {
-          href: `${ETHERSCAN_TX_URL}/${options.txHash}`,
-          target: "_blank",
-          text: <strong>View on Etherscan</strong>
-        },
-        message: (
-          <React.Fragment>
-            Locking {options.symbol}. You will not be able to trade {options.symbol} after the transaction is confirmed.
-          </React.Fragment>
-        ),
-        icon: 'tick',
-        intent: 'success',
-      }
-    case "unlockTokenConfirmed":
-      return {
-        action: {
-          href: `${ETHERSCAN_TX_URL}/${options.txHash}`,
-          target: "_blank",
-          text: <strong>View on Etherscan</strong>
-        },
-        message: (
-          <React.Fragment>
-            {options.symbol} trading unlocked.
-          </React.Fragment>
-        ),
-        icon: 'tick',
-        intent: 'success',
-      }
-    case "lockTokenConfirmed":
-      return {
-        action: {
-          href: `${ETHERSCAN_TX_URL}/${options.txHash}`,
-          target: "_blank",
-          text: <strong>View on Etherscan</strong>
-        },
-        message: (
-          <React.Fragment>
-            {options.symbol} trading locked.
-          </React.Fragment>
-        ),
-        icon: 'tick',
-        intent: 'success',
-      }
-    case "unlockPairPending":
-      return {
-        action: {
-          href: `${ETHERSCAN_TX_URL}/${options.txHash}`,
-          target: "_blank",
-          text: <strong>View on Etherscan</strong>
-        },
-        message: (
-          <React.Fragment>
-            Unlocking {options.baseTokenSymbol}/{options.quoteTokenSymbol}. You will be able to trade after the transaction is confirmed.
-          </React.Fragment>
-        ),
-        icon: 'tick',
-        intent: 'success',
-      }
-    case "lockPairPending":
-      return {
-        action: {
-          href: `${ETHERSCAN_TX_URL}/${options.txHash}`,
-          target: "_blank",
-          text: <strong>View on Etherscan</strong>
-        },
-        message: (
-          <React.Fragment>
-            Locking {options.baseTokenSymbol}/{options.quoteTokenSymbol}.
-          </React.Fragment>
-        ),
-        icon: 'tick',
-        intent: 'success',
-      }
-    case "unlockPairConfirmed":
-      return {
-        action: {
-          href: `${ETHERSCAN_TX_URL}/${options.txHash}`,
-          target: "_blank",
-          text: <strong>View on Etherscan</strong>
-        },
-        message: (
-          <React.Fragment>
-            {options.baseTokenSymbol}/{options.quoteTokenSymbol} unlocked. You can now start trading.
-          </React.Fragment>
-        ),
-        icon: 'tick',
-        intent: 'success',
-      }
-    case "lockPairConfirmed":
-      return {
-        action: {
-          href: `${ETHERSCAN_TX_URL}/${options.txHash}`,
-          target: "_blank",
-          text: <strong>View on Etherscan</strong>
-        },
-        message: (
-          <React.Fragment>
-            {options.baseTokenSymbol}/{options.quoteTokenSymbol} trading locked.
-          </React.Fragment>
-        ),
-        icon: 'tick',
-        intent: 'success',
       }
     default:
       return {

@@ -1,7 +1,6 @@
 // @flow
 
 import { isFloat, isInteger, round, computeChange } from './helpers'
-import { utils } from 'ethers'
 
 import type { TokenPair, APITokens, APIToken, Tokens } from '../types/tokens'
 import type { Order } from '../types/orders'
@@ -53,7 +52,7 @@ export const parseJSONToFixed = (obj: Object, decimals: number = 2) => {
 
 export const parseToken = (token: APIToken) => {
   return {
-    address: token.address,
+    asset: token.asset,
     active: token.active,
     listed: token.listed,
     quote: token.quote,
@@ -66,7 +65,7 @@ export const parseToken = (token: APIToken) => {
 export const parseTokens = (tokens: APITokens) => {
   let parsedTokens = tokens.map((token) => {
     return {
-      address: token.address,
+      asset: token.asset,
       active: token.active,
       listed: token.listed,
       quote: token.quote,
@@ -79,27 +78,28 @@ export const parseTokens = (tokens: APITokens) => {
   return parsedTokens  
 }
 
-export const parseTokenAmount = (amount: string, pair: TokenPair, precision: number = 2) => {
+export const parseTokenAmount = (amount: number, pair: TokenPair, precision: number = 2) => {
+  if (!amount)
+    return 0;
+  if (typeof amount !== 'number')
+    throw Error("amount is not a number: " + amount);
   let { baseTokenDecimals } = pair
-  let precisionMultiplier = utils.bigNumberify(10).pow(precision)
-  let baseMultiplier = utils.bigNumberify(10).pow(baseTokenDecimals)
-  let bigAmount = utils.bigNumberify(amount).mul(precisionMultiplier).div(baseMultiplier)
+  let precisionMultiplier = Math.pow(10, precision)
+  let baseMultiplier = Math.pow(10, baseTokenDecimals)
+  let bigAmount = amount * precisionMultiplier / baseMultiplier
 
   return Number(bigAmount) / Number(precisionMultiplier)
 }
 
 
-export const parsePricepoint = (pricepoint: string, pair: TokenPair, precision: number = 6) => {
-  let { quoteTokenDecimals } = pair
-  let priceMultiplier = utils.bigNumberify(10).pow(18)
-  let quoteMultiplier = utils.bigNumberify(10).pow(quoteTokenDecimals)
-  let bigPricepoint = utils.bigNumberify(pricepoint)
-
-  let nominator = Number(bigPricepoint.div(priceMultiplier).toString())
-  let denominator = Number(quoteMultiplier.toString()) 
-  let result =  nominator / denominator
-
-  return result
+export const parsePricepoint = (pricepoint: number, pair: TokenPair, precision: number = 6) => {
+  //return parseFloat(pricepoint);
+  if (typeof pricepoint !== 'number')
+    throw Error("price is not a number: " + pricepoint);
+  let { quoteTokenDecimals, baseTokenDecimals } = pair
+  let quoteMultiplier = Math.pow(10, quoteTokenDecimals)
+  let baseMultiplier = Math.pow(10, baseTokenDecimals)
+  return pricepoint * baseMultiplier / quoteMultiplier
 }
 
 
@@ -109,7 +109,7 @@ export const parseOrder = (order: Order, pair: TokenPair, precision: number = 2)
   time: order.createdAt,
   amount: parseTokenAmount(order.amount, pair, precision),
   filled: parseTokenAmount(order.filledAmount, pair, precision),
-  price: parsePricepoint(order.pricepoint, pair, precision),
+  price: parsePricepoint(order.price, pair, precision),
   hash: order.hash,
   side: order.side,
   pair: order.pairName,
@@ -125,7 +125,7 @@ export const parseOrders = (orders: Array<Order>, pairs: Object, precision: numb
     if (pair) {
       let amount = parseTokenAmount(order.amount, pair, precision)
       let filled = parseTokenAmount(order.filledAmount, pair, precision)
-      let price = parsePricepoint(order.pricepoint, pair, precision)
+      let price = parsePricepoint(order.price, pair, precision)
 
       let newOrder = {
         time: order.createdAt,
@@ -149,22 +149,22 @@ export const parseOrders = (orders: Array<Order>, pairs: Object, precision: numb
 export const parseTrade = (trade: Trade, pair: TokenPair, precision: number = 2) => {  
   return {
     time: trade.createdAt,
-    price: parsePricepoint(trade.pricepoint, pair, precision),
+    price: parsePricepoint(trade.price, pair, precision),
     amount: parseTokenAmount(trade.amount, pair, precision),
     hash: trade.hash,
     orderHash: trade.orderHash,
     type: trade.type || 'LIMIT',
     side: trade.side,
     pair: trade.pairName,
-    status: trade.status === 'SUCCESS' ? 'EXECUTED' : trade.status,
-    maker: utils.getAddress(trade.maker),
-    taker: utils.getAddress(trade.taker)
+    status: trade.status,
+    maker: trade.maker,
+    taker: trade.taker,
 }}
 
 export const parseTrades = (trades: Array<Trade>, pair: TokenPair, precision: number = 2) => {
   let parsed = (trades: any).map(trade => ({
     time: trade.createdAt,
-    price: parsePricepoint(trade.pricepoint, pair, precision),
+    price: parsePricepoint(trade.price, pair, precision),
     amount: parseTokenAmount(trade.amount, pair, precision),
     hash: trade.hash,
     txHash: trade.txHash,
@@ -172,9 +172,9 @@ export const parseTrades = (trades: Array<Trade>, pair: TokenPair, precision: nu
     type: trade.type || 'LIMIT',
     side: trade.side,
     pair: trade.pairName,
-    status: trade.status === 'SUCCESS' ? 'EXECUTED' : trade.status,
-    maker: utils.getAddress(trade.maker),
-    taker: utils.getAddress(trade.taker)
+    status: trade.status,
+    maker: trade.maker,
+    taker: trade.taker,
   }))
 
   return parsed
@@ -184,13 +184,15 @@ export const parseOrderBookData = (data: OrderBookData, pair: TokenPair, precisi
   let { bids, asks } = data
 
   asks = asks.map(ask => ({
-    price: parsePricepoint(ask.pricepoint, pair, precision),
-    amount: parseTokenAmount(ask.amount, pair, precision)
+    matcher: ask.matcherAddress,
+    price: parsePricepoint(ask.price, pair, precision),
+    amount: parseTokenAmount(Number(ask.amount), pair, precision)
   }))
 
   bids = bids.map(bid => ({
-    price: parsePricepoint(bid.pricepoint, pair, precision),
-    amount: parseTokenAmount(bid.amount, pair, precision)
+    matcher: bid.matcherAddress,
+    price: parsePricepoint(bid.price, pair, precision),
+    amount: parseTokenAmount(Number(bid.amount), pair, precision)
   }))
 
   return { asks, bids }
@@ -230,16 +232,18 @@ export const parseTokenPairsData = (data: APIPairData, pairs: Object) => {
       result.push({
         pair: pair.pair,
         price: datum.price ? datum.price : null,
-        lastPrice: datum.close ? datum.close : null,
+        lastPrice: datum.close ? parsePricepoint(datum.close, pair) : null,
         change: datum.open ? (datum.open - datum.close) / datum.open : null,
-        high: datum.high ? datum.high : null,
-        low: datum.low ? datum.low : null,
-        volume: datum.volume ? datum.volume : null,
-        orderVolume: datum.orderVolume ? datum.orderVolume : null,
+        high: datum.high ? parsePricepoint(datum.high, pair) : null,
+        low: datum.low ? parsePricepoint(datum.low, pair) : null,
+        open: datum.open ? parsePricepoint(datum.open, pair) : null,
+        close: datum.close ? parsePricepoint(datum.close, pair) : null,
+        volume: datum.volume ? parseTokenAmount(datum.volume, pair) : null,
+        orderVolume: datum.orderVolume ? parseTokenAmount(datum.orderVolume, pair) : null,
         orderCount: datum.orderCount ? datum.orderCount : null,
         tradeCount: datum.tradeCount ? datum.tradeCount : null,
-        averageOrderAmount: datum.averageOrderAmount ? datum.averageOrderAmount : null,
-        averageTradeAmount: datum.averageTradeAmount ? datum.averageTradeAmount : null
+        averageOrderAmount: datum.averageOrderAmount ? parseTokenAmount(datum.averageOrderAmount, pair) : null,
+        averageTradeAmount: datum.averageTradeAmount ? parseTokenAmount(datum.averageTradeAmount, pair) : null
       })
     }
   })
@@ -255,7 +259,7 @@ export const parseOHLCV = (data: Candles, pair: TokenPair) => {
       high: parsePricepoint(datum.high, pair),
       low: parsePricepoint(datum.low, pair),
       close: parsePricepoint(datum.close, pair),
-      volume: parseTokenAmount(datum.volume, pair, 2)
+      volume: parseTokenAmount(Number(datum.volume), pair, 2)
     }
   })
 

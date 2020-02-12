@@ -51,6 +51,13 @@ export const updateDuration = (currentDuration: Object, config: Object): ThunkAc
   }
 }
 
+export const getBaseSymbol = (state: State): string => {
+  const pairDomain = getTokenPairsDomain(state)
+  const currentPair = pairDomain.getCurrentPair()
+  return currentPair.baseTokenSymbol
+}
+
+
 function byDuration(duration) {
   switch (duration) {
     case '1h':

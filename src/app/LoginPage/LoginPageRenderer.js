@@ -1,10 +1,9 @@
 import React from 'react'
 import { defineMessages, FormattedMessage } from 'react-intl'
 import styled  from 'styled-components'
-import WalletLoginForm from '../../components/WalletLoginForm'
-import CreateWalletForm from '../../components/CreateWalletForm'
-import type { CreateWalletParams } from '../../types/createWallet'
 import { Spring } from 'react-spring'
+import QRCode from 'qrcode.react'
+import { CHATBOT_URL } from '../../config/urls'
 
 import { 
   Spinner, 
@@ -15,6 +14,7 @@ import {
   Centered, 
   Divider, 
   LargeText, 
+  SmallText,
   LinkText, 
   Colors, 
   Flex, 
@@ -32,46 +32,24 @@ import {
 
 type Props = {
   view: string,
-  showWalletLoginForm: CreateWalletParams => void,
   showLoginMethods: () => void,
-  loginWithMetamask: void => void,
-  loginWithLedger: void => void,
-  loginWithWallet: void => void,
+  loginWithApp: void => void,
 }
 
 const LoginPageRenderer = (props: Props) => {
   const {
     view,
-    loginWithMetamask,
-    loginWithWallet,
-    loginWithLedger,
-    showCreateWallet,
-    showWalletLoginForm,
-    metamaskStatus,
+    loginWithApp,
+    sessionId,
     showLoginMethods,
-    walletCreated,
   } = props
 
   const views = {
     loginMethods: (
       <LoginMethodsView
-        showWalletLoginForm={showWalletLoginForm}
-        loginWithMetamask={loginWithMetamask}
-        loginWithLedger={loginWithLedger}
-        showCreateWallet={showCreateWallet}
-        metamaskStatus={metamaskStatus}
+        loginWithApp={loginWithApp}
+        sessionId={sessionId}
       />
-    ),
-    wallet: (
-      <WidgetWrapper>
-        <WalletLoginForm loginWithWallet={loginWithWallet} showLoginMethods={showLoginMethods} />
-      </WidgetWrapper>
-    ),
-    createWallet: (
-      <WidgetWrapper >
-          <CreateWalletForm walletCreated={walletCreated} showLoginMethods={showLoginMethods}/>
-      </WidgetWrapper>
-      
     ),
     loading: (
       <Centered>
@@ -88,96 +66,49 @@ const LoginPageRenderer = (props: Props) => {
 const LoginMethodsView = (props: Props) => {
   
   const { 
-    showWalletLoginForm, 
-    loginWithMetamask, 
-    metamaskStatus, 
-    showCreateWallet
+    loginWithApp,
+    sessionId,
   } = props
+
+  const link = CHATBOT_URL + sessionId
 
   return (
     <FlexRow p={5} pb={6} justifyContent="space-between">
       <Box />
-      <Spring from={{ opacity: 0, marginTop: -1000 }} to={{ opacity: 1, marginTop: 0 }}>
-      {props => 
-        <WelcomeCard style={props} intent="success" title="Disclaimer" hideOnTablet>
-            <WelcomeMessage>
-              Welcome to <div className="glitch" data-text="AMP!">AMP!</div>
-            </WelcomeMessage>
-            <h3>
-            Trade from your own wallet, without waiting for deposits and with the security of instant blockchain settlements.
-            </h3>
-            <AnnouncementMessages>
-              • <FormattedMessage
-                {...messages.announcement}
-                values={{ link: <a href="https://amp.exchange">https://amp.exchange</a> }}
-              />
-              <br />
-              <br />
-              <Reminder>
-                • <FormattedMessage {...messages.noDisclosure} />
-              </Reminder>
-              <br />
-              <Reminder>
-                • <FormattedMessage {...messages.noOfficialStaffs} />
-              </Reminder>
-              <br />
-              <Reminder>
-                • <FormattedMessage {...messages.exchangeLaws} />
-              </Reminder>
-              <br />
-              <Reminder>
-                • <FormattedMessage {...messages.tokenListing} />
-              </Reminder>
-              <br />
-              <Reminder>
-                • Support us by sharing on <TwitterShareLink />
-              </Reminder>
-              <br />
-            </AnnouncementMessages>
-        </WelcomeCard>
-      }
-      </Spring>
       <LoginMethodsBox>
-        <LoginMethodsHeading>
-          <FormattedMessage {...messages.loginMethods} />
-        </LoginMethodsHeading>
+          <Centered>
+            <h1>
+              <FormattedMessage {...messages.loginMethods} />
+            </h1>
             <LoginCards>
                 <Flex flexDirection="column" width="100%">
-                  <Flex flexDirection="column" py={1}>
+                  <Flex flexDirection="column" alignItems="center" py={1}>
+                    Click this link or scan the QR code to open your Obyte app and confirm login:<br/><br/>
+                    <LargeText><a onClick={loginWithApp} href={link}>Log in with Obyte app</a><br/></LargeText>
+                    <QRCode value={link} level="L" fgColor="#293742" bgColor="#FFFFFF" includeMargin={true} /><br/>
+                    <SmallText muted>If you don't have Obyte wallet yet, <a href="https://obyte.org/#download" target="_blank">download it</a>.</SmallText>
+                    {/*
                     <StyledButton 
-                      onClick={loginWithMetamask} 
-                      disabled={metamaskStatus === "undefined"}
+                      onClick={loginWithApp} 
                       large 
                       intent="primary"
                       fill
                     >
-                      {
-                        metamaskStatus === "undefined" 
-                        ? <FormattedMessage {...messages.metamaskNotFound} />
-                        : <FormattedMessage {...messages.metamask} />
-                      }                      
+                      <FormattedMessage {...messages.obyteapp} />
                     </StyledButton>
-                      {
-                        metamaskStatus === "undefined"
-                          ? (
-                          <Flex p={1} justifyContent="flex-end">
-                            <Indent />
-                            <a href="https://metamask.io/">→ Get Metamask</a>
-                          </Flex>
-                          )
-                          : null
-                      }
+                    */}
                   </Flex>
-                  <Flex flexDirection="column" py={1}>
+                  {/* {<Flex flexDirection="column" py={1}>
                     <StyledButton onClick={showWalletLoginForm} large intent="primary" fill>
                       <FormattedMessage {...messages.wallet} />
                     </StyledButton>
                     <Flex p={1} justifyContent="flex-end">
                       <LinkText onClick={showCreateWallet}>→ Create a new wallet</LinkText>
                     </Flex>
-                  </Flex>
+                  </Flex>*/}
                 </Flex>
             </LoginCards>
+          </Centered>
       </LoginMethodsBox>
       <Box />
     </FlexRow>
@@ -255,51 +186,18 @@ const messages = defineMessages({
   },
   exchangeLaws: {
     id: 'loginPage.exchangeLaws',
-    defaultMessage: ' To adhere to international securities and exchange laws, AMP Marketplace prohibits use of this platform by US and South Korean residents. By using this platform, you are confirming that you are not excluded from use by this criteria.',
+    defaultMessage: ' To adhere to international securities and exchange laws, ODEX prohibits use of this platform by US residents. By using this platform, you are confirming that you are not excluded from use by this criteria.',
   },
   tokenListing: {
     id: 'loginPage.tokenListing',
     defaultMessage: 'For inquiries about listing your token, contact us at support@proofsuite.com.'
   },
-  noOfficialStaffs: {
-    id: 'loginPage.noOfficialStaffs',
-    defaultMessage: 'Never make transactions or send funds to anyone who claims to be a member of Proof Suite support.',
-  },
-  noDisclosure: {
-    id: 'loginPage.noDisclosure',
-    defaultMessage:
-      'Never disclose your password, private keys or other authentication elements to anyone, including Proof Suite support.',
-  },
   loginMethods: {
     id: 'loginPage.loginMethodsHeading',
-    defaultMessage: 'Choose a login method',
+    defaultMessage: 'Log in to ODEX to trade',
   },
-  connect: {
-    id: 'loginPage.connect',
-    defaultMessage: 'Connect to {name}',
-  },
-  import: {
-    id: 'loginPage.import',
-    defaultMessage: 'Import your {name}',
-  },
-  metamask: {
-    id: 'loginPage.metamask',
-    defaultMessage: 'Metamask',
-  },
-  ledger: {
-    id: 'loginPage.ledger',
-    defaultMessage: 'Ledger',
-  },
-  metamaskNotFound: {
-    id: 'loginPage.metamask',
-    defaultMessage: 'Metamask not detected'
-  },
-  wallet: {
-    id: 'loginPage.wallet',
-    defaultMessage: 'Wallet',
-  },
-  createWallet: {
-    id: 'loginPage.createWallet',
-    defaultMessage: 'Create a new wallet',
+  obyteapp: {
+    id: 'loginPage.obyteapp',
+    defaultMessage: 'Obyte App',
   },
 });

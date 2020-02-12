@@ -1,9 +1,7 @@
 import { connect } from 'react-redux';
 
 import loginPageSelector, { 
-  loginWithMetamask, 
-  loginWithWallet,
-  loginWithLedger
+  loginWithApp,
 } from '../../store/models/loginPage';
 
 import { removeNotification } from '../../store/actions/app';
@@ -13,13 +11,12 @@ export function mapStateToProps(state, props) {
 
   return {
     authenticated: selector.authenticated,
+    sessionId: selector.sessionId,
   };
 }
 
 const mapDispatchToProps = {
-  loginWithWallet,
-  loginWithMetamask,
-  loginWithLedger,
+  loginWithApp,
   removeNotification,
 };
 

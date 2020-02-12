@@ -1,0 +1,10 @@
+{
+  "testnet": {
+    "GBYTE": "base",
+    "USDC": "UccpQo12uLmufihkzdK7Kcrb5BlHp8GcMrSEA7NVdNw="
+  },
+  "livenet": {
+    "GBYTE": "base",
+    "USDC": "noneyet"
+  }
+}

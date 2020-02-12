@@ -6,6 +6,8 @@ import { text, withKnobs } from '@storybook/addon-knobs/react';
 import { withInfo } from '@storybook/addon-info';
 import OrderForm from './OrderForm';
 
+import { tokensBySymbol } from "../../utils/mockData";
+
 storiesOf('Order Form', module)
   .addDecorator(withKnobs)
   .add(
@@ -19,16 +21,17 @@ storiesOf('Order Form', module)
           bidPrice={0.29}
           baseTokenBalance={1000}
           quoteTokenBalance={10}
-          baseTokenSymbol="PRFT"
-          quoteTokenSymbol="ETH"
-          baseTokenDecimals={18}
-          quoteTokenDecimals={18}
+          baseTokenSymbol="GBYTE"
+          quoteTokenSymbol="USDC"
+          baseTokenDecimals={9}
+          quoteTokenDecimals={6}
+          tokensBySymbol={tokensBySymbol}
+          bestAskMatcher="M_ADDR"
+          bestBidMatcher="M_ADDR"
+          address="ADDR"
+          operatorAddress="M_ADDR"
           loggedIn={false}
-          makeFee={0.01}
-          takeFee={0.01}
           selectedOrder={null}
-          pairIsAllowed={true}
-          pairAllowanceIsPending={false}
           onCollapse={action('onCollapse')}
           onExpand={action('onExpand')}
           onResetDefaultLayout={action('onResetDefaultLayout')}
@@ -54,10 +57,6 @@ storiesOf('Order Form', module)
   //         baseTokenDecimals={18}
   //         quoteTokenDecimals={18}
   //         loggedIn={false}
-  //         makeFee={0.01}
-  //         takeFee={0.01}
-  //         pairIsAllowed={true}
-  //         pairAllowanceIsPending={false}
   //         onCollapse={action('onCollapse')}
   //         onExpand={action('onExpand')}
   //         onResetDefaultLayout={action('onResetDefaultLayout')}

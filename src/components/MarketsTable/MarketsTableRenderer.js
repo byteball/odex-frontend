@@ -25,7 +25,7 @@ import {
 import { 
   FlexRowSpaceBetween,
   Colors, 
-  AMPLogo, 
+  OdexLogo, 
   Centered, 
   LargeText, 
   SmallText,
@@ -67,7 +67,7 @@ class MarketsTableRenderer extends React.PureComponent<Props> {
         pair,
         baseTokenSymbol,
         quoteTokenSymbol,
-        price,
+        lastPrice,
         change, 
         volume, 
         orderVolume,
@@ -85,12 +85,12 @@ class MarketsTableRenderer extends React.PureComponent<Props> {
           </Cell>
           <Cell type="price">
             <SmallText muted>
-              {formatNumber(price, { precision: 2 })} {quoteTokenSymbol}
+              {formatNumber(lastPrice, { precision: 2 })} {quoteTokenSymbol}
             </SmallText>
           </Cell>
           <Cell type="referencePrice">
             <SmallText muted>
-              {formatNumber(price, { precision: 2 })} {currentReferenceCurrency}
+              {formatNumber(lastPrice, { precision: 2 })} {currentReferenceCurrency}
             </SmallText>
           </Cell>
           <Cell type="volume">
@@ -122,7 +122,7 @@ class MarketsTableRenderer extends React.PureComponent<Props> {
   noRowsRenderer = () => {
     return (
       <Centered my={4}>
-        <AMPLogo height="150em" width="150em" />
+        <OdexLogo height="150em" width="150em" />
         <LargeText muted>No pairs to display!</LargeText>
       </Centered>
     )
@@ -165,6 +165,7 @@ class MarketsTableRenderer extends React.PureComponent<Props> {
             {tabs.map((tab, i) => {
               return (
                 <QuoteSelectionButton
+                  key={i}
                   text={tab}
                   minimal
                   fill

@@ -3,13 +3,13 @@ import React from 'react'
 import styled from 'styled-components'
 import { Card } from '@blueprintjs/core'
 import CenteredSpinner from '../../components/Common/CenteredSpinner'
-import { AMPLogo } from '../../components/Common'
+import { OdexLogo } from '../../components/Common'
 import TokenTable from '../../components/TokenTable'
 import WalletInfo from '../../components/WalletInfo'
 import GetStartedModal from '../../components/GetStartedModal'
 
 import type { TokenData } from '../../types/tokens'
-import type { Tx } from '../../types/Tx'
+import type { Tx } from '../../types/transactions'
 
 import { Devices } from '../../components/Common/Variables'
 
@@ -18,10 +18,9 @@ type Props = {
   baseTokens: Array<string>,
   quoteTokens: Array<string>,
   connected: boolean,
-  toggleAllowance: string => void,
   redirectToTradingPage: string => void,
   isHelpModalOpen: boolean,
-  closeHelpModal: void => void,
+  closeHelpModal: boolean => void,
   balancesLoading: boolean,
   referenceCurrency: string,
 }
@@ -32,7 +31,6 @@ const WalletPageRenderer = (props: Props) => {
     baseTokens,
     quoteTokens,
     connected,
-    toggleAllowance,
     redirectToTradingPage,
     isHelpModalOpen,
     closeHelpModal,
@@ -48,7 +46,7 @@ const WalletPageRenderer = (props: Props) => {
         </WalletInfoBox>
         <WalletPageContentBox>
           {balancesLoading ? (
-            // <AMPLogo height="150em" width="150em" />
+            // <OdexLogo height="150em" width="150em" />
             <CenteredSpinner />
           ) : (
             <DepositTableBox>
@@ -57,7 +55,6 @@ const WalletPageRenderer = (props: Props) => {
                 tokenData={tokenData}
                 baseTokens={baseTokens}
                 quoteTokens={quoteTokens}
-                toggleAllowance={toggleAllowance}
                 redirectToTradingPage={redirectToTradingPage}
                 referenceCurrency={referenceCurrency}
               />

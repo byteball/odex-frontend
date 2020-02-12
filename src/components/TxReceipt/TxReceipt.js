@@ -1,7 +1,7 @@
 // @flow
 import React from 'react';
 import TxReceiptRenderer from './TxReceiptRenderer';
-import type { TxReceipt as TxReceiptType } from '../../types/transferTokensForm';
+import type { TxReceipt as TxReceiptType } from '../../types/common';
 
 type Props = {
   receipt: TxReceiptType,
@@ -20,16 +20,13 @@ class TxReceipt extends React.PureComponent<Props, State> {
 
   render() {
     const { visible } = this.state;
-    const { blockHash, blockNumber, transactionHash, gasUsed } = this.props.receipt;
+    const { hash } = this.props.receipt;
 
     return (
       <TxReceiptRenderer
         toggleVisible={this.toggleVisible}
         visible={visible}
-        blockHash={blockHash}
-        blockNumber={blockNumber}
-        gasLimit={gasUsed.toNumber()}
-        transactionHash={transactionHash}
+        hash={hash}
       />
     );
   }

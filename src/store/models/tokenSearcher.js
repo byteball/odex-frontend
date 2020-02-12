@@ -15,10 +15,6 @@ import * as actionCreators from '../actions/tokenSearcher'
 
 import { getQuoteToken, getBaseToken } from '../../utils/tokens'
 
-import { 
-  parseWETHPair,
-  parseToWETHPair
-} from '../../utils/helpers'
 
 export default function tokenSearcherSelector(state: State) {
   let domain = getTokenPairsDomain(state)
@@ -28,18 +24,16 @@ export default function tokenSearcherSelector(state: State) {
   let tokenPairs = domain.getTokenPairsDataArray()
   let favoriteTokenPairs = domain.getFavoritePairs()
   let tokenPairsByQuoteToken = {}
-  let quotes = ['USDC', 'ETH', 'DAI']
+  let quotes = ['USDC', 'GBYTE']
 
   for (let quote of quotes) {
-    //on the backend, the raw quote is "WETH" instead of "ETH".
-    let rawQuote = quote === "ETH" ? "WETH" : quote
+    let rawQuote = quote
 
     //We look for pairs with the corresponding "quote".
     tokenPairsByQuoteToken[quote] = tokenPairs
       .filter(({ pair }) => getQuoteToken(pair) === rawQuote)
       .map(tokenPair => {
-        //For each filtered pair, we parse out "WETH" into "ETH" for the frontend display
-        let parsedPair = parseWETHPair(tokenPair.pair)
+        let parsedPair = tokenPair.pair
         return {
           ...tokenPair,
           pair: parsedPair,
@@ -62,9 +56,9 @@ export default function tokenSearcherSelector(state: State) {
   let baseTokenAvailableBalance = baseTokenBalance - baseTokenLockedBalance
   let quoteTokenAvailableBalance = quoteTokenBalance - quoteTokenLockedBalance
 
-  let currentPairName = parseWETHPair(rawPair.pair)
-  let baseTokenSymbol = (rawPair.baseTokenSymbol === "WETH") ? "ETH" : rawPair.baseTokenSymbol
-  let quoteTokenSymbol = (rawPair.quoteTokenSymbol === "WETH") ? "ETH" : rawPair.quoteTokenSymbol
+  let currentPairName = rawPair.pair
+  let baseTokenSymbol = rawPair.baseTokenSymbol
+  let quoteTokenSymbol = rawPair.quoteTokenSymbol
   let currentPair = { ...rawPair, pair: currentPairName, baseTokenSymbol, quoteTokenSymbol }
 
   return {
@@ -77,11 +71,9 @@ export default function tokenSearcherSelector(state: State) {
   }
 }
 
-export const updateCurrentPair = (symbol: string): ThunkAction => {
+export const updateCurrentPair = (newPairSymbol: string): ThunkAction => {
   return async (dispatch, getState, { socket, mixpanel }) => {
     mixpanel.track('trading-page/update-current-pair')
-
-    let newPairSymbol = parseToWETHPair(symbol)
 
     try {
       socket.unsubscribeChart()

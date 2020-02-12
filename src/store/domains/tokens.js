@@ -3,7 +3,7 @@ import type { TokenState, Tokens, TokenRates } from '../../types/tokens';
 
 const initialState = {
   bySymbol: {
-    'ETH': { symbol: 'ETH', address: '0x0', decimals: 18, quote: false }
+    'GBYTE': { symbol: 'GBYTE', asset: 'base', decimals: 9, quote: true }
   }
 };
 
@@ -17,7 +17,7 @@ export const tokensUpdated = (tokens: Tokens) => {
     let bySymbol = tokens.reduce(
       (result, token) => {
         result[token.symbol] = {
-          address: token.address,
+          asset: token.asset,
           symbol: token.symbol,
           decimals: token.decimals,
           registered: token.registered ? token.registered : null,
@@ -51,7 +51,7 @@ export const tokensReset = (tokens: Tokens) => {
     let bySymbol = tokens.reduce(
       (result, token) => {
         result[token.symbol] = {
-          address: token.address,
+          asset: token.asset,
           symbol: token.symbol,
           decimals: token.decimals,
           registered: token.registered ? token.registered : null,
@@ -71,26 +71,6 @@ export const tokensReset = (tokens: Tokens) => {
     return {
       ...state,
       bySymbol
-    }
-  }
-
-  return event
-}
-
-export const tokenFeeUpdated = (symbol: string, makeFee: string, takeFee: string) => {
-  const event = (state: TokenState) => {
-    if (!state.bySymbol[symbol]) return
-
-    return {
-      ...state,
-      bySymbol: {
-        ...state.bySymbol,
-        [symbol]: {
-          ...state.bySymbol[symbol],
-          makeFee,
-          takeFee
-        }
-      }
     }
   }
 
@@ -134,28 +114,28 @@ export default function getTokenDomain(state: TokenState) {
 
     quoteTokens: (): any => {
       let tokens: any = Object.values(state.bySymbol)      
-      let quoteTokens = tokens.filter(token => (token.quote === true && token.symbol !== 'ETH'))
+      let quoteTokens = tokens.filter(token => (token.quote === true))
 
       return quoteTokens
     },
 
     baseTokens: (): any => {
       let tokens: any = Object.values(state.bySymbol)      
-      let baseTokens = tokens.filter(token => (token.quote === false && token.symbol !== 'ETH'))
+      let baseTokens = tokens.filter(token => (token.quote === false))
 
       return baseTokens
     },
 
-    tokenAddresses: (): any => {
+    assets: (): any => {
       let tokens: any = Object.values(state.bySymbol)
-      let addresses = tokens.map(token => token.address)
+      let assets = tokens.map(token => token.assets)
 
-      return addresses
+      return assets
     },
 
     registeredTokens: (): any => {
       let tokens: any = Object.values(state.bySymbol)
-      let registeredTokens = tokens.filter(token => (token.registered === true && token.symbol !== 'ETH'))
+      let registeredTokens = tokens.filter(token => (token.registered === true))
 
 
       return registeredTokens
@@ -163,25 +143,25 @@ export default function getTokenDomain(state: TokenState) {
 
     listedTokens: (): any => {
       let tokens: any = Object.values(state.bySymbol)
-      let listedTokens = tokens.filter(token => (token.listed === true && token.symbol !== 'ETH'))
+      let listedTokens = tokens.filter(token => (token.listed === true))
 
       return listedTokens
     },
 
-    listedTokenAddresses: (): any => {
+    listedAssets: (): any => {
       let tokens: any = Object.values(state.bySymbol)
-      let listed = tokens.filter(token => (token.listed === true && token.symbol !== 'ETH'))
-      let addresses = listed.map(token => token.address)
+      let listed = tokens.filter(token => (token.listed === true))
+      let assets = listed.map(token => token.asset)
       
-      return addresses
+      return assets
     },
 
-    registeredTokenAddresses: (): any => {
+    registeredAssets: (): any => {
       let tokens: any = Object.values(state.bySymbol)
-      let registered = tokens.filter((token => token.registered === true && token.symbol !== 'ETH'))
-      let addresses = registered.map(token => token.address)
+      let registered = tokens.filter((token => token.registered === true))
+      let assets = registered.map(token => token.asset)
 
-      return addresses
+      return assets
     },
 
     exchangeRates: (): any => {

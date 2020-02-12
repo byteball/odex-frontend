@@ -4,17 +4,15 @@ import styled from 'styled-components';
 import TokenTableRenderer from './TokenTableRenderer';
 import DepositModal from '../../components/DepositModal';
 import TransferTokensModal from '../../components/TransferTokensModal';
-import ConvertTokensModal from '../../components/ConvertTokensModal';
 
 import type { Token } from '../../types/tokens';
 
 type TokenData = {
   symbol: string,
-  address: string,
-  balance: string,
-  allowed: boolean,
+  asset: string,
+  balance: number,
+  value: number,
   decimals: number,
-  allowancePending: boolean,
   quote?: ?bool,
   registered?: ?bool,
   listed?: ?bool,
@@ -23,7 +21,6 @@ type TokenData = {
 
 type Props = {
   connected: boolean,
-  toggleAllowance: string => void,
   tokenData: Array<TokenData>,
   baseTokens: Array<string>,
   quoteTokens: Array<string>,
@@ -34,10 +31,7 @@ type Props = {
 type State = {
   isDepositModalOpen: boolean,
   isSendModalOpen: boolean,
-  isConvertModalOpen: boolean,
-  convertModalFromToken: string,
-  convertModalToToken: string,
-  selectedToken: ?Token,
+  selectedTokenSymbol: string,
   hideZeroBalanceToken: boolean,
   searchInput: string,
 };
@@ -46,13 +40,19 @@ class TokenTable extends React.PureComponent<Props, State> {
   state = {
     isDepositModalOpen: false,
     isSendModalOpen: false,
-    isConvertModalOpen: false,
-    selectedToken: 'ETH',
+    selectedTokenSymbol: 'GBYTE',
     hideZeroBalanceToken: false,
     searchInput: '',
-    convertModalFromToken: 'ETH',
-    convertModalToToken: 'WETH',
   };
+
+  /*componentDidMount() {
+    if (!this.state.selectedToken)
+      this.updateSelectedToken('GBYTE')
+  }*/
+
+  getSelectedToken = () => {
+    return this.props.tokenData.filter(elem => elem.symbol === this.state.selectedTokenSymbol)[0]
+  }
 
   openDepositModal = (event: SyntheticEvent<>, symbol: string) => {
     event.stopPropagation();
@@ -62,7 +62,7 @@ class TokenTable extends React.PureComponent<Props, State> {
 
     this.setState({
       isDepositModalOpen: true,
-      selectedToken,
+      selectedTokenSymbol: symbol,
     });
   };
 
@@ -75,36 +75,11 @@ class TokenTable extends React.PureComponent<Props, State> {
 
     this.setState({
       isSendModalOpen: true,
-      selectedToken,
+      selectedTokenSymbol: symbol,
     });
   };
 
-  openConvertModal = (event: SyntheticEvent<>, fromTokenSymbol: string, toTokenSymbol: string) => {
-    event.preventDefault()
-    event.stopPropagation();
-    event.nativeEvent.stopImmediatePropagation();
 
-    this.setState((previousState, currentProps) => {
-      return {
-        ...previousState,
-        convertModalFromToken: fromTokenSymbol,
-        convertModalToToken: toTokenSymbol,
-        isConvertModalOpen: true,
-      }
-    })
-  }
-
-  handleToggleAllowance = (event: SyntheticEvent<>, symbol: string) => {    
-    // event.stopProp
-    event.preventDefault()
-    event.stopPropagation();
-    event.nativeEvent.stopImmediatePropagation();
-    
-    
-    this.props.toggleAllowance(symbol)
-
-    return false
-  }
 
   closeDepositModal = () => {
     this.setState({ isDepositModalOpen: false });
@@ -114,9 +89,6 @@ class TokenTable extends React.PureComponent<Props, State> {
     this.setState({ isSendModalOpen: false });
   };
 
-  closeConvertModal = () => {
-    this.setState({ isConvertModalOpen: false })
-  };
 
   handleSearchInputChange = (e: SyntheticInputEvent<>) => {
     this.setState({ searchInput: e.target.value });
@@ -126,15 +98,16 @@ class TokenTable extends React.PureComponent<Props, State> {
     this.setState({ hideZeroBalanceToken: !this.state.hideZeroBalanceToken });
   };
 
-  updateSelectedToken = (selectedToken: string) => {
-    this.setState({ selectedToken })
+  updateSelectedToken = (symbol: string) => {
+    //let selectedToken = this.props.tokenData.filter(elem => elem.symbol === symbol)[0];
+    this.setState({ selectedTokenSymbol: symbol })
   }
 
   filterTokens = (data: Array<TokenData>) => {
     const { searchInput, hideZeroBalanceToken } = this.state;
 
     if (searchInput) data = data.filter(token => token.symbol.indexOf(searchInput.toUpperCase()) > -1);
-    if (hideZeroBalanceToken) data = data.filter(token => token.symbol === 'ETH' || Number(token.balance) !== 0);
+    if (hideZeroBalanceToken) data = data.filter(token => token.symbol === 'GBYTE' || Number(token.balance) !== 0);
 
     return data;
   };
@@ -151,48 +124,27 @@ class TokenTable extends React.PureComponent<Props, State> {
     let {
       isDepositModalOpen,
       isSendModalOpen,
-      selectedToken,
+      selectedTokenSymbol,
       searchInput,
       hideZeroBalanceToken,
-      isConvertModalOpen,
-      convertModalFromToken,
-      convertModalToToken,
      } = this.state;
 
-     let baseTokenData = tokenData.filter((token: Token) => baseTokens.indexOf(token.symbol) === -1 && token.symbol !== 'WETH' && token.symbol !== 'ETH')
-     let WETHTokenData = tokenData.filter((token: Token) => token.symbol === 'WETH')
-     let ETHTokenData = tokenData.filter((token: Token) => token.symbol === 'ETH')
+     let baseTokenData = tokenData.filter((token: TokenData) => baseTokens.indexOf(token.symbol) === -1)
 
-     let ETHData = [{
-       ...ETHTokenData[0],
-       ETHBalance: ETHTokenData[0].balance,
-       WETHBalance: WETHTokenData[0].balance,
-       totalBalance: Number(ETHTokenData[0].balance) + Number(WETHTokenData[0].balance)
-     }]
-
-    let selectedTokenData
-     if (selectedToken === "ETH") {       
-       selectedTokenData = ETHData[0]
-     } else {
-       selectedTokenData = tokenData.filter((token: Token) => token.symbol === selectedToken)[0]
-     }
+    let selectedTokenData = tokenData.filter((token: TokenData) => token.symbol === selectedTokenSymbol)[0]
      
     let filteredBaseTokenData = this.filterTokens(baseTokenData)
-    let filteredETHData = this.filterTokens(ETHData)
     let totalFilteredTokens = filteredBaseTokenData.length
 
     return (
       <Wrapper>
         <TokenTableRenderer
           connected={connected}
-          handleToggleAllowance={this.handleToggleAllowance}
           baseTokensData={filteredBaseTokenData}
-          ETHTokenData={filteredETHData[0]}
           tokenDataLength={tokenData.length}
           searchInput={searchInput}
           hideZeroBalanceToken={hideZeroBalanceToken}
           openDepositModal={this.openDepositModal}
-          openConvertModal={this.openConvertModal}
           openSendModal={this.openSendModal}
           toggleZeroBalanceToken={this.toggleZeroBalanceToken}
           handleSearchInputChange={this.handleSearchInputChange}
@@ -200,31 +152,25 @@ class TokenTable extends React.PureComponent<Props, State> {
           totalFilteredTokens={totalFilteredTokens}
           referenceCurrency={referenceCurrency}
           updateSelectedToken={this.updateSelectedToken}
-          selectedToken={selectedToken}
+          selectedTokenSymbol={selectedTokenSymbol}
           selectedTokenData={selectedTokenData}
         />
         <DepositModal
           isOpen={isDepositModalOpen}
           handleClose={this.closeDepositModal}
-          token={selectedToken}
+          token={this.getSelectedToken()}
           tokenData={tokenData}
         />
         <TransferTokensModal
           isOpen={isSendModalOpen}
           handleClose={this.closeSendModal}
-          token={selectedToken}
-        />
-        <ConvertTokensModal
-          isOpen={isConvertModalOpen}
-          handleClose={this.closeConvertModal}
-          fromToken={convertModalFromToken}
-          toToken={convertModalToToken}
+          token={this.getSelectedToken()}
         />
       </Wrapper>
     );
   }
 }
-1
+
 export default TokenTable;
 
 const Wrapper = styled.div`

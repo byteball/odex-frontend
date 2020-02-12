@@ -7,7 +7,6 @@ it('renders without crashing', () => {
     logout={jest.fn()}
     quoteTokens={['USDC', 'DAI']}
     connected={true}
-    toggleAllowance={jest.fn()}
     loading={false}
     redirectToTradingPage={jest.fn()}
   />);

@@ -41,13 +41,17 @@ import {
 
 import { 
     GreenGlowingButton,
+    GreenGlowingAnchorButton,
     RedGlowingButton,
+    RedGlowingAnchorButton,
     BlueGlowingButton
 } from './Button'
 
 export { 
     GreenGlowingButton, 
+    GreenGlowingAnchorButton,
     RedGlowingButton, 
+    RedGlowingAnchorButton,
     BlueGlowingButton
 }
 
@@ -115,6 +119,6 @@ export { default as Indent } from './Indent'
 export { default as ModalBody } from './ModalBody'
 export { default as ModalFooter } from './ModalFooter'
 export { default as CloseableCallout } from './CloseableCallout'
-export { default as AMPLogo } from './AMPLogo'
+export { default as OdexLogo } from './OdexLogo'
 export { default as Link } from './Link'
 export { default as TwitterShareLink } from './TwitterShareLink'

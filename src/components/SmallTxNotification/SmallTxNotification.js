@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
 import styled from 'styled-components'
-import { ETHERSCAN_TX_URL } from '../../config/urls'
+import { EXPLORER_URL } from '../../config/urls'
 
 import { 
   Callout,
@@ -22,10 +22,9 @@ type Props = {
   hash: string,
 }
 
-//TODO Add link to Etherscan
 const SmallTxNotification = (props: Props) => {
   const {  status, txName, hash } = props
-  const txUrl = `${ETHERSCAN_TX_URL}/${hash}`
+  const txUrl = `${EXPLORER_URL}#${hash}`
 
   switch (status) {
     case 'incomplete':
@@ -40,7 +39,7 @@ const SmallTxNotification = (props: Props) => {
                 <Indent /> {txName} pending
               </FlexRow>
               <a href={txUrl} target="_blank">
-                <Button minimal interactive>View on Etherscan</Button>
+                <Button minimal interactive>View on Explorer</Button>
               </a>
             </NotificationBox>
           </Callout>
@@ -58,7 +57,7 @@ const SmallTxNotification = (props: Props) => {
               >
                 <span>{txName} successful</span>
                 <a href={txUrl} target="_blank">
-                  <Button minimal interactive>View on Etherscan</Button>
+                  <Button minimal interactive>View on Explorer</Button>
                 </a>
               </FlexRow>
             </NotificationBox>
@@ -72,7 +71,7 @@ const SmallTxNotification = (props: Props) => {
             <NotificationBox>
               {txName} error
               <a href={txUrl} target="_blank">
-                <Button minimal interactive>View on Etherscan</Button>
+                <Button minimal interactive>View on Explorer</Button>
               </a>
             </NotificationBox>
           </Callout>

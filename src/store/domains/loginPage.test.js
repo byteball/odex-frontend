@@ -8,27 +8,27 @@ function getDomain(events) {
 
 it('handles initialized event', () => {
   const domain = getDomain([eventCreators.initialized()]);
-  expect(domain.isLoading()).toEqual(false);
-  expect(domain.getError()).toEqual('');
+  expect(domain.loading).toEqual(false);
+  expect(domain.error).toEqual('');
 });
 
 it('handles loginRequested event', () => {
   const domain = getDomain([eventCreators.initialized(), eventCreators.loginRequested()]);
 
-  expect(domain.isLoading()).toEqual(true);
-  expect(domain.getError()).toEqual('');
+  expect(domain.loading).toEqual(true);
+  expect(domain.error).toEqual('');
 });
 
 it('handles loginFailed event', () => {
   const domain = getDomain([eventCreators.initialized(), eventCreators.loginFailed('Metamask not found')]);
 
-  expect(domain.isLoading()).toEqual(false);
-  expect(domain.getError()).toEqual('Metamask not found');
+  expect(domain.loading).toEqual(false);
+  expect(domain.error).toEqual('Metamask not found');
 });
 
 it('handles authenticated event properly', () => {
   const domain = getDomain([eventCreators.initialized(), eventCreators.authenticated()]);
 
-  expect(domain.isLoading()).toEqual(false);
-  expect(domain.getError()).toEqual('');
+  expect(domain.loading).toEqual(false);
+  expect(domain.error).toEqual('');
 });

@@ -10,11 +10,11 @@ export type OHLCVState = {
 };
 
 export type Candle = {
-  open: string,
-  high: string,
-  close: string,
-  low: string,
-  volume: string,
+  open: number,
+  high: number,
+  close: number,
+  low: number,
+  volume: number,
   timestamp: number,
   pair: TokenPair
 }

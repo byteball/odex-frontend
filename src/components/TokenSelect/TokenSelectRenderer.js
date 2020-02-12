@@ -34,7 +34,7 @@ const renderItem = (item, { handleClick, modifiers }) => {
     <MenuItem
       active={modifiers.active}
       disabled={modifiers.disabled}
-      label={item.address}
+      label={item.asset}
       key={item.rank}
       onClick={handleClick}
       text={`${item.rank}. ${item.symbol}`}

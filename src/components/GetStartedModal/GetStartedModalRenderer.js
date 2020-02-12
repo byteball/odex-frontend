@@ -9,34 +9,25 @@ import ThirdStep from './steps/ThirdStep';
 import { FlexRow, Box } from '../Common'
 import { Spring } from 'react-spring'
 
+import type { Token } from '../../types/tokens';
+import type { AccountBalance } from '../../types/accountBalances';
+
 type Props = {
   step: string,
   goToFirstStep: void => void,
   goToSecondStep: void => void,
   goToThirdStep: void => void,
-  userHasETH: boolean,
-  userHasWETH: boolean,
-  userHasApprovedWETH: boolean,
-  handleConvertETH: void => void,
-  handleApproveWETH: void => void,
-  ETHBalance: number,
-  WETHBalance: number,
-  convertAmount: number,
-  convertFraction: number,
-  changeConvertETHFraction: number => void,
-  ETHAddress: string,
-  approveTxStatus: string,
-  approveTxHash: string,
-  convertTxStatus: string,
-  convertTxHash: string,
+  balances: { [string]: number },
+  tokens: Array<Token>,
+  userHasBytes: boolean,
+  GBYTEBalance: number,
+  address: string,
   redirectToTradingPage: void => void,
   redirectToFAQPage: void => void,
   toggleShowHelpModalCheckBox: void => void,
   showHelpModalChecked: boolean,
   handleClose: void => void,
   isOpen: boolean,
-  transactionsPending: boolean,
-  transactionsComplete: boolean,
   currentTab: string,
   handleChangeTab: string => void,
 };

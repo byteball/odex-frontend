@@ -15,31 +15,31 @@ export default function walletInfoSelector(state: State) {
     let accountDomain = getAccountDomain(state)
 
     return {
-        userTokens: tokenDomain.tokenAddresses(),
-        listedTokens: tokenDomain.listedTokenAddresses(),
-        registeredTokens: tokenDomain.registeredTokenAddresses(),
-        etherBalance: accountBalancesDomain.formattedEtherBalance(),
+        userTokens: tokenDomain.assets(),
+        listedTokens: tokenDomain.listedAssets(),
+        registeredTokens: tokenDomain.registeredAssets(),
+        gbyteBalance: accountBalancesDomain.formattedGbyteBalance(),
         recentTransactions: transactionsDomain.recentTransactions(8),
         accountAddress: accountDomain.address
     }
 }
 
-export function detectContract(tokenAddress: string): ThunkAction {
+export function detectToken(asset: string): ThunkAction {
     return async (dispatch, getState, { provider, api, mixpanel }) => {
         mixpanel.track('wallet-page/detect-contract')
 
         try {
             let state = getState()
             let tokenDomain = getTokenDomain(state)
-            let listedTokens = tokenDomain.listedTokenAddresses()
+            let listedTokens = tokenDomain.listedAssets()
 
-            if (listedTokens.indexOf(tokenAddress) !== -1) {
+            if (listedTokens.indexOf(asset) !== -1) {
                 return { error: 'Token is already listed' }
             }
             
             let token
 
-            token = await api.getToken(tokenAddress)
+            token = await api.getToken(asset)
             if (token) {
                 return {
                     isRegistered: true,
@@ -48,7 +48,7 @@ export function detectContract(tokenAddress: string): ThunkAction {
                 }
             }
 
-            token = await provider.detectContract(tokenAddress)
+            token = await api.checkToken(asset)
             if (token && token.symbol) {
 
                 return {
@@ -58,7 +58,7 @@ export function detectContract(tokenAddress: string): ThunkAction {
                 }
             }
 
-            return { error: 'Contract not found' }
+            return { error: 'Asset not found' }
         } catch (e) {
             console.log(e)
             return { error: e.message }
@@ -66,7 +66,7 @@ export function detectContract(tokenAddress: string): ThunkAction {
     }
 }
 
-export function addToken(tokenAddress: string): ThunkAction {
+export function addToken(asset: string): ThunkAction {
     return async (dispatch, getState, { provider, api, mixpanel }) => {
         mixpanel.track('wallet-page/add-token')
 
@@ -74,54 +74,33 @@ export function addToken(tokenAddress: string): ThunkAction {
             let state = getState()
             let tokenDomain = getTokenDomain(state)
             let quoteTokens = tokenDomain.quoteTokens()
-            let listedTokens = tokenDomain.listedTokenAddresses()
-            let userTokens = tokenDomain.tokenAddresses()
+            let listedTokens = tokenDomain.listedAssets()
+            let userTokens = tokenDomain.assets()
             
-            if (listedTokens.indexOf(tokenAddress) !== -1) {
+            if (listedTokens.indexOf(asset) !== -1) {
                 return { error: 'Token is already listed'}
             }
 
-            if (userTokens.indexOf(tokenAddress) !== -1) {
+            if (userTokens.indexOf(asset) !== -1) {
                 return { error: 'Token is already added' }
             }
 
-            const { decimals, symbol } = await provider.detectContract(tokenAddress)
+            let token = await api.getToken(asset)
+            if (!token || !token.symbol)
+                return { error: 'Asset not found' }
 
-            if (!symbol) {
-                return { error: 'Could not detect contract' }
-            }
-
-            let pairs = []
-            let token
-
-            token = await api.getToken(tokenAddress)
-
-            if (token && token.registered) {
-                pairs = quoteTokens.map((quote) => {
-                    return {
-                        baseTokenSymbol: token.symbol,
-                        quoteTokenSymbol: quote.symbol,
-                        baseTokenAddress: token.address,
-                        quoteTokenAddress: quote.address,
-                        baseTokenDecimals: token.decimals,
-                        quoteTokenDecimals: quote.decimals,
-                        makeFee: quote.makeFee,
-                        takeFee: quote.takeFee,
-                        listed: token.listed,
-                        active: token.active
-                    }
-                })
-            } else {
-                token = {
-                    symbol: symbol,
-                    address: tokenAddress,
-                    decimals: decimals,
-                    quote: false,
-                    registered: false,
-                    listed: false,
-                    active: false,
+            let pairs = quoteTokens.map((quote) => {
+                return {
+                    baseTokenSymbol: token.symbol,
+                    quoteTokenSymbol: quote.symbol,
+                    baseAsset: token.asset,
+                    quoteAsset: quote.asset,
+                    baseTokenDecimals: token.decimals,
+                    quoteTokenDecimals: quote.decimals,
+                    listed: token.listed,
+                    active: token.active
                 }
-            }
+            })
 
             await dispatch(actionCreators.addToken(token, pairs))
 
@@ -135,28 +114,51 @@ export function addToken(tokenAddress: string): ThunkAction {
 }
 
 
-export function registerToken(tokenAddress: string): ThunkAction {
+export function registerToken(asset: string): ThunkAction {
     return async (dispatch, getState, { provider, api, mixpanel }) => {
         mixpanel.track('wallet-page/register-token')
 
         try {
             let state = getState()
             let tokenDomain = getTokenDomain(state)
-            let listedTokens = tokenDomain.listedTokenAddresses()
-            let registeredTokens = tokenDomain.registeredTokenAddresses()
+            let listedTokens = tokenDomain.listedAssets()
+            let registeredTokens = tokenDomain.registeredAssets()
+            let quoteTokens = tokenDomain.quoteTokens()
 
-            if (listedTokens.indexOf(tokenAddress) !== -1) {
+            if (listedTokens.indexOf(asset) !== -1) {
                 return { error: 'Token is already listed' }
             }
 
-            if (registeredTokens.indexOf(tokenAddress) !== -1) {
+            if (registeredTokens.indexOf(asset) !== -1) {
                 return { error: 'Token is already registered' }
             }
 
-            let pairs = await api.createPairs(tokenAddress)
-            if (pairs) await dispatch(actionCreators.registerToken(pairs))
+            let token = await api.getToken(asset)
+            if (token && token.symbol){ // already registered, just add
+                let pairs = quoteTokens.map((quote) => {
+                    return {
+                        baseTokenSymbol: token.symbol,
+                        quoteTokenSymbol: quote.symbol,
+                        baseAsset: token.asset,
+                        quoteAsset: quote.asset,
+                        baseTokenDecimals: token.decimals,
+                        quoteTokenDecimals: quote.decimals,
+                        listed: token.listed,
+                        active: token.active
+                    }
+                })
+                await dispatch(actionCreators.addToken(token, pairs))
+                return
+            }
 
-            return { pairs }
+            token = await api.checkToken(asset)
+            if (!token || !token.symbol) // not in the DAG
+                return { error: 'Asset not found' }
+
+            let pairs = await api.createPairs(asset)
+            if (pairs) await dispatch(actionCreators.addToken(token, pairs))
+
+            return { token, pairs }
         } catch (e) {
             console.log(e)
 

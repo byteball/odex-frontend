@@ -2,20 +2,17 @@
 import React from 'react';
 import WalletInfoRenderer from './WalletInfoRenderer';
 
-import { isEthereumAddress } from '../../utils/crypto'
-import { ETHERSCAN_TOKEN_URL, ETHERSCAN_ADDRESS_URL } from '../../config/urls'
+import { EXPLORER_URL } from '../../config/urls'
 
 import type { Token, TokenPairs } from '../../types/tokens'
 import type { Tx } from '../../types/transactions'
 
 type Props = {
   accountAddress: string,
-  etherBalance: string,
-  gasPrice: number,
-  gas: number,
+  gbyteBalance: number,
   userTokens: Array<string>,
   listedTokens: Array<string>,
-  detectContract: string => { decimals: number, symbol: string, isRegistered: boolean },
+  detectToken: string => { decimals: number, symbol: string, isRegistered: boolean },
   addToken: string => { error: string, token: Token, pairs: TokenPairs },
   registerToken: string => { error?: string, token?: Token, pairs?: TokenPairs },
   recentTransactions: Array<Tx>
@@ -24,8 +21,8 @@ type Props = {
 type State = {
   isModalOpen: boolean,
   selectedTab: string,
-  tokenAddressStatus: string,
-  tokenAddress: string,
+  assetStatus: string,
+  asset: string,
   tokenSymbol: string,
   tokenDecimals: number,
   tokenIsRegistered: ?boolean,
@@ -37,8 +34,8 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
   state = { 
     isModalOpen: false,
     selectedTab: "Portfolio",
-    tokenAddress: "",
-    tokenAddressStatus: "",
+    asset: "",
+    assetStatus: "",
     tokenDecimals: 0,
     tokenSymbol: "",
     tokenIsRegistered: null,
@@ -54,22 +51,22 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
     this.setState({ selectedTab: tab })
   }
 
-  handleChangeTokenAddress = ({ target }: *) => {
-    this.setState({ tokenAddress: target.value })
+  handleChangeAsset = ({ target }: *) => {
+    this.setState({ asset: target.value })
   }
 
-  handleDetectContract = async () => {
-    const { tokenAddress } = this.state
-    const { detectContract } = this.props 
+  handleDetectToken = async () => {
+    const { asset } = this.state
+    const { detectToken } = this.props 
 
-    if (!isEthereumAddress(tokenAddress)) {
-      return this.setState({ tokenAddressStatus: "invalid" })
+    if (asset.length !== 44) {
+      return this.setState({ assetStatus: "invalid" })
     }
 
-    const { decimals, symbol, isRegistered } = await detectContract(tokenAddress)
+    const { decimals, symbol, isRegistered } = await detectToken(asset)
 
     if (!symbol) {
-      return this.setState({ tokenAddressStatus: "invalid" })
+      return this.setState({ assetStatus: "invalid" })
     }
 
     return this.setState({ 
@@ -80,11 +77,11 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
   }
 
   handleAddToken = async () => {
-    const { tokenAddress } = this.state
+    const { asset } = this.state
     const { addToken } = this.props
 
     this.setState({ addTokenPending: true })
-    const { error, token, pairs } = await addToken(tokenAddress)
+    const { error, token, pairs } = await addToken(asset)
     this.setState({ addTokenPending: false })
 
     if (error) {
@@ -96,11 +93,11 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
   }
 
   handleRegisterToken = async () => {
-    const { tokenAddress } = this.state
+    const { asset } = this.state
     const { registerToken } = this.props
 
     this.setState({ registerTokenPending: true })
-    const { error } = await registerToken(tokenAddress)
+    const { error } = await registerToken(asset)
     this.setState({ registerTokenPending: false })
 
     if (error) {
@@ -114,9 +111,7 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
     const {
       props: {
         accountAddress,
-        gasPrice,
-        gas,
-        etherBalance,
+        gbyteBalance,
         userTokens,
         listedTokens,
         recentTransactions
@@ -124,46 +119,44 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
       state: { 
         isModalOpen,
         selectedTab,
-        tokenAddress,
+        asset,
         tokenSymbol,
-        tokenAddressStatus,
+        assetStatus,
         tokenIsRegistered,
         addTokenPending,
         registerTokenPending,
       },
       handleModalClose,
       handleChangeTab,
-      handleChangeTokenAddress,
-      handleDetectContract,
+      handleChangeAsset,
+      handleDetectToken,
       handleRegisterToken,
       handleAddToken
     } = this;
 
-    let tokenEtherscanUrl = `${ETHERSCAN_TOKEN_URL}/${tokenAddress}`
-    let accountEtherscanUrl = `${ETHERSCAN_ADDRESS_URL}/${accountAddress}`
-    let tokenIsAdded = userTokens.indexOf(tokenAddress) !== -1
-    let tokenIsListed = listedTokens.indexOf(tokenAddress) !== -1
+    let tokenExplorerUrl = `${EXPLORER_URL}/#${asset}`
+    let accountExplorerUrl = `${EXPLORER_URL}/#${accountAddress}`
+    let tokenIsAdded = userTokens.indexOf(asset) !== -1
+    let tokenIsListed = listedTokens.indexOf(asset) !== -1
 
     return (
       <WalletInfoRenderer
-        gasPrice={gasPrice}
-        gas={gas}
-        balance={etherBalance}
+        balance={gbyteBalance}
         isModalOpen={isModalOpen}
         selectedTab={selectedTab}
         accountAddress={accountAddress}
-        accountEtherscanUrl={accountEtherscanUrl}
-        tokenAddress={tokenAddress}
-        tokenAddressStatus={tokenAddressStatus}
+        accountExplorerUrl={accountExplorerUrl}
+        asset={asset}
+        assetStatus={assetStatus}
         tokenSymbol={tokenSymbol}
-        tokenEtherscanUrl={tokenEtherscanUrl}
+        tokenExplorerUrl={tokenExplorerUrl}
         tokenIsAdded={tokenIsAdded}
         tokenIsListed={tokenIsListed}
         tokenIsRegistered={tokenIsRegistered}
         handleModalClose={handleModalClose}
         handleChangeTab={handleChangeTab}
-        handleChangeTokenAddress={handleChangeTokenAddress}
-        handleDetectContract={handleDetectContract}
+        handleChangeAsset={handleChangeAsset}
+        handleDetectToken={handleDetectToken}
         handleAddToken={handleAddToken}
         handleRegisterToken={handleRegisterToken}
         registerTokenPending={registerTokenPending}

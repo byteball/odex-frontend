@@ -7,7 +7,7 @@ export const fiatCurrencies = [
 ]
 
 export const pricedTokens = [
-  "ETH",
+  "GBYTE",
   "AE",
   "BAT",
   "BNB",
@@ -22,7 +22,6 @@ export const pricedTokens = [
   "PRFT",
   "REP",
   "SNT",
-  "WETH",
   "WTC",
   "ZRX",
   "USDC",

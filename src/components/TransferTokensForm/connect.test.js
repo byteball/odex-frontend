@@ -19,8 +19,6 @@ describe('mapStateToProps(state, props)', () => {
       loading: 'test loading',
       status: 'test status',
       statusMessage: 'test statusMessage',
-      gas: 'test gas',
-      gasPrice: 'test gasPrice',
       hash: 'test hash',
       receipt: 'test receipt',
       tokens: 'test tokens',
@@ -30,11 +28,10 @@ describe('mapStateToProps(state, props)', () => {
       isLoading: jest.fn(() => 'test loading'),
       getStatus: jest.fn(() => 'test status'),
       getStatusMessage: jest.fn(() => 'test statusMessage'),
-      getGas: jest.fn(() => 'test gas'),
-      getGasPrice: jest.fn(() => 'test gasPrice'),
       getHash: jest.fn(() => 'test hash'),
       getReceipt: jest.fn(() => 'test receipt'),
       tokens: jest.fn(() => 'test tokens'),
+      exchangeAddress: jest.fn(() => 'test exchangeAddress'),
     });
   });
 
@@ -44,14 +41,8 @@ describe('mapStateToProps(state, props)', () => {
     const result = mapStateToProps(state, props);
     const expected = {
       token: { symbol: 'PRFT', address: '0x1' },
-      loading: 'test loading',
-      status: 'test status',
-      statusMessage: 'test statusMessage',
-      gas: 'test gas',
-      gasPrice: 'test gasPrice',
-      hash: 'test hash',
-      receipt: 'test receipt',
       tokens: 'test tokens',
+      exchangeAddress: 'test exchangeAddress',
     };
 
     expect(result).toBeDefined();
@@ -73,10 +64,6 @@ describe('connect(Component)', () => {
     const { store } = createStore();
     const ConnectedTestComponent = connect(props => {
       expect(props).toBeDefined();
-      expect(props).toHaveProperty('validateEtherTx');
-      expect(props).toHaveProperty('sendEtherTx');
-      expect(props).toHaveProperty('validateTransferTokensTx');
-      expect(props).toHaveProperty('sendTransferTokensTx');
       return null;
     });
 

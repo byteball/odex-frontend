@@ -9,15 +9,14 @@ import getTokenPairsDomain from './tokenPairs';
 const symbols = ['ETH', 'EOS', 'WETH', 'ZRX'];
 
 const quoteTokens = [
-  { symbol: 'WETH', address: '0x3', decimals: 18 },
-  { symbol: 'DAI', address: '0x2', decimals: 18 },
+  { symbol: 'WETH', asset: '0x3', decimals: 18 },
+  { symbol: 'DAI', asset: '0x2', decimals: 18 },
 ]
 
 const tokensBySymbol = {
-  ETH: { symbol: 'ETH', address: '0x0', decimals: 18 },
-  EOS: { symbol: 'EOS', address: '0x1', decimals: 18 },
-  WETH: { symbol: 'WETH', address: '0x3', decimals: 18 },
-  ZRX: { symbol: 'ZRX', address: '0x4', decimals: 18 },
+  EOS: { symbol: 'EOS', asset: '0x1', decimals: 18 },
+  WETH: { symbol: 'WETH', asset: '0x3', decimals: 18 },
+  ZRX: { symbol: 'ZRX', asset: '0x4', decimals: 18 },
 };
 
 const tokens = Object.values(tokensBySymbol);
@@ -47,8 +46,8 @@ describe('Token Pair Domain', () => {
         quoteTokenSymbol: 'DAI',
         baseTokenDecimals: 18,
         quoteTokenDecimals: 18,
-        baseTokenAddress: '0x1',
-        quoteTokenAddress: '0x2',
+        baseAsset: '0x1',
+        quoteAsset: '0x2',
       },
       'EOS/WETH': {
         pair: 'EOS/WETH',
@@ -56,8 +55,8 @@ describe('Token Pair Domain', () => {
         quoteTokenSymbol: 'WETH',
         baseTokenDecimals: 18,
         quoteTokenDecimals: 18,
-        baseTokenAddress: '0x1',
-        quoteTokenAddress: '0x3',
+        baseAsset: '0x1',
+        quoteAsset: '0x3',
       },
       'ZRX/DAI': {
         pair: 'ZRX/DAI',
@@ -65,8 +64,8 @@ describe('Token Pair Domain', () => {
         quoteTokenSymbol: 'DAI',
         baseTokenDecimals: 18,
         quoteTokenDecimals: 18,
-        baseTokenAddress: '0x4',
-        quoteTokenAddress: '0x2',
+        baseAsset: '0x4',
+        quoteAsset: '0x2',
       },
       'ZRX/WETH': {
         pair: 'ZRX/WETH',
@@ -74,8 +73,8 @@ describe('Token Pair Domain', () => {
         quoteTokenSymbol: 'WETH',
         baseTokenDecimals: 18,
         quoteTokenDecimals: 18,
-        baseTokenAddress: '0x4',
-        quoteTokenAddress: '0x3',
+        baseAsset: '0x4',
+        quoteAsset: '0x3',
       },
       'WETH/DAI': {
         pair: 'WETH/DAI',
@@ -83,8 +82,8 @@ describe('Token Pair Domain', () => {
         quoteTokenSymbol: 'DAI',
         baseTokenDecimals: 18,
         quoteTokenDecimals: 18,
-        baseTokenAddress: '0x3',
-        quoteTokenAddress: '0x2',
+        baseAsset: '0x3',
+        quoteAsset: '0x2',
       },
     };
 
@@ -101,8 +100,8 @@ describe('Token Pair Domain', () => {
         quoteTokenSymbol: 'DAI',
         baseTokenDecimals: 18,
         quoteTokenDecimals: 18,
-        baseTokenAddress: '0x1',
-        quoteTokenAddress: '0x2',
+        baseAsset: '0x1',
+        quoteAsset: '0x2',
       },
       {
         pair: 'EOS/WETH',
@@ -110,8 +109,8 @@ describe('Token Pair Domain', () => {
         quoteTokenSymbol: 'WETH',
         baseTokenDecimals: 18,
         quoteTokenDecimals: 18,
-        baseTokenAddress: '0x1',
-        quoteTokenAddress: '0x3',
+        baseAsset: '0x1',
+        quoteAsset: '0x3',
       },
       {
         pair: 'ZRX/DAI',
@@ -119,8 +118,8 @@ describe('Token Pair Domain', () => {
         quoteTokenSymbol: 'DAI',
         baseTokenDecimals: 18,
         quoteTokenDecimals: 18,
-        baseTokenAddress: '0x4',
-        quoteTokenAddress: '0x2',
+        baseAsset: '0x4',
+        quoteAsset: '0x2',
       },
       {
         pair: 'ZRX/WETH',
@@ -128,8 +127,8 @@ describe('Token Pair Domain', () => {
         quoteTokenSymbol: 'WETH',
         baseTokenDecimals: 18,
         quoteTokenDecimals: 18,
-        baseTokenAddress: '0x4',
-        quoteTokenAddress: '0x3',
+        baseAsset: '0x4',
+        quoteAsset: '0x3',
       },
       {
         pair: 'WETH/DAI',
@@ -137,8 +136,8 @@ describe('Token Pair Domain', () => {
         quoteTokenSymbol: 'DAI',
         baseTokenDecimals: 18,
         quoteTokenDecimals: 18,
-        baseTokenAddress: '0x3',
-        quoteTokenAddress: '0x2',
+        baseAsset: '0x3',
+        quoteAsset: '0x2',
       }
     ];
 
@@ -156,8 +155,8 @@ describe('Token Pair Domain', () => {
         quoteTokenSymbol: 'DAI',
         baseTokenDecimals: 18,
         quoteTokenDecimals: 18,
-        baseTokenAddress: '0x1',
-        quoteTokenAddress: '0x2',
+        baseAsset: '0x1',
+        quoteAsset: '0x2',
       },
       'EOS/WETH': {
         pair: 'EOS/WETH',
@@ -165,8 +164,8 @@ describe('Token Pair Domain', () => {
         quoteTokenSymbol: 'WETH',
         baseTokenDecimals: 18,
         quoteTokenDecimals: 18,
-        baseTokenAddress: '0x1',
-        quoteTokenAddress: '0x3',
+        baseAsset: '0x1',
+        quoteAsset: '0x3',
       },
       'ZRX/DAI': {
         pair: 'ZRX/DAI',
@@ -174,8 +173,8 @@ describe('Token Pair Domain', () => {
         quoteTokenSymbol: 'DAI',
         baseTokenDecimals: 18,
         quoteTokenDecimals: 18,
-        baseTokenAddress: '0x4',
-        quoteTokenAddress: '0x2',
+        baseAsset: '0x4',
+        quoteAsset: '0x2',
       },
       'ZRX/WETH': {
         pair: 'ZRX/WETH',
@@ -183,8 +182,8 @@ describe('Token Pair Domain', () => {
         quoteTokenSymbol: 'WETH',
         baseTokenDecimals: 18,
         quoteTokenDecimals: 18,
-        baseTokenAddress: '0x4',
-        quoteTokenAddress: '0x3',
+        baseAsset: '0x4',
+        quoteAsset: '0x3',
       },
       'WETH/DAI': {
         pair: 'WETH/DAI',
@@ -192,8 +191,8 @@ describe('Token Pair Domain', () => {
         quoteTokenSymbol: 'DAI',
         baseTokenDecimals: 18,
         quoteTokenDecimals: 18,
-        baseTokenAddress: '0x3',
-        quoteTokenAddress: '0x2',
+        baseAsset: '0x3',
+        quoteAsset: '0x2',
       }
     };
 
@@ -274,10 +273,8 @@ describe('Token Pair Domain', () => {
         quoteTokenSymbol: 'DAI',
         baseTokenDecimals: 18,
         quoteTokenDecimals: 18,
-        baseTokenAddress: '0x1',
-        quoteTokenAddress: '0x2',
-        makeFee: '500000',
-        takeFee: '500000'
+        baseAsset: '0x1',
+        quoteAsset: '0x2',
       },
       {
         pair: 'EOS/WETH',
@@ -285,10 +282,8 @@ describe('Token Pair Domain', () => {
         quoteTokenSymbol: 'WETH',
         baseTokenDecimals: 18,
         quoteTokenDecimals: 18,
-        baseTokenAddress: '0x1',
-        quoteTokenAddress: '0x3',
-        makeFee: '500000',
-        takeFee: '500000'
+        baseAsset: '0x1',
+        quoteAsset: '0x3',
       },
       {
         pair: 'ZRX/DAI',
@@ -296,10 +291,8 @@ describe('Token Pair Domain', () => {
         quoteTokenSymbol: 'DAI',
         baseTokenDecimals: 18,
         quoteTokenDecimals: 18,
-        baseTokenAddress: '0x4',
-        quoteTokenAddress: '0x2',
-        makeFee: '500000',
-        takeFee: '500000'
+        baseAsset: '0x4',
+        quoteAsset: '0x2',
       },
       {
         pair: 'ZRX/WETH',
@@ -307,10 +300,8 @@ describe('Token Pair Domain', () => {
         quoteTokenSymbol: 'WETH',
         baseTokenDecimals: 18,
         quoteTokenDecimals: 18,
-        baseTokenAddress: '0x4',
-        quoteTokenAddress: '0x3',
-        makeFee: '500000',
-        takeFee: '500000'
+        baseAsset: '0x4',
+        quoteAsset: '0x3',
       },
       {
         pair: 'WETH/DAI',
@@ -318,10 +309,8 @@ describe('Token Pair Domain', () => {
         quoteTokenSymbol: 'DAI',
         baseTokenDecimals: 18,
         quoteTokenDecimals: 18,
-        baseTokenAddress: '0x3',
-        quoteTokenAddress: '0x2',
-        makeFee: '500000',
-        takeFee: '500000'
+        baseAsset: '0x3',
+        quoteAsset: '0x2',
       }
     ];
 
@@ -359,16 +348,14 @@ describe('Token Pair Domain', () => {
         quoteTokenSymbol: 'DAI',
         baseTokenDecimals: 18,
         quoteTokenDecimals: 18,
-        baseTokenAddress: '0x1',
-        quoteTokenAddress: '0x2',
+        baseAsset: '0x1',
+        quoteAsset: '0x2',
         lastPrice: '7425.2945',
         change: '4.5421',
         orderbookSize: '100000',
         high: '8782.7964',
         low: '6499.3696',
         volume: 720404,
-        makeFee: '500000',
-        takeFee: '500000'
       },
       'WETH/DAI': {
         pair: 'WETH/DAI',
@@ -376,16 +363,14 @@ describe('Token Pair Domain', () => {
         quoteTokenSymbol: 'DAI',
         baseTokenDecimals: 18,
         quoteTokenDecimals: 18,
-        baseTokenAddress: '0x3',
-        quoteTokenAddress: '0x2',
+        baseAsset: '0x3',
+        quoteAsset: '0x2',
         lastPrice: '6018.7886',
         change: '1.6589',
         orderbookSize: '100000',
         high: '3876.8717',
         low: '4613.5315',
         volume: 68946,
-        makeFee: '500000',
-        takeFee: '500000'
       }
     })
 
@@ -396,16 +381,14 @@ describe('Token Pair Domain', () => {
         quoteTokenSymbol: 'DAI',
         baseTokenDecimals: 18,
         quoteTokenDecimals: 18,
-        baseTokenAddress: '0x1',
-        quoteTokenAddress: '0x2',
+        baseAsset: '0x1',
+        quoteAsset: '0x2',
         lastPrice: '7425.2945',
         change: '4.5421',
         orderbookSize: '100000',
         high: '8782.7964',
         low: '6499.3696',
         volume: 720404,
-        makeFee: '500000',
-        takeFee: '500000'
       },
       {
         pair: 'WETH/DAI',
@@ -413,16 +396,14 @@ describe('Token Pair Domain', () => {
         quoteTokenSymbol: 'DAI',
         baseTokenDecimals: 18,
         quoteTokenDecimals: 18,
-        baseTokenAddress: '0x3',
-        quoteTokenAddress: '0x2',
+        baseAsset: '0x3',
+        quoteAsset: '0x2',
         lastPrice: '6018.7886',
         change: '1.6589',
         orderbookSize: '100000',
         high: '3876.8717',
         low: '4613.5315',
         volume: 68946,
-        makeFee: '500000',
-        takeFee: '500000'
       }
     ]
     )

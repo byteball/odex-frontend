@@ -6,27 +6,21 @@ import { Button, Collapse } from '@blueprintjs/core';
 
 type Props = {
   visible: boolean,
-  blockHash: string,
-  blockNumber: string,
-  gasLimit: number,
   hash: string,
   toggleVisible: (SyntheticEvent<>) => void,
 };
 
 const TxReceiptRenderer = (props: Props) => {
-  const { blockHash, blockNumber, gasLimit, transactionHash, visible, toggleVisible } = props;
+  const { hash, visible, toggleVisible } = props;
 
-  console.log(transactionHash)
+  console.log(hash)
 
   return (
     <div>
       <Button minimal text={visible ? `Hide Receipt` : `Show Receipt`} onClick={toggleVisible} />
       <Collapse isOpen={visible}>
         <List>
-          <Item key="1">Block Hash: {blockHash}</Item>
-          <Item key="2">Block Number: {blockNumber}</Item>
-          <Item key="3">Gas Used: {gasLimit}</Item>
-          <Item key="4">Transaction Hash: {transactionHash}</Item>
+          <Item key="1">Transaction Hash: {hash}</Item>
         </List>
       </Collapse>
     </div>

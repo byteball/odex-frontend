@@ -2,7 +2,7 @@ import React from 'react';
 import Colors from './Colors';
 import styled from 'styled-components';
 import Indent from './Indent'
-import ampLogo from '../../assets/amp_black.png'
+import odexLogo from '../../assets/odex_logo_black.png'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTwitter } from '../Common/Icons/faTwitter'
@@ -26,7 +26,7 @@ const Footer = () => (
     <Container>
       <TopSection>
         <LogosWrapper>
-        <img src={ampLogo} class="Profile-image" width="120" height="120" alt=""/>
+        <img src={odexLogo} className="Profile-image"  height="120" alt=""/>
         <FooterText mt={3}>
             <FooterSatoshiQuote>"03/Jan/2009 Chancellor on brink of second bailout for banks"</FooterSatoshiQuote>
             <FooterFirstBlock>1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa in Block 1</FooterFirstBlock>
@@ -36,147 +36,143 @@ const Footer = () => (
           <List hideOnMobile>
             <HeadListItem>About</HeadListItem>
             <NormalListItem>
-                <LinkText>
-                  <a 
-                    href="https://www.proofsuite.com/#about" 
+                <LinkText
+                    href="https://obyte.org/" 
                     target="_blank"
-                    rel="noopener noreferrer"
+                    rel="noopener"
                     >
-                    Proof Suite
-                  </a>
+                    Obyte
                 </LinkText>
             </NormalListItem>
             <NormalListItem>
-              <LinkText>
-                <a 
-                  href="https://www.proofsuite.com/#apps" 
+              <LinkText
+                  href="https://medium.com/obyte/whats-next-for-obyte-a-decentralized-exchange-fd7164569a9d" 
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel="noopener"
                 >
-                  Products
-                </a>
+                  ODEX
               </LinkText>
             </NormalListItem>
-            <NormalListItem>
-              <LinkText>
-                <a 
-                  href="https://www.proofsuite.com/#terms" 
-                  target="_blank"
-                  rel="noopener noreferrer"
+            {/* {<NormalListItem>
+              <LinkText
+                  href="#terms" 
                 >
                   Terms
-                </a>
               </LinkText>
-            </NormalListItem>
+            </NormalListItem>} */}
           </List>
           <List hideOnMobile>
-            <HeadListItem>Platforms</HeadListItem>
+            <HeadListItem>Dapps</HeadListItem>
             <NormalListItem>
-              <LinkText>
-                <a href="https://www.proofsuite.com/#amp" 
+              <LinkText
+                  href="" 
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel="noopener"
                 >
-                  AMP
-                </a>
+                  Stablecoin
               </LinkText>
             </NormalListItem>
             <NormalListItem>
-              <LinkText>
-                <a 
-                  href="https://www.proofsuite.com/#avocado" 
+              <LinkText
+                  href="" 
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel="noopener"
                   >
-                  Avocado
-                </a>
+                  Prediction markets
               </LinkText>
             </NormalListItem>
             <NormalListItem>
-              <LinkText>
-                <a 
-                  href="https://www.proofsuite.com/#togen" 
+              <LinkText
+                  href="" 
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel="noopener"
                 >
-                  Togen
-                </a>
+                  Token registry
               </LinkText>
             </NormalListItem>
           </List>
           <List>
             <HeadListItem>Links</HeadListItem>
             <NormalListItem>
-              <a 
-                href="https://twitter.com/proofsuite" 
+              <LinkText
+                href="https://twitter.com/obyteorg" 
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 <FontAwesomeIcon icon={faTwitter} />
                 <Indent />
-                <LinkText>Twitter</LinkText>
-              </a>
+                Twitter
+              </LinkText>
             </NormalListItem>
             <NormalListItem>
-              <a 
-                href="https://discordapp.com/invite/eChaHFk" 
+              <LinkText
+                href="https://discord.obyte.org" 
                 target="_blank"
-                rel="noopener noreferrer"
+                rel="noopener"
               >
                 <FontAwesomeIcon icon={faDiscord} />
                 <Indent />
-                <LinkText>Discord</LinkText>
-              </a>
-              </NormalListItem>
+                Discord
+              </LinkText>
+            </NormalListItem>
             <NormalListItem>
-              <a 
-                href="https://facebook.com/proofsuite" 
+              <LinkText
+                href="https://www.facebook.com/obyte.org" 
                 target="_blank"
                 rel="noopener noreferrer"
                 >
                 <FontAwesomeIcon icon={faFacebook} />
                 <Indent />
-                <LinkText>Facebook</LinkText>
-              </a>
+                Facebook
+              </LinkText>
             </NormalListItem>
             <NormalListItem>
-              <a 
-                href="https://medium.com/proof-of-fintech" 
+              <LinkText
+                href="https://medium.com/obyte" 
                 target="_blank"
-                rel="noopener noreferrer"
+                rel="noopener"
                 >
                 <FontAwesomeIcon icon={faMedium} />
                 <Indent />
-                <LinkText>Medium</LinkText>
-              </a>
+                Medium
+              </LinkText>
             </NormalListItem>
             <NormalListItem>
-              <a 
-                href="https://github.com/proofsuite" 
+              <LinkText
+                href="https://github.com/obyte/odex-frontend" 
                 target="_blank"
-                rel="noopener noreferrer"
+                rel="noopener"
                 >
                 <FontAwesomeIcon icon={faGithub} />
                 <Indent />
-                <LinkText>Github</LinkText>
-              </a>
+                Github
+              </LinkText>
             </NormalListItem>
             <NormalListItem>
-              <a 
-                href="https://www.youtube.com/channel/UCKDNphVF9TItP7PP9wJPM6g" 
+              <LinkText
+                href="https://www.youtube.com/channel/UCYAjbxT5zHfeTtXe_hr9Gxg" 
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 <FontAwesomeIcon icon={faYoutube} />            
                 <Indent />
-                <LinkText>Youtube</LinkText>
-              </a>
+                Youtube
+              </LinkText>
             </NormalListItem>
           </List>
           <List>
             <HeadListItem>Contact</HeadListItem>
-            <NormalListItem>Support: support@proofsuite.com</NormalListItem>
-            <NormalListItem>Careers: careers@proofsuite.com</NormalListItem>
+            <NormalListItem>
+              <LinkText
+                href="https://discord.obyte.org" 
+                target="_blank"
+                rel="noopener"
+              >
+                <FontAwesomeIcon icon={faDiscord} />
+                <Indent />
+                Discord
+              </LinkText>
+            </NormalListItem>
             <NormalListItem />
           </List>
         </LinksWrapper>

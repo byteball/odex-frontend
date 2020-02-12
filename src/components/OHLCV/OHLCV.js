@@ -74,6 +74,7 @@ export const duration: Array<Object> = [
 
 
 type Props = {
+  baseSymbol: string,
   ohlcvData: Array<Object>,
   currentTimeSpan: Object,
   currentDuration: Object,
@@ -100,7 +101,6 @@ type State = {
   duration: Array<Object>,
   expandedChard: boolean,
   isOpen: boolean,
-  onResetDefaultLayout: void => void
 };
 
 class OHLCV extends React.PureComponent<Props, State> {
@@ -167,6 +167,7 @@ class OHLCV extends React.PureComponent<Props, State> {
   render() {
     const {
       props: { 
+        baseSymbol,
         ohlcvData, 
         currentDuration, 
         currentTimeSpan, 
@@ -224,6 +225,7 @@ class OHLCV extends React.PureComponent<Props, State> {
           currentChart={currentChart}
           expandedChard={expandedChard}
           data={ohlcvData}
+          baseSymbol={baseSymbol}
           width="100%"
         />
       </Wrapper>
@@ -239,10 +241,8 @@ const Toolbar = (props: *) => {
   changeTimeSpan,
   currentTimeSpan,
   currentDuration,
-  updateProps,
   changeDuration,
   changeChartType,
-  indicators,
   expand,
   onFullScreen,
   fullScreen,

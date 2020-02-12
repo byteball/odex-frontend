@@ -1,29 +1,51 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Button, Callout, ControlGroup, Spinner } from '@blueprintjs/core';
+import { Button, Callout, ControlGroup, Spinner, InputGroup } from '@blueprintjs/core';
 import { ModalBody, ModalFooter } from '../../Common'
 import TokenSuggest from '../../TokenSuggest';
+import { PROTOCOL } from '../../../config/urls'
 
-const WaitingFormRenderer = (props: Props) => {
+class WaitingFormRenderer extends React.PureComponent<Props, State> {
+
+state = {
+  amount: '',
+};
+
+handleAmountInputChange = (e: SyntheticInputEvent<>) => {
+  this.setState({ amount: e.target.value });
+};
+
+render() {
   const {
     tokens,
     token,
     address,
+    exchangeAddress,
     balance,
     handleChangeToken,
     handleSubmitChangeToken,
     toggleTokenSuggest,
     showTokenSuggest,
-  } = props;
+  } = this.props;
+
+  let amountInSmallestUnits = parseFloat(this.state.amount || 0) * Math.pow(10, token.decimals);
 
   return (
     <ModalBody>
-      <Callout intent="primary" title="Notice">
-        Send {token.symbol} to the address displayed below. This form will update once your account balance is changed.
-      </Callout>
+        Click the link below to send {token.symbol} to the Autonomous Agent of the exchange. The link will open your Obyte wallet. This form will update once your account balance is changed.
       <WaitingFormBox>
-        <Spinner intent="primary" large />
-        <Address>{address}</Address>
+        {/*<Spinner intent="primary" large />*/}
+        {/*<Address>{address}</Address>*/}
+        <AmountBox>
+          <InputGroup
+            type="number"
+            placeholder="Amount"
+            rightElement={<TokenNameBox>{token.symbol}</TokenNameBox>}
+            value={this.state.amount}
+            onChange={this.handleAmountInputChange}
+          />
+        </AmountBox>
+        <a href={PROTOCOL+exchangeAddress + "?asset=" + encodeURIComponent(token.asset) + "&amount=" + amountInSmallestUnits + "&from_address=" + address}>Deposit {this.state.amount} {token.symbol}</a>
         <CurrentBalanceBox>
           (Your current balance is {balance} {token.symbol})
         </CurrentBalanceBox>
@@ -44,6 +66,7 @@ const WaitingFormRenderer = (props: Props) => {
     </ModalBody>
   );
 };
+}
 
 const WaitingFormBox = styled.div`
   margin: auto;
@@ -63,6 +86,15 @@ const CurrentBalanceBox = styled.div`
 const Address = styled.div`
   padding-top: 40px;
   font-weight: bold;
+`;
+
+const AmountBox = styled.div`
+  padding-bottom: 20px;
+`;
+
+const TokenNameBox = styled.div`
+  padding-right: 5px;
+  padding-top: 6px;
 `;
 
 export default WaitingFormRenderer;

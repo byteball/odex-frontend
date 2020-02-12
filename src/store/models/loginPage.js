@@ -3,95 +3,38 @@ import * as actionCreators from '../actions/loginPage'
 import * as notifierActionCreators from '../actions/app'
 import { getAccountDomain, getLoginPageDomain } from '../domains'
 
-import { saveEncryptedWalletInLocalStorage, savePrivateKeyInSessionStorage } from '../services/wallet'
-import { createDefaultWalletSigner, createMetamaskSigner, createLedgerSigner } from '../services/signer'
-
 import type { State, ThunkAction } from '../../types'
 
-type CreateWalletParams = {
-  wallet: Object,
-  encryptedWallet: string,
-  storeWallet: boolean,
-  storePrivateKey: boolean,
-};
-
 export default function loginPageSelector(state: State) {
-  let { authenticated } = getAccountDomain(state)
+  let { authenticated, sessionId } = getAccountDomain(state)
   let { loading, error } = getLoginPageDomain(state)
 
   return {
     authenticated,
+    sessionId,
     loading,
     error,
   };
 }
 
-export function loginWithMetamask(): ThunkAction {
+
+export function loginWithApp(): ThunkAction {
   return async (dispatch, getState, { socket, mixpanel }) => {
-    mixpanel.track('login-page/login-with-metamask');
+    mixpanel.track('login-page/login-with-app');
 
     try {
       dispatch(actionCreators.requestLogin());
 
-      const { Web3, ethereum } = window;
-
-      if (ethereum) {
-        window.web3 = new Web3(ethereum);
-        await ethereum.enable();
-      }
-
-      if (typeof window.web3 === 'undefined') throw new Error('Metamask not installed');
-      if (typeof window.web3.eth.defaultAccount === 'undefined') throw new Error('Metamask account locked');
-
-      let { address } = await createMetamaskSigner();
-      dispatch(actionCreators.loginWithMetamask(address));
-      dispatch(notifierActionCreators.addSuccessNotification({ message: 'Signed in with Metamask' }));
+      let state = getState();
+      let { sessionId } = getAccountDomain(state);
+      socket.subscribeLogin(sessionId);
+      //dispatch(actionCreators.loginWithApp(address));
+      //dispatch(notifierActionCreators.addSuccessNotification({ message: 'Signed in with app' }));
     } catch (e) {
-      if (e.message === 'Metamask account locked') return dispatch(actionCreators.loginError('Metamask account locked'));
-      if (e.message === 'Metamask not installed') return dispatch(actionCreators.loginError('Metamask not installed'));
-
       dispatch(notifierActionCreators.addNotification({ message: 'Login error ' }));
       dispatch(actionCreators.loginError(e.message));
     }
   };
 }
 
-export function loginWithWallet(params: CreateWalletParams): ThunkAction {
-  return async (dispatch, getState, { mixpanel }) => {
-    mixpanel.track('login-page/login-with-wallet');
 
-    try {
-      dispatch(actionCreators.requestLogin());
-      let { wallet, encryptedWallet, storeWallet, storePrivateKey } = params;
-      let { address, privateKey } = wallet;
-
-      if (storeWallet && encryptedWallet) saveEncryptedWalletInLocalStorage(address, encryptedWallet);
-      if (storePrivateKey) await savePrivateKeyInSessionStorage({ address, privateKey });
-
-      await createDefaultWalletSigner(wallet);
-      dispatch(actionCreators.createWallet(wallet.address, encryptedWallet));
-      dispatch(actionCreators.loginWithWallet(address, privateKey));
-      dispatch(notifierActionCreators.addSuccessNotification({ message: `Signed in with ${address}` }));
-    } catch (e) {
-      console.log(e);
-      dispatch(notifierActionCreators.addNotification({ message: 'Login Error' }));
-      dispatch(actionCreators.loginError(e.message));
-    }
-  };
-}
-
-
-export function loginWithLedger(params: CreateWalletParams): ThunkAction {
-  return async (dispatch, getState, { mixpanel }) => {
-    mixpanel.track('login-page/login-with-ledger');
-
-    try {
-      dispatch(actionCreators.requestLogin());
-      await createLedgerSigner();
-    } catch (e) {
-      console.log(e);
-      dispatch(notifierActionCreators.addNotification({ message: 'Login Error' }));
-      dispatch(actionCreators.loginError(e.message));
-    }
-  };
-}

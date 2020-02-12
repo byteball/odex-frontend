@@ -8,8 +8,8 @@ export type OrderBookState = {
   +sortedBids: Array<number>,
   +sortedAsks: Array<number>,
   +selected: ?{
-    pricepoint: string,
-    amount: string,
+    price: number,
+    amount: number,
   }
 };
 
@@ -37,11 +37,13 @@ export type SingleOrderPropsTypes = {
 };
 
 export type Bid = {
-  pricepoint: string,
-  amount: string
+  matcherAddress: string,
+  price: number,
+  amount: number
 }
 
 export type Ask = {
-  pricepoint: string,
-  amount: string
+  matcherAddress: string,
+  price: number,
+  amount: number
 }

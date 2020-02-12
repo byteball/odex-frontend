@@ -12,7 +12,7 @@ jest.mock('../../store/models/ordersTable');
 describe('mapStateToProps(state, props)', () => {
   it('returns expected props', () => {
     const orders = jest.fn(() => 'test getOrders');
-    ordersTableSelector.mockReturnValue({ orders });
+    ordersTableSelector.mockReturnValue({ orders: 'test getOrders' });
 
     const state = {};
     const result = mapStateToProps({}, {});

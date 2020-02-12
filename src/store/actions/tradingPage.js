@@ -1,6 +1,6 @@
 // @flow
 import { actionTypes } from '../../types/tradingPage'
-import type { TokenPairDataMap } from '../../types/tokens'
+import type { TokenPairDataArray } from '../../types/tokens'
 import type { Orders } from '../../types/orders'
 import type { Trades } from '../../types/trades'
 
@@ -22,7 +22,7 @@ export function updateCurrentPair(pair: string): UpdateCurrentPairAction {
   }
 }
 
-export function updateTradingPageData(tokenPairData: TokenPairDataMap, orders: Orders): UpdateTradingPageDataAction {
+export function updateTradingPageData(tokenPairData: TokenPairDataArray, orders: Orders): UpdateTradingPageDataAction {
   return {
     type: actionTypes.updateTradingPageData,
     payload: { tokenPairData, orders }

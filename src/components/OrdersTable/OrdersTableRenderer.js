@@ -3,6 +3,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { formatNumber } from 'accounting-js'
 import { AutoSizer } from 'react-virtualized'
+import { CHATBOT_URL } from '../../config/urls'
 
 import { 
   Card, 
@@ -11,6 +12,7 @@ import {
   Tabs, 
   Collapse, 
   Button, 
+  AnchorButton,
   Icon
 } from '@blueprintjs/core'
 
@@ -35,6 +37,8 @@ type Props = {
   isOpen: boolean,
   toggleCollapse: void => void,
   cancelOrder: string => void,
+  authenticated: boolean,
+  address: string,
   orders: {
     ALL: Array<Order>,
     OPEN: Array<Order>,
@@ -65,6 +69,7 @@ const OrdersTableRenderer = (props: Props) => {
     toggleCollapse,
     expand,
     onContextMenu,
+    address,
     authenticated
   } = props
 
@@ -105,6 +110,7 @@ const OrdersTableRenderer = (props: Props) => {
                     cancelOrder={cancelOrder} 
                     width={width}
                     authenticated={authenticated}
+                    address={address}
                   />} 
                 />
                 <Tab id="open" title="OPEN" panel={
@@ -114,6 +120,7 @@ const OrdersTableRenderer = (props: Props) => {
                     cancelOrder={cancelOrder} 
                     width={width} 
                     authenticated={authenticated}
+                    address={address}
                   />} 
                 />
                 <Tab id="cancelled" title="CANCELLED" panel={
@@ -123,6 +130,7 @@ const OrdersTableRenderer = (props: Props) => {
                     cancelOrder={cancelOrder} 
                     width={width}
                     authenticated={authenticated}
+                    address={address}
                   />
                   } 
                 />
@@ -133,6 +141,7 @@ const OrdersTableRenderer = (props: Props) => {
                     cancelOrder={cancelOrder} 
                     width={width}
                     authenticated={authenticated}
+                    address={address}
                   />} 
                 />
               </Tabs>
@@ -145,7 +154,7 @@ const OrdersTableRenderer = (props: Props) => {
 }
 
 const OrdersTablePanel = (props: *) => {
-  const { loading, orders, cancelOrder, width, authenticated } = props
+  const { loading, orders, cancelOrder, width, authenticated, address } = props
 
   if (loading) return <Loading />
   if (!authenticated) return <CenteredMessage message="Not logged in" />
@@ -176,6 +185,7 @@ const OrdersTablePanel = (props: *) => {
                   order={order} 
                   index={index} 
                   cancelOrder={cancelOrder}
+                  address={address}
                   width={width}
                 />
               )
@@ -187,7 +197,7 @@ const OrdersTablePanel = (props: *) => {
 }
 
 const OrderRow = (props: *) => {
-  const { order, cancelOrder, width } = props
+  const { order, cancelOrder, address, width } = props
 
   return (
     <Row>
@@ -221,9 +231,9 @@ const OrderRow = (props: *) => {
       </Hideable>
       <Cell className="cancel" muted>
         {order.cancelleable && (
-          <Button intent="danger" minimal onClick={() => cancelOrder(order.hash)}>
+          <AnchorButton intent="danger" minimal href={CHATBOT_URL + "cancel-" + order.hash + "-" + address}>
             <Icon icon="cross" intent="danger" />&nbsp;&nbsp;Cancel
-          </Button>
+          </AnchorButton>
         )}
       </Cell>
     </Row>
@@ -236,7 +246,7 @@ const StatusTag = ({ status }) => {
     "CANCELLED": "danger",
     "OPEN": "primary",
     "FILLED": "success",
-    "PARTIALLY_FILLED": "success"
+    "PARTIAL_FILLED": "success"
   }
 
   const intent = statuses[status]

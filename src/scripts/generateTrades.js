@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { rand, randInt } from '../utils/helpers';
 import tokenPairs from '../jsons/tokenPairs.json';
-import { utils } from 'ethers';
+const crypto = require('crypto');
 
 let orderHistory = [];
 let { pairs } = tokenPairs;
@@ -19,7 +19,7 @@ const randomPair = () => pairs[randInt(0, 5)];
 const randomAmount = () => rand(minAmount, maxAmount);
 const randomTimestamp = () => randInt(minTimeStamp, maxTimeStamp);
 const randomPrice = () => rand(minPrice, maxPrice);
-const randomHash = () => utils.sha256(utils.randomBytes(100));
+const randomHash = () => crypto.createHash('sha256').update(crypto.randomBytes(100)).digest('base64');
 const randomAddress = () => randomHash().slice(0, 42);
 
 for (let i = 0; i < 200; i++) {

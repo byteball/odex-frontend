@@ -7,12 +7,10 @@ export type TokenPairState = {
       +pair: string,
       +baseTokenSymbol: string,
       +quoteTokenSymbol: string,
-      +baseTokenAddress: string,
-      +quoteTokenAddress: string,
+      +baseAsset: string,
+      +quoteAsset: string,
       +baseTokenDecimals: number,
       +quoteTokenDecimals: number,
-      +makeFee: string,
-      +takeFee: string,
       +listed: bool,
       +active: bool,
       +rank: number,
@@ -21,11 +19,11 @@ export type TokenPairState = {
   +data: {
     +[string]: {
       +pair: string,
-      +lastPrice: string,
+      +lastPrice: number,
       +change: string,
-      +high: string,
-      +low: string,
-      +volume: string,
+      +high: number,
+      +low: number,
+      +volume: number,
     },
   },
   +favorites: Array<string>,
@@ -36,7 +34,7 @@ export type TokenPairState = {
 
 // Token is the structure representing an ERC20 token that is stored in the redux store
 export type Token = {
-  address: string,
+  asset: string,
   symbol: string,
   decimals: number,
   quote?: ?bool,
@@ -50,7 +48,7 @@ export type Token = {
 
 // APIToken is the structure representing an ERC20 token that is fetched from an external API
 export type APIToken = {
-  address: string, 
+  asset: string, 
   symbol: string,
   decimals: number,
   quote?: ?bool,
@@ -68,12 +66,10 @@ export type TokenPair = {
   +pair: string,
   +baseTokenSymbol: string,
   +quoteTokenSymbol: string,
-  +baseTokenAddress: string,
+  +baseAsset: string,
   +baseTokenDecimals: number,
   +quoteTokenDecimals: number,
-  +quoteTokenAddress: string,
-  +makeFee: string,
-  +takeFee: string,
+  +quoteAsset: string,
   +listed: bool,
   +active: bool,
   +rank: number,
@@ -83,18 +79,19 @@ export type TokenPair = {
 // in the redux store.
 export type TokenPairData = {
   pair: string,
-  lastPrice: string,
+  lastPrice: number,
   price: number,
-  change: string,
-  high: string,
-  open: string,
-  low: string,
-  volume: string,
+  change: number,
+  high: number,
+  open: number,
+  close: number,
+  low: number,
+  volume: number,
   base: ?string,
   quote: ?string,
   favorited: ?string,
-  orderCount: string, 
-  orderVolume: string,
+  orderCount: number, 
+  orderVolume: number,
   active: boolean,
   averageOrderAmount: number,
   averageTradeAmount: number,
@@ -102,10 +99,9 @@ export type TokenPairData = {
 
 
 export type TokenData = {
-  address: string,
+  asset: string,
   symbol: string,
-  balance: string,
-  allowance: string, 
+  balance: number,
 };
 
 // TokenRate is an object containing the different exchange rates between the 'symbol' token and the main 
@@ -133,7 +129,7 @@ export type TokenPairEvent = any => TokenPairState => TokenPairState;
 
 
 export type RankedToken = {
-  address: string,
+  asset: string,
   symbol: string,
   decimals: number,
   rank: number,

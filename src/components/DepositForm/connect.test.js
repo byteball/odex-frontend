@@ -9,22 +9,20 @@ jest.mock('../../store/models/tokens');
 jest.mock('../../store/models/depositForm');
 
 describe('mapStateToProps(state, props)', () => {
-  let getStep, balances, accountAddress, rankedTokens, getTokens, getAllowTxState, getConvertTxState;
+  let getStep, balances, accountAddress, rankedTokens, getTokens;
 
   beforeEach(() => {
     getStep = jest.fn(() => 'test step');
-    getConvertTxState = jest.fn(() => 'test convertTxState');
-    getAllowTxState = jest.fn(() => 'test allowTxState');
 
     rankedTokens = jest.fn(() => 'test rankedTokens');
     balances = jest.fn(() => 'test balances');
     accountAddress = jest.fn(() => 'test address');
+    let exchangeAddress = jest.fn(() => 'exchange address');
 
     getDepositFormModel.mockReturnValue({
       accountAddress,
+      exchangeAddress,
       getStep,
-      getConvertTxState,
-      getAllowTxState,
       rankedTokens,
       balances,
     });
@@ -39,8 +37,7 @@ describe('mapStateToProps(state, props)', () => {
       address: 'test address',
       tokens: 'test rankedTokens',
       step: 'test step',
-      convertTx: 'test convertTxState',
-      allowTx: 'test allowTxState',
+      exchangeAddress: 'exchange address',
     };
 
     expect(result).toBeDefined();
@@ -57,8 +54,6 @@ describe('mapStateToProps(state, props)', () => {
     expect(accountAddress).toBeCalled();
     expect(rankedTokens).toBeCalled();
     expect(getStep).toBeCalled();
-    expect(getConvertTxState).toBeCalled();
-    expect(getAllowTxState).toBeCalled();
   });
 });
 
@@ -72,11 +67,6 @@ describe('connect(Component)', () => {
       expect(props).toHaveProperty('address');
       expect(props).toHaveProperty('tokens');
       expect(props).toHaveProperty('queryBalances');
-      expect(props).toHaveProperty('subscribeBalance');
-      expect(props).toHaveProperty('confirmTokenDeposit');
-      expect(props).toHaveProperty('confirmEtherDeposit');
-      expect(props).toHaveProperty('allowTx');
-      expect(props).toHaveProperty('convertTx');
 
       return null;
     });

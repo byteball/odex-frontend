@@ -23,8 +23,8 @@ export const subscribeChart = (pair: TokenPair, timespan: string, duration: stri
       type: 'SUBSCRIBE',
       payload: {
         name: pair.pair,
-        baseToken: pair.baseTokenAddress,
-        quoteToken: pair.quoteTokenAddress,
+        baseToken: pair.baseAsset,
+        quoteToken: pair.quoteAsset,
         from: duration === 'Full' ? 0 : Math.floor((now - Number(duration.slice(0, -1)) * lengthByDurationUnit[duration.slice(-1)]) / 1000),
         to: Math.floor(now / 1000),
         units: nameByTimespanUnit[timespan.slice(-1)],
@@ -61,8 +61,8 @@ export const subscribeOrderBook = (pair: TokenPair) => {
       type: 'SUBSCRIBE',
       payload: {
         name: pair.pair,
-        baseToken: pair.baseTokenAddress,
-        quoteToken: pair.quoteTokenAddress
+        baseToken: pair.baseAsset,
+        quoteToken: pair.quoteAsset
       }
     }
   })
@@ -93,8 +93,8 @@ export const subscribeTrades = (pair: TokenPair) => {
       type: 'SUBSCRIBE',
       payload: {
         name: pair.pair,
-        baseToken: pair.baseTokenAddress,
-        quoteToken: pair.quoteTokenAddress
+        baseToken: pair.baseAsset,
+        quoteToken: pair.quoteAsset
       }
     }
   })
@@ -110,6 +110,20 @@ export const unsubscribeTrades = (pair: TokenPair) => {
   message = JSON.stringify({
     channel: 'trades',
     event: { type: 'UNSUBSCRIBE' }
+  })
+
+  window.socket.send(message)
+}
+
+export const subscribeLogin = (sessionId: string) => {
+  if (!window.socket) throw new Error('Socket connection not established')
+
+  let message: WebsocketMessage = JSON.stringify({
+    channel: 'login',
+    event: {
+      type: 'SUBSCRIBE',
+      payload: sessionId
+    }
   })
 
   window.socket.send(message)

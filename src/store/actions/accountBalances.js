@@ -1,12 +1,9 @@
 // @flow
 import type {
-  AccountAllowances,
   AccountBalances,
   ClearAccountBalancesAction,
   SubscribeAccountBalanceAction,
   UnsubscribeAccountBalanceAction,
-  UpdateAccountAllowanceAction,
-  UpdateAccountAllowancesAction,
   UpdateAccountBalanceAction,
   UpdateAccountBalancesAction,
 } from '../../types/accountBalances';
@@ -14,9 +11,7 @@ import type {
 const actionTypes = {
   subscribeBalance: 'accountBalances/SUBSCRIBE_BALANCE',
   updateBalance: 'accountBalances/UPDATE_BALANCE',
-  updateAllowance: 'accountBalances/UPDATE_ALLOWANCE',
   updateBalances: 'accountBalances/UPDATE_BALANCES',
-  updateAllowances: 'accountBalances/UPDATE_ALLOWANCES',
   unsubscribeBalance: 'accountBalances/UNSUBSCRIBE_BALANCE',
   clearBalances: 'accountBalances/CLEAR_BALANCES',
 };
@@ -28,7 +23,7 @@ export function subscribeBalance(symbol: string): SubscribeAccountBalanceAction 
   };
 }
 
-export function updateBalance(symbol: string, balance: string): UpdateAccountBalanceAction {
+export function updateBalance(symbol: string, balance: number): UpdateAccountBalanceAction {
   return {
     type: actionTypes.updateBalance,
     payload: { symbol, balance },
@@ -39,20 +34,6 @@ export function updateBalances(balances: AccountBalances): UpdateAccountBalances
   return {
     type: actionTypes.updateBalances,
     payload: { balances },
-  };
-}
-
-export function updateAllowance(symbol: string, allowance: string): UpdateAccountAllowanceAction {
-  return {
-    type: actionTypes.updateAllowance,
-    payload: { symbol, allowance },
-  };
-}
-
-export function updateAllowances(allowances: AccountAllowances): UpdateAccountAllowancesAction {
-  return {
-    type: actionTypes.updateAllowances,
-    payload: { allowances },
   };
 }
 

@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { rand, randInt } from '../utils/helpers';
 import tokenPairs from '../jsons/tokenPairs.json';
-import { utils } from 'ethers';
+const crypto = require('crypto');
 
 let orderHistory = [];
 let { pairs } = tokenPairs;
@@ -14,14 +14,14 @@ let maxPrice = 100000;
 
 const randomOrderSide = () => (randInt(0, 1) === 1 ? 'BUY' : 'SELL');
 const randomOrderType = () => ['MARKET', 'LIMIT'][randInt(0, 1)];
-const randomOrderStatus = () => ['EXECUTED', 'CANCELLED', 'PARTIALLY_FILLED'][randInt(0, 2)];
+const randomOrderStatus = () => ['EXECUTED', 'CANCELLED', 'PARTIAL_FILLED'][randInt(0, 2)];
 const randomPair = () => pairs[randInt(0, 5)];
 const randomFee = () => rand(10000, 100000);
 const randomAmount = () => rand(minAmount, maxAmount);
 const randomRatio = () => rand(0, 1);
 const randomTimestamp = () => randInt(minTimeStamp, maxTimeStamp);
 const randomPrice = () => rand(minPrice, maxPrice);
-const randomHash = () => utils.sha256(utils.randomBytes(100));
+const randomHash = () => crypto.createHash('sha256').update(crypto.randomBytes(100)).digest('base64');
 const randomAddress = () => randomHash().slice(0, 42);
 
 for (let i = 0; i < 200; i++) {
@@ -36,13 +36,13 @@ for (let i = 0; i < 200; i++) {
     side: randomOrderSide(),
     pairName: randomPair(),
     amount: randomAmount(),
-    pricepoint: randomPrice(),
+    price: randomPrice(),
     createdAt: randomTimestamp(),
   };
 
   if (order.status === 'CANCELLED') {
     order.filledAmount = 0;
-  } else if (order.status === 'PARTIALLY_FILLED') {
+  } else if (order.status === 'PARTIAL_FILLED') {
     order.filledAmount = order.amount * randomRatio();
   } else if (order.status === 'EXECUTED') {
     order.filledAmount = order.amount;

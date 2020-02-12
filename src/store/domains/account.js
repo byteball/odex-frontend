@@ -1,13 +1,24 @@
 // @flow
 import type { AccountState, AccountParams, ReferenceCurrency } from '../../types/account'
 
+function dec2hex(dec) {
+  return ('0' + dec.toString(16)).substr(-2)
+}
+
+// generateRandomString :: Integer -> String
+function generateRandomString(len) {
+  var arr = new Uint8Array((len || 40) / 2)
+  window.crypto.getRandomValues(arr)
+  return Array.from(arr, dec2hex).join('')
+}
+
 const initialState = {
   loaded: false,
+  sessionId: generateRandomString(),
   address: null,
-  privateKey: null,
-  currentBlock: '',
   showHelpModal: true,
   exchangeAddress: '',
+  operatorAddress: '',
   referenceCurrency: { name: 'USD', symbol: '$'}
 }
 
@@ -34,11 +45,10 @@ export const accountLoaded = (loaded: boolean) => {
   return event
 }
 
-export const accountUpdated = (address: string, privateKey: string) => {
+export const accountUpdated = (address: string) => {
   const event = (state: AccountState) => ({
     ...state,
     address,
-    privateKey,
   })
   return event
 }
@@ -47,20 +57,11 @@ export const accountRemoved = () => {
   const event = (state: AccountState) => ({
     ...state,
     address: null,
-    privateKey: null,
-    currentBlock: '',
   })
 
   return event
 }
 
-export const currentBlockUpdated = (currentBlock: string) => {
-  const event = (state: AccountState) => ({
-    ...state,
-    currentBlock,
-  })
-  return event
-}
 
 export const showHelpModalUpdated = (showHelpModal: boolean) => {
   const event = (state: AccountState) => ({
@@ -95,12 +96,12 @@ export const referenceCurrencyUpdated = (referenceCurrency: ReferenceCurrency) =
 export default function accountDomain(state: AccountState) {
   return {
     appIsLoaded: state.loaded,
+    sessionId: state.sessionId,
     authenticated: state.address !== null,
     address: state.address,
-    privateKey: state.privateKey,
-    currentBlock: state.currentBlock,
     showHelpModal: state.showHelpModal,
     exchangeAddress: state.exchangeAddress,
+    operatorAddress: state.operatorAddress,
     referenceCurrency: state.referenceCurrency,
     referenceCurrencyName: state.referenceCurrency.name
   };

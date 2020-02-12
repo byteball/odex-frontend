@@ -1,7 +1,8 @@
 // @flow
 import React from 'react'
 import styled from 'styled-components'
-import { utils } from 'ethers'
+import { MATCHER_FEE } from '../../config/environment';
+import { CHATBOT_URL } from '../../config/urls'
 
 import { 
   Position, 
@@ -20,7 +21,9 @@ import {
    Flex, 
    MutedText, 
    RedGlowingButton, 
+   RedGlowingAnchorButton,
    GreenGlowingButton,
+   GreenGlowingAnchorButton,
    FlexRow,
    Box
 } from '../Common'
@@ -33,11 +36,16 @@ import type { Node } from 'react'
 type Props = {
   selectedTabId: string,
   side: 'BUY' | 'SELL',
+  askPrice: number,
+  bidPrice: number,
+  bestAskMatcher: string,
+  bestBidMatcher: string,
+  tokensBySymbol: Object,
   fraction: number,
   priceType: string,
   price: string,
-  amount: string,
-  maxAmount: string,
+  amount: string, // formatted
+  maxAmount: string, // formatted
   total: string,
   baseTokenSymbol: string,
   quoteTokenSymbol: string,
@@ -47,17 +55,15 @@ type Props = {
   onInputChange: Object => void,
   handleChangeOrderType: string => void,
   handleSendOrder: void => void,
-  handleUnlockPair: (string, string) => void,
-  makeFee: string,
-  takeFee: string,
   baseTokenDecimals: number,
   quoteTokenDecimals: number,
-  pairIsAllowed: boolean,
-  pairAllowanceIsPending: boolean,
-  handleSideChange: string => void,
+  address: string,
+  operatorAddress: string,
+  exchangeAddress: string,
+  handleSideChange: ('BUY' | 'SELL') => void,
   toggleCollapse: SyntheticEvent<> => void,
   expand: SyntheticEvent<> => void,
-  onContextMenu: Node => void,
+  onContextMenu: void => Node,
   buttonType: "BUY" | "SELL" | "BUY_UNLOCK" | "SELL_UNLOCK" | "BUY_LOGIN" | "SELL_LOGIN" | "BUY_UNLOCK_PENDING" | "SELL_UNLOCK_PENDING",
 }
 
@@ -80,13 +86,16 @@ const OrderFormRenderer = (props: Props) => {
     handleChangeOrderType,
     handleSendOrder,
     toggleCollapse,
-    makeFee,
-    takeFee,
     baseTokenDecimals,
     quoteTokenDecimals,
-    pairIsAllowed,
-    pairAllowanceIsPending,
-    handleUnlockPair,
+    address,
+    operatorAddress,
+    exchangeAddress,
+    askPrice,
+    bidPrice,
+    bestAskMatcher,
+    bestBidMatcher,
+    tokensBySymbol,
     handleSideChange,
     expand,
     onContextMenu,
@@ -167,13 +176,16 @@ const OrderFormRenderer = (props: Props) => {
                 insufficientBalance={insufficientBalance}
                 onInputChange={onInputChange}
                 handleSendOrder={handleSendOrder}
-                makeFee={makeFee}
-                takeFee={takeFee}
                 quoteTokenDecimals={quoteTokenDecimals}
                 baseTokenDecimals={baseTokenDecimals}
-                pairIsAllowed={pairIsAllowed}
-                pairAllowanceIsPending={pairAllowanceIsPending}
-                handleUnlockPair={handleUnlockPair}
+                address={address}
+                operatorAddress={operatorAddress}
+                exchangeAddress={exchangeAddress}
+                askPrice={askPrice}
+                bidPrice={bidPrice}
+                bestAskMatcher={bestAskMatcher}
+                bestBidMatcher={bestBidMatcher}
+                tokensBySymbol={tokensBySymbol}
                 buttonType={buttonType}
               />
             }
@@ -195,13 +207,8 @@ const OrderFormRenderer = (props: Props) => {
                 total={total}
                 onInputChange={onInputChange}
                 handleSendOrder={handleSendOrder}
-                makeFee={makeFee}
-                takeFee={takeFee}
                 quoteTokenDecimals={quoteTokenDecimals}
                 baseTokenDecimals={baseTokenDecimals}
-                pairIsAllowed={pairIsAllowed}
-                pairAllowanceIsPending={pairAllowanceIsPending}
-                handleUnlockPair={handleUnlockPair}
                 buttonType={buttonType}
               />
             }
@@ -224,13 +231,8 @@ const OrderFormRenderer = (props: Props) => {
                 total={total}
                 onInputChange={onInputChange}
                 handleSendOrder={handleSendOrder}
-                makeFee={makeFee}
-                takeFee={takeFee}
                 quoteTokenDecimals={quoteTokenDecimals}
                 baseTokenDecimals={baseTokenDecimals}
-                pairIsAllowed={pairIsAllowed}
-                pairAllowanceIsPending={pairAllowanceIsPending}
-                handleUnlockPair={handleUnlockPair}
                 buttonType={buttonType}
               />
             }
@@ -254,17 +256,65 @@ const LimitOrderPanel = props => {
     onInputChange, 
     insufficientBalance, 
     handleSendOrder, 
-    makeFee,
     quoteTokenDecimals,
-    handleUnlockPair,
+    baseTokenDecimals,
+    address,
+    operatorAddress,
+    exchangeAddress,
+    askPrice,
+    bidPrice,
+    bestAskMatcher,
+    bestBidMatcher,
+    tokensBySymbol,
     buttonType
   } = props
+
+  let fAmount = parseFloat(amount);
+  let fPrice = parseFloat(price);
+  let matcher = operatorAddress;
+  let sell_symbol = (side === 'SELL') ? baseTokenSymbol : quoteTokenSymbol;
+  let buy_symbol = (side === 'BUY') ? baseTokenSymbol : quoteTokenSymbol;
+  let sell_asset_decimals = (side === 'SELL') ? baseTokenDecimals : quoteTokenDecimals;
+  let buy_asset_decimals = (side === 'BUY') ? baseTokenDecimals : quoteTokenDecimals;
+  if (side === 'SELL'){
+    let base_amount_sold = fAmount * Math.pow(10, baseTokenDecimals);
+    let quote_amount_bought = fAmount * fPrice * Math.pow(10, quoteTokenDecimals);
+    var price_in_pennies = quote_amount_bought / base_amount_sold;
+    var sell_amount = Math.round(base_amount_sold);
+    var matcher_fee = Math.round(quote_amount_bought * MATCHER_FEE)
+    if (bidPrice && fPrice <= bidPrice) // inherit matcher from best bid
+      matcher = bestBidMatcher;
+  }
+  else {
+    let base_amount_bought = fAmount * Math.pow(10, baseTokenDecimals);
+    let quote_amount_sold = fAmount * fPrice * Math.pow(10, quoteTokenDecimals);
+    var price_in_pennies = base_amount_bought / quote_amount_sold;
+    var sell_amount = Math.round(quote_amount_sold);
+    var matcher_fee = Math.round(quote_amount_sold * MATCHER_FEE)
+    if (askPrice && fPrice >= askPrice) // inherit matcher from best ask
+      matcher = bestAskMatcher;
+  }
+  let fee = matcher_fee / Math.pow(10, quoteTokenDecimals);
+  let order = (tokensBySymbol[sell_symbol] && tokensBySymbol[buy_symbol]) ? {
+    sell_asset: tokensBySymbol[sell_symbol].asset,
+    buy_asset: tokensBySymbol[buy_symbol].asset,
+    sell_amount,
+    price: price_in_pennies,
+    matcher_fee_asset: tokensBySymbol[quoteTokenSymbol].asset,
+    matcher_fee,
+    matcher,
+    aa: exchangeAddress,
+    address
+  } : {};
+  console.log(order);
+  let pairing_secret = btoa(JSON.stringify(order));
+  let link = CHATBOT_URL + pairing_secret;
 
   return (
     <React.Fragment>
       <InputBox>
         <InputLabel>
-          Price <MutedText>({quoteTokenSymbol})</MutedText>
+          Price <MutedText>(in {quoteTokenSymbol})</MutedText>
         </InputLabel>
         <PriceInputGroup name="price" onChange={onInputChange} value={price} placeholder="Price" />
       </InputBox>
@@ -294,15 +344,16 @@ const LimitOrderPanel = props => {
       </RadioButtonsWrapper>
       { total && <MaxAmount>Total: ~{total} {quoteTokenSymbol}</MaxAmount> }
       { maxAmount && <MaxAmount>Max: ~{maxAmount} {baseTokenSymbol}</MaxAmount> }
-      { makeFee && <MaxAmount> Fee: {utils.formatUnits(makeFee, quoteTokenDecimals)} {quoteTokenSymbol}</MaxAmount>}
+      <MaxAmount> Fee: {fee} {quoteTokenSymbol}</MaxAmount>
         <ButtonRenderer
           side={side}
+          link={link}
+          amount={amount}
           baseTokenSymbol={baseTokenSymbol}
           quoteTokenSymbol={quoteTokenSymbol}
           handleSendOrder={handleSendOrder}
-          handleUnlockPair={handleUnlockPair}
           buttonType={buttonType}
-          insufficientBalance={insufficientBalance}
+          disabled={insufficientBalance || !fPrice || !fAmount}
         />
     </React.Fragment>
   )
@@ -323,9 +374,7 @@ const MarketOrderPanel = (props: *) => {
     onInputChange, 
     insufficientBalance, 
     handleSendOrder, 
-    makeFee,
     quoteTokenDecimals,
-    handleUnlockPair,
     buttonType
   } = props
 
@@ -362,14 +411,15 @@ const MarketOrderPanel = (props: *) => {
       </RadioButtonsWrapper>
       { total && <MaxAmount>Total: ~{total} {quoteTokenSymbol}</MaxAmount> }
       { maxAmount && <MaxAmount>Max: ~{maxAmount} {baseTokenSymbol}</MaxAmount> }
-      { makeFee && <MaxAmount>Fee: {utils.formatUnits(makeFee, quoteTokenDecimals)} {quoteTokenSymbol}</MaxAmount> }
+      <MaxAmount>Fee: {0 /*utils.formatUnits(makeFee || 0, quoteTokenDecimals)*/} {quoteTokenSymbol}</MaxAmount>
       <ButtonRenderer
         side={side}
+        link=""
+        amount={amount}
         baseTokenSymbol={baseTokenSymbol}
         quoteTokenSymbol={quoteTokenSymbol}
         handleSendOrder={handleSendOrder}
-        handleUnlockPair={handleUnlockPair}
-        insufficientBalance={insufficientBalance}
+        disabled={insufficientBalance}
         buttonType={buttonType}
       />
     </React.Fragment>
@@ -388,9 +438,7 @@ const StopLimitOrderPanel = (props: *) => {
     onInputChange, 
     insufficientBalance, 
     handleSendOrder, 
-    makeFee,
     quoteTokenDecimals,
-    handleUnlockPair,
     buttonType
     } = props
 
@@ -429,14 +477,15 @@ const StopLimitOrderPanel = (props: *) => {
       </InputBox>
       <MaxAmount>Total: ~{total} {quoteTokenSymbol}</MaxAmount>
       <MaxAmount>Max: ~{maxAmount} {baseTokenSymbol}</MaxAmount>
-      <MaxAmount>Fee: {makeFee} {utils.formatUnits(makeFee, quoteTokenDecimals)} {quoteTokenSymbol} </MaxAmount>
+      <MaxAmount>Fee: {0 /*utils.formatUnits(makeFee || 0, quoteTokenDecimals)*/} {quoteTokenSymbol} </MaxAmount>
       <ButtonRenderer
         side={side}
+        link=""
+        amount={amount}
         baseTokenSymbol={baseTokenSymbol}
         quoteTokenSymbol={quoteTokenSymbol}
         handleSendOrder={handleSendOrder}
-        handleUnlockPair={handleUnlockPair}
-        insufficientBalance={insufficientBalance}
+        disabled={insufficientBalance}
         buttonType={buttonType}
       />
     </React.Fragment>
@@ -457,33 +506,34 @@ const RadioButton = props => {
 const ButtonRenderer = (props: *) => {
   const {
     side,
+    link,
+    amount,
     baseTokenSymbol,
     quoteTokenSymbol,
     handleSendOrder,
-    handleUnlockPair,
-    insufficientBalance,
+    disabled,
     buttonType
   } = props
 
   
   return {
     "BUY": (
-      <GreenGlowingButton
+      <GreenGlowingAnchorButton
           intent="success"
-          text={side}
+          text={side + " " + amount + " " + baseTokenSymbol}
           name="order"
-          onClick={handleSendOrder}
-          disabled={insufficientBalance} 
+          href={link}
+          disabled={disabled} 
           fill
       />
     ),
     "SELL": (
-      <RedGlowingButton
+      <RedGlowingAnchorButton
         intent="danger"
-        text={side}
+        text={side + " " + amount + " " + baseTokenSymbol}
         name="order"
-        onClick={handleSendOrder}
-        disabled={insufficientBalance} 
+        href={link}
+        disabled={disabled} 
         fill 
       />
     ),
@@ -492,8 +542,7 @@ const ButtonRenderer = (props: *) => {
           intent="success"
           text={`Unlock ${baseTokenSymbol}/${quoteTokenSymbol}`}
           name="order"
-          onClick={handleUnlockPair}
-          disabled={insufficientBalance} 
+          disabled={disabled} 
           fill
       />
     ),
@@ -502,8 +551,7 @@ const ButtonRenderer = (props: *) => {
         intent="danger"
         text={`Unlock ${baseTokenSymbol}/${quoteTokenSymbol}`}
         name="order"
-        onClick={handleUnlockPair}
-        disabled={insufficientBalance}
+        disabled={disabled}
         fill
       />
     ),
@@ -538,21 +586,21 @@ const ButtonRenderer = (props: *) => {
       </GreenGlowingButton>
     ),
     "BUY_LOGIN": (
-      <GreenGlowingButton
+      <GreenGlowingAnchorButton
           intent="success"
           text={`Login to trade ${baseTokenSymbol}/${quoteTokenSymbol}`}
           name="order"
-          // onClick={}
+          href="/login"
           // disabled={insufficientBalance}
           fill
       />
     ),
     "SELL_LOGIN": (
-        <RedGlowingButton
+        <RedGlowingAnchorButton
           intent="danger"
           text={`Login to trade ${baseTokenSymbol}/${quoteTokenSymbol}`}
           name="order"
-          // onClick={pairIsAllowed ? handleSendOrder : handleUnlockPair}
+          href="/login"
           // disabled={insufficientBalance} 
           fill 
       />

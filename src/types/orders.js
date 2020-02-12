@@ -12,19 +12,12 @@ export type RawOrder = {
   userAddress: string,
   baseToken: string,
   quoteToken: string,
-  amount: string,
-  pricepoint: string,
+  amount: number,
+  price: string,
   side: 'BUY' | 'SELL',
   nonce: string,
-  makeFee: string,
-  takeFee: string,
   status: string,
   hash: string,
-  signature: {
-    r: string,
-    s: string,
-    v: string
-  },
 }
 
 export type Order = {
@@ -36,7 +29,7 @@ export type Order = {
   side: 'BUY' | 'SELL',
   pair: string,
   type: 'MARKET' | 'LIMIT',
-  status: 'NEW' | 'OPEN' | 'CANCELLED' | 'FILLED' | 'PARTIALLY_FILLED'
+  status: 'NEW' | 'OPEN' | 'CANCELLED' | 'AUTO_CANCELLED' | 'FILLED' | 'PARTIAL_FILLED'
 }
 
 // eslint-disable-next-line

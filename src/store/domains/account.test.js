@@ -9,7 +9,7 @@ function getDomain(events) {
 it('handles initialized event properly', () => {
   const domain = getDomain([eventCreators.initialized()]);
 
-  expect(domain.address()).toEqual(null);
+  expect(domain.address).toEqual(null);
 });
 
 it('handles updated event properly', () => {
@@ -18,7 +18,7 @@ it('handles updated event properly', () => {
     eventCreators.accountUpdated('0x44809695706c252435531029b1e9d7d0355d475f'),
   ]);
 
-  expect(domain.address()).toEqual('0x44809695706c252435531029b1e9d7d0355d475f');
+  expect(domain.address).toEqual('0x44809695706c252435531029b1e9d7d0355d475f');
 });
 
 it('handles removed event', () => {
@@ -28,5 +28,5 @@ it('handles removed event', () => {
     eventCreators.accountRemoved(),
   ]);
 
-  expect(domain.address()).toEqual(null);
+  expect(domain.address).toEqual(null);
 });

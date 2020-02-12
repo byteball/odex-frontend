@@ -7,15 +7,13 @@ export type PairData = {
   pair: string,
   baseTokenSymbol: string,
   quoteTokenSymbol: string,
-  baseTokenAddress: string,
+  baseAsset: string,
   baseTokenDecimals: number,
   quoteTokenDecimals: number,
-  quoteTokenAddress: string,
+  quoteAsset: string,
   price: number,
   change: number,
   orderVolume: number,
-  makeFee: string,
-  takeFee: string,
   listed: bool,
   active: bool,
   rank: number
@@ -24,7 +22,7 @@ export type PairData = {
 type Props = {
   pairs: Array<PairData>,
   quoteTokens: Array<string>,
-  redirectToTradingPage: (string, string) => void,
+  redirectToTradingPage: string => void,
   currentReferenceCurrency: string,
   toggleMarketStatistics: void => void
 };
@@ -56,7 +54,7 @@ class MarketsTable extends React.PureComponent<Props, State> {
     const { searchInput, selectedTab } = this.state;
 
     if (selectedTab !== 'ALL') pairs = pairs.filter(pair => pair.quoteTokenSymbol === selectedTab)
-    pairs = searchInput ? pairs.filter(pair => pair.baseTokenSymbol.indexOf(searchInput.toUpperCase()) > -1) : pairs
+    if (searchInput) pairs = pairs.filter(pair => pair.baseTokenSymbol.indexOf(searchInput.toUpperCase()) > -1)
 
     return pairs
   };

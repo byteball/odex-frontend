@@ -1,7 +1,9 @@
 import * as actionCreators from '../actions/layout'
+import * as balanceActionCreators from '../actions/accountBalances';
 import * as notifierActionCreators from '../actions/app'
 
 import {
+  getTokenDomain,
   getAccountDomain,
   getAccountBalancesDomain
  } from '../domains'
@@ -9,13 +11,11 @@ import {
 import { fiatCurrencies, pricedTokens } from '../../config'
 
 export default function createSelector(state) {
-  let { authenticated, address, currentBlock, referenceCurrency } = getAccountDomain(state)
+  let { authenticated, address, referenceCurrency } = getAccountDomain(state)
   let accountBalancesDomain = getAccountBalancesDomain(state)
 
-  let ETHBalance = accountBalancesDomain.etherBalance()
-  let WETHBalance = accountBalancesDomain.tokenBalance('WETH')
-  let WETHAllowance = accountBalancesDomain.tokenAllowance('WETH')
-  let accountLoading = !(ETHBalance && WETHBalance && WETHAllowance)
+  let GBYTEBalance = accountBalancesDomain.gbyteBalance()
+  let accountLoading = !(GBYTEBalance)
   let location = state.router.location.pathname
 
   let referenceCurrencies = fiatCurrencies.map((currency, i) => {
@@ -29,13 +29,10 @@ export default function createSelector(state) {
   let currentReferenceCurrency = referenceCurrencies.filter(currency => currency.name === referenceCurrency.name)[0]
 
   return {
-    ETHBalance,
-    WETHBalance,
-    WETHAllowance,
+    GBYTEBalance,
     authenticated,
     address,
     accountLoading,
-    currentBlock,
     currentReferenceCurrency,
     referenceCurrencies,
     location
@@ -45,8 +42,12 @@ export default function createSelector(state) {
 
 export function queryAppData(): ThunkAction {
   return async (dispatch, getState, { api, provider }) => {
+    const state = getState();
+    let { address } = getAccountDomain(state)
+    const tokensBySymbol = getTokenDomain(state).bySymbol()
     try {    
-    let [ tokens, pairs ] = await Promise.all([
+    let [ assocBalances, tokens, pairs ] = await Promise.all([
+      address ? api.getBalances(address) : {},
       api.getTokens(),
       api.fetchPairs()
     ])
@@ -64,16 +65,15 @@ export function queryAppData(): ThunkAction {
       }
     })
 
+    let balances = []
+    for (var symbol in assocBalances)
+      balances.push({balance: assocBalances[symbol] / Math.pow(10, tokensBySymbol[symbol].decimals), symbol});
+
+    dispatch(balanceActionCreators.updateBalances(balances));
     dispatch(actionCreators.updateAppData(tokens, pairs))
   } catch (e) {
     console.log(e)
     dispatch(notifierActionCreators.addErrorNotification({ message: e.message }))
   }
 }
-}
-
-export function createProvider(): ThunkAction {
-  return async (dispatch, getState, { provider }) => {
-    provider.createConnection()
-  }
 }

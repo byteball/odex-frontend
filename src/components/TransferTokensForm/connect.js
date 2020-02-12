@@ -1,11 +1,6 @@
 // @flow
 import { connect } from 'react-redux';
-import getTransferTokensFormSelector, {
-  sendEtherTx,
-  sendTransferTokensTx,
-  validateEtherTx,
-  validateTransferTokensTx,
-} from '../../store/models/transferTokensForm';
+import getTransferTokensFormSelector from '../../store/models/transferTokensForm';
 
 import type { State } from '../../types';
 import type { Token } from '../../types/tokens';
@@ -19,22 +14,13 @@ export const mapStateToProps = (state: State, ownProps: Props) => {
 
   return {
     token: ownProps.token,
-    loading: transferTokensFormSelector.isLoading(),
-    status: transferTokensFormSelector.getStatus(),
-    statusMessage: transferTokensFormSelector.getStatusMessage(),
-    gas: transferTokensFormSelector.getGas(),
-    gasPrice: transferTokensFormSelector.getGasPrice(),
-    hash: transferTokensFormSelector.getHash(),
-    receipt: transferTokensFormSelector.getReceipt(),
     tokens: transferTokensFormSelector.tokens(),
+    exchangeAddress: transferTokensFormSelector.exchangeAddress(),
+    address: transferTokensFormSelector.address(),
   };
 };
 
 export const mapDispatchToProps = {
-  validateEtherTx,
-  sendEtherTx,
-  validateTransferTokensTx,
-  sendTransferTokensTx,
 };
 
 export default connect(

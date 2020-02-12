@@ -1,9 +1,8 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import DepositForm from './DepositForm';
-import { mockAddress, mockAllowTxState, mockConvertTxState, mockTokens } from '../../mockData';
+import { mockAddress, mockTokens } from '../../mockData';
 
-jest.mock('../../store/services/wallet');
 
 describe('Rendering', () => {
   it('renders without crashing', () => {
@@ -16,9 +15,6 @@ describe('Rendering', () => {
         queryBalances={jest.fn()}
         subscribeBalance={jest.fn()}
         confirmTokenDeposit={jest.fn()}
-        confirmEtherDeposit={jest.fn()}
-        allowTx={mockAllowTxState}
-        convertTx={mockConvertTxState}
       />
     );
   });
@@ -28,9 +24,6 @@ describe('Component methods', () => {
   let wrapper, instance;
   let queryBalances = jest.fn();
   let unsubscribe = jest.fn();
-  let subscribeBalance = jest.fn(() => Promise.resolve(unsubscribe));
-  let confirmTokenDeposit = jest.fn();
-  let confirmEtherDeposit = jest.fn();
 
   beforeEach(() => {
     wrapper = shallow(
@@ -40,11 +33,6 @@ describe('Component methods', () => {
         address={mockAddress}
         tokens={mockTokens}
         queryBalances={queryBalances}
-        subscribeBalance={subscribeBalance}
-        confirmTokenDeposit={confirmTokenDeposit}
-        confirmEtherDeposit={confirmEtherDeposit}
-        allowTx={mockAllowTxState}
-        convertTx={mockConvertTxState}
       />
     );
 
@@ -57,21 +45,14 @@ describe('Component methods', () => {
 
   it('calls queryBalances and subscribe on mount', () => {
     expect(queryBalances).toHaveBeenCalled();
-    expect(subscribeBalance).toHaveBeenCalledTimes(1);
-    expect(subscribeBalance).toHaveBeenCalledWith(mockTokens[0]);
   });
 
   it('unsubscribes on unmount', () => {
     wrapper.unmount();
-    expect(unsubscribe).toHaveBeenCalledTimes(1);
   });
 
   it('unsubscribes before subscribing to new balance', () => {
-    instance.subscribe(mockTokens[1]);
-    expect(unsubscribe).toHaveBeenCalledTimes(1);
-    expect(subscribeBalance).toHaveBeenCalledTimes(2);
 
-    expect(wrapper.state('unsubscribeBalance')).toEqual(unsubscribe);
   });
 
   it('handlesChangeToken sets state correctly', () => {
@@ -79,10 +60,6 @@ describe('Component methods', () => {
     expect(wrapper.state('inputToken')).toEqual(mockTokens[2]);
   });
 
-  it('handleChangeConvertAmount sets amount correctly', () => {
-    instance.handleChangeConvertAmount(50);
-    expect(wrapper.state('convertAmount')).toEqual(50);
-  });
 
   it('handleSubmitChangeToken sets token correctly', () => {
     wrapper.setState({ inputToken: mockTokens[2] });
@@ -94,17 +71,5 @@ describe('Component methods', () => {
     // expect(unsubscribe).toHaveBeenCalledTimes(1);
   });
 
-  it('handleConfirm', () => {
-    wrapper.setState({ token: mockTokens[0], shouldAllow: true, shouldConvert: true, convertAmount: 50 });
-    instance.handleConfirm();
-    // expect(unsubscribe).toHaveBeenCalledTimes(1);
-    expect(confirmEtherDeposit).toHaveBeenCalledWith(true, true, 50);
-  });
 
-  it('handleConfirm (token case)', () => {
-    wrapper.setState({ token: mockTokens[1], shouldAllow: true, shouldConvert: true, convertAmount: 50 });
-    instance.handleConfirm();
-    // expect(unsubscribe).toHaveBeenCalledTimes(1);
-    expect(confirmTokenDeposit).toHaveBeenCalledWith(mockTokens[1], true);
-  });
 });

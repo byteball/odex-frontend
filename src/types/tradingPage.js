@@ -1,5 +1,5 @@
 //@flow
-import type { TokenPairDataMap } from './tokens'
+import type { TokenPairDataArray } from './tokens'
 import type { Orders } from './orders'
 import type { Trades } from './trades'
 
@@ -17,7 +17,7 @@ export const actionTypes = {
 
 export type UpdateTradingPageDataAction = {
   type: 'tradingPage/UPDATE_TRADING_PAGE_DATA',
-  payload: { tokenPairData: TokenPairDataMap, orders: Orders }
+  payload: { tokenPairData: TokenPairDataArray, orders: Orders }
 }
 
 export type UpdateCurrentPairAction = {
@@ -62,7 +62,7 @@ export type SingleOrderTypes = {
 }
 
 export type TradingPageAction =
-  | UpdateTokenPairDataAction
+//  | UpdateTokenPairDataAction
   | UpdateCurrentPairAction
   | UpdateTradesTableAction
   | UpdateOrderBookAction

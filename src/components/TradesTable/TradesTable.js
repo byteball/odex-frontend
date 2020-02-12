@@ -1,7 +1,7 @@
 // @flow
 import React from 'react';
 import TradesTableRenderer from './TradesTableRenderer';
-import { ETHERSCAN_TX_URL } from '../../config/urls'
+import { EXPLORER_URL } from '../../config/urls'
 import { ContextMenuTarget, Menu, MenuItem } from '@blueprintjs/core'
 
 import type Trade from '../../types/trades';
@@ -34,8 +34,8 @@ class TradesTable extends React.PureComponent<Props, State> {
     this.setState({ selectedTabId: tabId });
   };
 
-  openEtherscanLink = (txHash: string) => {
-    if (txHash !== "") window.open(`${ETHERSCAN_TX_URL}/${txHash}`)
+  openExplorerLink = (txHash: string) => {
+    if (txHash !== "") window.open(`${EXPLORER_URL}#${txHash}`)
   }
 
   toggleCollapse = () => {
@@ -72,7 +72,7 @@ class TradesTable extends React.PureComponent<Props, State> {
       state: { selectedTabId, isOpen },
       changeTab,
       toggleCollapse,
-      openEtherscanLink,
+      openExplorerLink,
       expand,
       renderContextMenu
     } = this;
@@ -86,7 +86,7 @@ class TradesTable extends React.PureComponent<Props, State> {
         userTrades={userTrades}
         isOpen={isOpen}
         toggleCollapse={toggleCollapse}
-        openEtherscanLink={openEtherscanLink}
+        openExplorerLink={openExplorerLink}
         expand={expand}
         onContextMenu={renderContextMenu}
         authenticated={authenticated}

@@ -55,11 +55,16 @@ let moreAsks = [
 ];
 
 let currentPair = {
-  baseTokenAddress: '0xB8c77482e45F1F44dE1745F52C74426C631bDD52',
+  baseAsset: '0xB8c77482e45F1F44dE1745F52C74426C631bDD52',
   baseTokenSymbol: 'BNB',
   pair: 'BNB_WETH',
-  quoteTokenAddress: '0x2eb24432177e82907de24b7c5a6e0a5c03226135',
+  quoteAsset: '0x2eb24432177e82907de24b7c5a6e0a5c03226135',
   quoteTokenSymbol: 'WETH',
+  active: true,
+  listed: true,
+  baseTokenDecimals: 9,
+  quoteTokenDecimals: 9,
+  rank: 1,
 };
 
 storiesOf('OrderBook', module)

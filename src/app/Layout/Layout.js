@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { IntlProvider } from 'react-intl'
 import { NavLink } from 'react-router-dom'
 import Notifier from '../../components/Notifier'
-import ampLogo from '../../assets/amp_black.png'
+import odexLogo from '../../assets/odex_logo_white.png'
 import ConnectionStatus from '../../components/ConnectionStatus'
 
 
@@ -39,20 +39,15 @@ import type {
 } from '../../types/common'
 
 export type Props = {
-  ETHBalance: string,
-  WETHBalance: string,
-  WETHAllowance: string,
   children?: Node,
   authenticated: boolean,
   accountLoading: boolean,
   address: string,
   locale: string,
   messages: string,
-  currentBlock?: string,
   referenceCurrencies: Array<string>,
   updateReferenceCurrency: void => string,
   currentReferenceCurrency: string,
-  createProvider: void => void,
   queryAppData: void => void,
   location: Location
 }
@@ -62,7 +57,6 @@ type State = {}
 class Layout extends React.PureComponent<Props, State> {
 
   componentDidMount() {
-    this.props.createProvider()
     this.props.queryAppData()
   }
 
@@ -92,7 +86,8 @@ class Layout extends React.PureComponent<Props, State> {
     )
 
     return (
-      <IntlProvider locale={locale} messages={messages}>
+      // <IntlProvider locale={locale} messages={messages}>
+      <IntlProvider locale={locale} >
         <Wrapper>
           <Notifier />
           <Header>
@@ -100,13 +95,13 @@ class Layout extends React.PureComponent<Props, State> {
               <NavbarGroup align={Alignment.LEFT}>
                 <NavbarHeading>
                   <NavbarHeaderBox>
-                    <img src={ampLogo} class="Profile-image" height={25} width={25} alt="AMP Logo" />
+                    <img src={odexLogo} className="Profile-image" height={25}  alt="ODEX Logo" />
                   </NavbarHeaderBox>
                 </NavbarHeading>
                 {authenticated && <NavbarLink to="/wallet">Wallet</NavbarLink>}    
                 {authenticated && <NavbarLink to="/markets">Markets</NavbarLink>}
                 <NavbarLink to="/trade">Exchange</NavbarLink>
-                {authenticated && <NavbarLink to="/settings" hideOnMobile>Settings</NavbarLink>}
+                {false && <NavbarLink to="/settings" hideOnMobile>Settings</NavbarLink>}
                 <NavbarLink to="/faq">FAQ</NavbarLink>
                 <NavbarDivider hideOnMobile />
                 {showReferenceCurrency &&

@@ -12,22 +12,16 @@ import { loadShowHelpModalSetting } from '../../store/services/storage'
 export type Props = {
   connected: boolean,
   accountAddress: string,
-  etherBalance: string,
-  gasPrice: number,
-  gas: number,
   authenticated: boolean,
   queryAccountData: void => void,
   redirectToTradingPage: string => void,
   openConnection: void => void,
-  toggleAllowance: string => void,
   tokenData: Array<TokenData>,
   baseTokens: Array<string>,
   quoteTokens: Array<string>,
   showHelpModal: boolean,
-  closeHelpModal: void => void,
+  closeHelpModal: boolean => void,
   balancesLoading: boolean,
-  WETHBalance: string,
-  WETHAllowance: string,
   referenceCurrency: string,
   recentTransactions: Array<Tx>
 }
@@ -41,13 +35,12 @@ class WalletPage extends React.PureComponent<Props, State> {
 
   checkOpenHelpModal = () => {
     const showHelpModalSetting = loadShowHelpModalSetting()
-    const { authenticated, showHelpModal, balancesLoading, WETHBalance, WETHAllowance } = this.props
+    const { authenticated, showHelpModal, balancesLoading } = this.props
 
     if (!showHelpModalSetting) return false
     if (!authenticated) return false
     if (!showHelpModal) return false
     if (balancesLoading) return false
-    // if (WETHBalance !== '0.0' && WETHAllowance !== '0.0') return false
 
     return true
   }
@@ -57,10 +50,6 @@ class WalletPage extends React.PureComponent<Props, State> {
       connected,
       authenticated,
       accountAddress,
-      etherBalance,
-      gasPrice,
-      gas,
-      toggleAllowance,
       redirectToTradingPage,
       tokenData,
       quoteTokens,
@@ -78,15 +67,11 @@ class WalletPage extends React.PureComponent<Props, State> {
 
     return (
       <WalletPageRenderer
-        gas={gas}
-        gasPrice={gasPrice}
-        etherBalance={etherBalance}
         tokenData={tokenData}
         baseTokens={baseTokens}
         quoteTokens={quoteTokens}
         connected={connected}
         accountAddress={accountAddress}
-        toggleAllowance={toggleAllowance}
         balancesLoading={balancesLoading}
         redirectToTradingPage={redirectToTradingPage}
         isHelpModalOpen={isHelpModalOpen}

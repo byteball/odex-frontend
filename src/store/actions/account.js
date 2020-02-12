@@ -3,22 +3,14 @@ import type { UpdateAccountAction } from '../../types/account';
 
 const actionTypes = {
   updateAccount: 'account/UPDATE_ACCOUNT',
-  updateCurrentBlock: 'account/UPDATE_CURRENT_BLOCK',
-  updateCurrentProvider: 'account/UPDATE_CURRENT_PROVIDER',
 };
 
-export function updateAccount(address: string, privateKey: string): UpdateAccountAction {
+export function updateAccount(address: string): UpdateAccountAction {
   return {
     type: actionTypes.updateAccount,
-    payload: { address, privateKey },
+    payload: { address },
   };
 }
 
-export function updateCurrentProvider(provider: string) {
-  return {
-    type: actionTypes.updateCurrentProvider,
-    payload: { provider },
-  };
-}
 
 export default actionTypes;

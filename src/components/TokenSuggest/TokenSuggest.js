@@ -46,7 +46,7 @@ const renderItem = (item, { handleClick, modifiers }) => {
     <MenuItem
       active={modifiers.active}
       disabled={modifiers.disabled}
-      label={item.address}
+      label={item.asset}
       key={item.rank}
       onClick={handleClick}
       text={`${item.rank}. ${item.symbol}`}
@@ -57,7 +57,7 @@ const renderItem = (item, { handleClick, modifiers }) => {
 const renderInputValue = item => item.symbol;
 
 const filterItem = (query, item) => {
-  return `${item.symbol.toLowerCase()} ${item.address.toLowerCase()}`.indexOf(query.toLowerCase()) >= 0;
+  return `${item.symbol.toLowerCase()} ${item.asset.toLowerCase()}`.indexOf(query.toLowerCase()) >= 0;
 };
 
 export default TokenSelect;

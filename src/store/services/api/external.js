@@ -26,9 +26,6 @@ export const fetchExchangeRates = async (baseCurrencies, quoteCurrencies) => {
 
     const exchangeRates = await response.json()
 
-    //the WETH exchange rate is not handled by the cryptocompare API
-    if (exchangeRates["ETH"]) exchangeRates["WETH"] = exchangeRates["ETH"]
-    
     return exchangeRates
 }
 

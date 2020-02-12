@@ -5,7 +5,7 @@ import Layout from './Layout'
 import LoginPage from './LoginPage'
 import FaqPage from './FaqPage';
 import WalletPage from './WalletPage'
-import SettingsPage from './SettingsPage'
+//import SettingsPage from './SettingsPage'
 import LogoutPage from './LogoutPage'
 import TradingPage from './TradingPage'
 import MarketsPage from './MarketsPage'
@@ -32,10 +32,10 @@ const App = () => {
               <Route path="/login" component={LoginPage} />
               <Route path="/markets" component={MarketsPage} />
               <Route path="/wallet" component={WalletPage} />
-              <Route path="/settings" component={SettingsPage} />
+              {/*<Route path="/settings" component={SettingsPage} />*/}
               <Route path="/logout" component={LogoutPage} />
               <Route path="/trade" component={TradingPage} />
-              <Redirect to="/login" />
+              <Redirect to="/trade" />
             </Switch>
           </Layout>
         </SocketController>

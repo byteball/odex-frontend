@@ -24,6 +24,7 @@ const configureStore = () => {
 
   store.subscribe(() => {
     saveState({
+      account: store.getState().account,
       tokens: store.getState().tokens,
       tokenPairs: store.getState().tokenPairs
     })

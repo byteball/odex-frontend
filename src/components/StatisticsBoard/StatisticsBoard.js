@@ -16,6 +16,8 @@ type Props = {
     tradeSuccessRatio: number,
     totalBuyAmount: number,
     totalSellAmount: number,
+    totalBuyValue: number,
+    totalSellValue: number,
     numberOfTrades: number,
     numberOfOrders: number,
     numberOfBuys: number,

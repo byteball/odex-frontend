@@ -24,7 +24,6 @@ storiesOf('SmallSmallTxNotification', module)
             hash={receipt.hash}
             receipt={receipt}
             status="valid"
-            gas={21000}
           />
         </Card>
       </div>

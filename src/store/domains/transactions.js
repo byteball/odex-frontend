@@ -1,12 +1,12 @@
 // @flow 
-import type { Tx, Txs, TransactionState } from '../../types/tx'
+import type { Tx, Txs, TransactionState } from '../../types/transactions'
 
 const initialState = {
     byHash: {}
 }
 
 export const initialized = () => {
-    const event = (state: TxState = initialState) => state
+    const event = (state: TransactionState = initialState) => state
     return event
 }
 
@@ -49,7 +49,7 @@ export function txsUpdated(txs: Tx) {
 }
 
 export const txsDeleted = (txHashes: Array<string>) => {
-  const event = (state: OrdersState) => ({
+  const event = (state: TransactionState) => ({
     ...state,
     byHash: Object.keys(state.byHash)
       .filter(key => txHashes.indexOf(key) === -1)
@@ -68,7 +68,7 @@ export default function txDomain(state: TransactionState) {
             let txs = Object.values(state.byHash)
             
             txs = txs.slice(Math.max(txs.length - n, 0))
-            txs = txs.reverse()
+            txs = (txs: Txs).reverse()
 
             return txs
         }

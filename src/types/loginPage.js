@@ -4,34 +4,13 @@ export type LoginPageState = {
   +error: string,
 };
 
-export type LoginWithWallet = {
-  wallet: string,
-  encryptedWallet: string,
-  storeWallet: boolean,
-  storePrivateKey: boolean,
-};
 
 export type LoginPageEvent = any => LoginPageState => LoginPageState;
 
-export type CreateWalletAction = {
-  type: 'loginPage/CREATE_WALLET',
-  payload: { address: string, encryptedWallet: string },
-};
-
-export type LoginWithMetamaskAction = {
-  type: 'loginPage/LOGIN_WITH_METAMASK',
+export type loginWithAppAction = {
+  type: 'loginPage/LOGIN_WITH_APP',
   payload: { address: string },
 };
-
-export type LoginWithWalletAction = {
-  type: 'loginPage/LOGIN_WITH_WALLET',
-  payload: { address: string },
-};
-
-export type LoginWithLedgerAction = {
-  type: 'loginPage/LOGIN_WITH_LEDGER',
-  payload: { address: string }
-}
 
 export type LoginErrorAction = {
   type: 'loginPage/LOGIN_ERROR',
@@ -43,9 +22,6 @@ export type RequestLoginAction = {
 };
 
 export type LoginPageAction =
-  | CreateWalletAction
   | LoginErrorAction
   | RequestLoginAction
-  | LoginWithWalletAction
-  | LoginWithMetamaskAction
-  | LoginWithLedgerAction
+  | loginWithAppAction

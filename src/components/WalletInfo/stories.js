@@ -17,15 +17,14 @@ storiesOf('Wallet Info', module)
       <Card className="bp3-dark">
         <WalletInfo 
             accountAddress="0x1" 
-            etherBalance="0x2" 
-            gasPrice={10000} 
-            gas={100} 
+            gbyteBalance={20} 
             listedTokens={["0x3", "0x4"]}
             userTokens={["0x3", "0x4"]}
             registeredTokens={["0x3", "0x4"]}
-            detectContract={action("detectContract")}
+            detectToken={action("detectToken")}
             addToken={action("addToken")}
             registerToken={action("registerToken")}
+            recentTransactions={[]}
         />
       </Card>
     ))
@@ -37,27 +36,26 @@ storiesOf('Wallet Info', module)
         <WalletInfoRenderer
             isModalOpen={false}
             accountAddress="0x1"
-            balance="0x2"
-            accountEtherscanUrl=""
-            gasPrice={10000}
-            gas={100}
+            balance={20}
+            accountExplorerUrl=""
             selectedTab="Portfolio"
-            tokenAddress=""
+            asset=""
             tokenSymbol=""
-            tokenEtherscanUrl=""
+            tokenExplorerUrl=""
             recentTransactions={[]}
             addTokenPending={false}
             registerTokenPending={false}
-            tokenAddressStatus=""
+            assetStatus=""
             tokenIsAdded={false}
             tokenIsListed={false}
             tokenIsRegistered={false}
             handleChangeTab={action("handleChangeTab")}
-            handleChangeTokenAddress={action("handleChangeTokenAddress")}
-            handleDetectContract={action("handleDetectContract")}
+            handleChangeAsset={action("handleChangeAsset")}
+            handleDetectToken={action("handleDetectToken")}
             handleModalClose={action("handleModalClose")}
             handleAddToken={action("handleAddToken")}
             handleRegisterToken={action("handleRegisterToken")}
+            recentTransactions={[]}
         />
       </Card>
     ))
@@ -70,22 +68,24 @@ storiesOf('Wallet Info', module)
             isModalOpen={false}
             handleModalClose={action("handleModalClose")}
             accountAddress="0x1"
-            balance="0x2"
-            gasPrice={10000} 
-            gas={100} 
+            balance={20}
             handleChangeTab={action("handleChangeTab")}
             selectedTab="Add Token"
-            tokenAddress=""
+            asset=""
             tokenSymbol=""
-            tokenEtherscanUrl=""
-            handleChangeTokenAddress={action("handleChangeTokenAddress")}
-            handleDetectContract={action("handleDetectContract")}
+            tokenExplorerUrl=""
+            handleChangeAsset={action("handleChangeAsset")}
+            handleDetectToken={action("handleDetectToken")}
             handleAddToken={action("handleAddToken")}
             handleRegisterToken={action("handleRegisterToken")}
-            tokenAddressStatus=""
+            assetStatus=""
             tokenIsAdded={false}
             tokenIsListed={false}
             tokenIsRegistered={false}
+            recentTransactions={[]}
+            accountExplorerUrl=""
+            addTokenPending={false}
+            registerTokenPending={false}
         />
       </Card>
     ))
@@ -98,22 +98,24 @@ storiesOf('Wallet Info', module)
             isModalOpen={false}
             handleModalClose={action("handleModalClose")}
             accountAddress="0x1"
-            balance="0x2"
-            gasPrice={10000}
-            gas={100} 
+            balance={20}
             handleChangeTab={action("handleChangeTab")}
             selectedTab="Add Token"
-            tokenAddress="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+            asset="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
             tokenSymbol="USDC"
-            tokenEtherscanUrl="https://etherscan.io/token/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
-            handleChangeTokenAddress={action("handleChangeTokenAddress")}
-            handleDetectContract={action("handleDetectContract")}
+            tokenExplorerUrl="https://etherscan.io/token/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+            handleChangeAsset={action("handleChangeAsset")}
+            handleDetectToken={action("handleDetectToken")}
             handleAddToken={action("handleAddToken")}
             handleRegisterToken={action("handleRegisterToken")}
-            tokenAddressStatus=""
+            assetStatus=""
             tokenIsAdded={false}
             tokenIsListed={false}
             tokenIsRegistered={false}
+            recentTransactions={[]}
+            accountExplorerUrl=""
+            addTokenPending={false}
+            registerTokenPending={false}
         />
       </Card>
     ))
@@ -126,22 +128,24 @@ storiesOf('Wallet Info', module)
             isModalOpen={false}
             handleModalClose={action("handleModalClose")}
             accountAddress="0x1"
-            balance="0x2"
-            gasPrice={10000}
-            gas={100} 
+            balance={20}
             handleChangeTab={action("handleChangeTab")}
             selectedTab="Add Token"
-            tokenAddress="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+            asset="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
             tokenSymbol="USDC"
-            tokenEtherscanUrl="https://etherscan.io/token/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
-            handleChangeTokenAddress={action("handleChangeTokenAddress")}
-            handleDetectContract={action("handleDetectContract")}
+            tokenExplorerUrl="https://etherscan.io/token/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+            handleChangeAsset={action("handleChangeAsset")}
+            handleDetectToken={action("handleDetectToken")}
             handleAddToken={action("handleAddToken")}
             handleRegisterToken={action("handleRegisterToken")}
-            tokenAddressStatus=""
+            assetStatus=""
             tokenIsAdded={true}
             tokenIsListed={true}
             tokenIsRegistered={true}
+            recentTransactions={[]}
+            accountExplorerUrl=""
+            addTokenPending={false}
+            registerTokenPending={false}
         />
       </Card>
     ))
@@ -154,22 +158,24 @@ storiesOf('Wallet Info', module)
             isModalOpen={false}
             handleModalClose={action("handleModalClose")}
             accountAddress="0x1"
-            balance="0x2"
-            gasPrice={10000}
-            gas={100} 
+            balance={20}
             handleChangeTab={action("handleChangeTab")}
             selectedTab="Add Token"
-            tokenAddress="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+            asset="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
             tokenSymbol="USDC"
-            tokenEtherscanUrl="https://etherscan.io/token/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
-            handleChangeTokenAddress={action("handleChangeTokenAddress")}
-            handleDetectContract={action("handleDetectContract")}
+            tokenExplorerUrl="https://etherscan.io/token/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+            handleChangeAsset={action("handleChangeAsset")}
+            handleDetectToken={action("handleDetectToken")}
             handleAddToken={action("handleAddToken")}
             handleRegisterToken={action("handleRegisterToken")}
-            tokenAddressStatus=""
+            assetStatus=""
             tokenIsAdded={false}
             tokenIsListed={false}
             tokenIsRegistered={true}
+            recentTransactions={[]}
+            accountExplorerUrl=""
+            addTokenPending={false}
+            registerTokenPending={false}
         />
       </Card>
     ))
@@ -182,22 +188,24 @@ storiesOf('Wallet Info', module)
             isModalOpen={false}
             handleModalClose={action("handleModalClose")}
             accountAddress="0x1"
-            balance="0x2"
-            gasPrice={10000}
-            gas={100} 
+            balance={20}
             handleChangeTab={action("handleChangeTab")}
             selectedTab="Add Token"
-            tokenAddress="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+            asset="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
             tokenSymbol="USDC"
-            tokenEtherscanUrl="https://etherscan.io/token/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
-            handleChangeTokenAddress={action("handleChangeTokenAddress")}
-            handleDetectContract={action("handleDetectContract")}
+            tokenExplorerUrl="https://etherscan.io/token/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+            handleChangeAsset={action("handleChangeAsset")}
+            handleDetectToken={action("handleDetectToken")}
             handleAddToken={action("handleAddToken")}
             handleRegisterToken={action("handleRegisterToken")}
-            tokenAddressStatus=""
+            assetStatus=""
             tokenIsAdded={false}
             tokenIsListed={false}
             tokenIsRegistered={false}
+            recentTransactions={[]}
+            accountExplorerUrl=""
+            addTokenPending={false}
+            registerTokenPending={false}
         />
       </Card>
     ))
@@ -210,22 +218,24 @@ storiesOf('Wallet Info', module)
             isModalOpen={false}
             handleModalClose={action("handleModalClose")}
             accountAddress="0x1"
-            balance="0x2"
-            gasPrice={10000}
-            gas={100} 
+            balance={20}
             handleChangeTab={action("handleChangeTab")}
             selectedTab="Add Token"
-            tokenAddress="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+            asset="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
             tokenSymbol="USDC"
-            tokenEtherscanUrl="https://etherscan.io/token/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
-            handleChangeTokenAddress={action("handleChangeTokenAddress")}
-            handleDetectContract={action("handleDetectContract")}
+            tokenExplorerUrl="https://etherscan.io/token/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+            handleChangeAsset={action("handleChangeAsset")}
+            handleDetectToken={action("handleDetectToken")}
             handleAddToken={action("handleAddToken")}
             handleRegisterToken={action("handleRegisterToken")}
-            tokenAddressStatus=""
+            assetStatus=""
             tokenIsAdded={true}
             tokenIsRegistered={false}
             tokenIsListed={false}
+            recentTransactions={[]}
+            accountExplorerUrl=""
+            addTokenPending={false}
+            registerTokenPending={false}
         />
       </Card>
     ))
@@ -238,22 +248,24 @@ storiesOf('Wallet Info', module)
             isModalOpen={false}
             handleModalClose={action("handleModalClose")}
             accountAddress="0x1"
-            balance="0x2"
-            gasPrice={10000}
-            gas={100} 
+            balance={20}
             handleChangeTab={action("handleChangeTab")}
             selectedTab="Add Token"
-            tokenAddress="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+            asset="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
             tokenSymbol="USDC"
-            tokenEtherscanUrl="https://etherscan.io/token/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
-            handleChangeTokenAddress={action("handleChangeTokenAddress")}
-            handleDetectContract={action("handleDetectContract")}
+            tokenExplorerUrl="https://etherscan.io/token/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+            handleChangeAsset={action("handleChangeAsset")}
+            handleDetectToken={action("handleDetectToken")}
             handleAddToken={action("handleAddToken")}
             handleRegisterToken={action("handleRegisterToken")}
-            tokenAddressStatus=""
+            assetStatus=""
             tokenIsAdded={false}
             tokenIsRegistered={true}
             tokenIsListed={false}
+            recentTransactions={[]}
+            accountExplorerUrl=""
+            addTokenPending={false}
+            registerTokenPending={false}
         />
       </Card>
     ))

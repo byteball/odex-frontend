@@ -3,5 +3,5 @@ import { shallow } from 'enzyme';
 import Layout from './Layout';
 
 it('renders without crashing', () => {
-  shallow(<Layout createProvider={jest.fn()} />);
+  shallow(<Layout queryAppData={jest.fn()} />);
 });

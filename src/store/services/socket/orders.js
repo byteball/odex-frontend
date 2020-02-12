@@ -31,3 +31,19 @@ export const sendNewOrderCancelMessage = orderCancelPayload => {
 
   window.socket.send(message)
 }
+
+export const sendAddressMessage = address => {
+  if (!window.socket) throw new Error('Socket connection not established')
+
+  let message = JSON.stringify({
+    channel: 'orders',
+    event: {
+      type: 'ADDRESS',
+      payload: address
+    }
+  })
+
+  console.log(message)
+
+  window.socket.send(message)
+}

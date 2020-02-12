@@ -1,8 +1,7 @@
 //@flow
 
-import { utils } from 'ethers'
 import distanceInWordsStrict from 'date-fns/distance_in_words_strict'
-import type { Token, TokenPair, TokenPairData } from '../types/Token'
+import type { Token, TokenPair, TokenPairData } from '../types/tokens'
 
 export const rand = (min: number, max: number, decimals: number = 4) => {
   return (Math.random() * (max - min) + min).toFixed(decimals)
@@ -39,7 +38,7 @@ export const replace =(arr: Array<any>, element: any, newElement: any) => {
 }
 
 
-export const convertPricepointToPrice = (n: any, pricePointMultiplier: number = 1e9, decimals: number = 6) =>
+export const convertPricepointToPrice = (n: any, pricePointMultiplier: number = 1, decimals: number = 6) =>
   Math.round((n / pricePointMultiplier) * Math.pow(10, decimals)) / Math.pow(10, decimals)
 
 export const sortTable = (table: *, column: *, order: string = 'asc') => {
@@ -67,84 +66,31 @@ export const isJson = (text: *) => {
 }
 
 export const isNotNull = (elem: *) => {
-  return (elem !== null && elem !== NaN)
+  return (elem !== null && !isNaN(elem))
 }
 
 export const arrayIsNotEmpty = (arr: *) => {
   return (
-    typeof arr != "undefined"
+    typeof arr !== "undefined"
     && arr != null
     && arr.length != null
     && arr.length > 0)
 }
 
-export const computeTokenAmount = (amount: Object, tokenDecimals: number) => {
-  return utils.bigNumberify(amount).div(utils.bigNumberify(10).pow(tokenDecimals)).toString()
-}
 
-export const computePricepoint = ({ price, priceMultiplier, quoteMultiplier, precisionMultiplier }: *) => {
-    let a = price * precisionMultiplier
-    let b = a.toFixed(0)
-    let c = utils.bigNumberify(b)
-    let d = c.mul(priceMultiplier).mul(quoteMultiplier).div(precisionMultiplier)
 
-    return d
-} 
 
-export const computeAmountPoints = ({ amount, baseMultiplier, precisionMultiplier }: *) => {
-    let a = amount * precisionMultiplier
-    let b = a.toFixed(0)
-    let c = utils.bigNumberify(b)
-    let d = c.mul(baseMultiplier).div(precisionMultiplier)
 
-    return d
-}
-
-export const computePairMultiplier = ({ priceMultiplier, baseMultiplier, quoteMultiplier }: *) => {  
-    return priceMultiplier.mul(baseMultiplier)
-}
-
-export const computeChange = ( open: string, close: string ) => {
-  let bigOpen = utils.bigNumberify(open)
-  let bigClose = utils.bigNumberify(close)
-  let percentMultiplier = utils.bigNumberify(100)
-
-  if (bigOpen.eq(bigClose)) return 0
-
-  let change = ((bigClose.sub(bigOpen)).mul(percentMultiplier)).div(bigOpen)
-  let percentChange = Number(change.toString()) / 100
-  return percentChange
+export const computeChange = ( open: number, close: number ) => {
+  if (open === close) return 0
+  return (close - open) / open
 }
 
 
-export const max = (a: Object, b: Object) => {
-  let bigA = utils.bigNumberify(a)
-  let bigB = utils.bigNumberify(b)
-
-  if (bigA.gte(bigB)) {
-    return bigA
-  } else {
-    return bigB
-  }
-}
-
-export const min = (a: Object, b: Object) => {
-  let bigA = utils.bigNumberify(a)
-  let bigB = utils.bigNumberify(b)
-
-  if (bigA.lte(bigB)) {
-    return bigA
-  } else {
-    return bigB
-  }
-}
 
 export const minOrderAmount = (makeFee: string, takeFee: string) => {
-  let bigMakeFee = utils.bigNumberify(makeFee)
-  let bigTakeFee = utils.bigNumberify(takeFee)
-  let minAmount = (bigMakeFee.mul(2)).add(bigTakeFee.mul(2))
   
-  return minAmount
+  return 0
 }
 
 export const getExchangeRate = (currency: string, token: Token) => {
@@ -161,29 +107,13 @@ export const getExchangeRate = (currency: string, token: Token) => {
 }
 
 
-// parseWETHToken replaces the "WETH" symbol by the more commonly understood "ETH" symbol.
-// On the frontend, we display ETH instead of WETH for a better UX.
-export const parseWETHToken = (symbol: string) => {
-  return symbol === "WETH" ? "ETH" : symbol
-}
 
-// parseWETHPair replaces the "WETH" symbol by the more commonly understood "ETH" symbol.
-// On the frontend, we display ETH instead of WETH for a better UX.
-export const parseWETHPair = (tokenPairSymbol: string) => {
-  let baseSymbol = getBaseToken(tokenPairSymbol)
-  let quoteSymbol = getQuoteToken(tokenPairSymbol)
-  
-  baseSymbol = baseSymbol === 'WETH' ? 'ETH' : baseSymbol
-  quoteSymbol = quoteSymbol === 'WETH' ? 'ETH' : quoteSymbol
-
-  return `${baseSymbol}/${quoteSymbol}`
-}
 
 export const parseTokenPairArray = (data: Array<TokenPair & TokenPairData>) => {
   return data.map(rawPair => {
-    let pair = parseWETHPair(rawPair.pair)
-    let baseTokenSymbol = parseWETHToken(rawPair.baseTokenSymbol)
-    let quoteTokenSymbol = parseWETHToken(rawPair.quoteTokenSymbol)
+    let pair = rawPair.pair
+    let baseTokenSymbol = rawPair.baseTokenSymbol
+    let quoteTokenSymbol = rawPair.quoteTokenSymbol
     
     return {
       ...rawPair,
@@ -194,20 +124,8 @@ export const parseTokenPairArray = (data: Array<TokenPair & TokenPairData>) => {
   })
 }
 
-export const parseETHtoWETHToken = (symbol: string) => {
-  return symbol === "ETH" ? "WETH" : symbol
-}
 
 
-export const parseToWETHPair = (tokenPairSymbol: string) => {
-  let baseSymbol = getBaseToken(tokenPairSymbol)
-  let quoteSymbol = getQuoteToken(tokenPairSymbol)
-
-  baseSymbol = baseSymbol === 'ETH' ? 'WETH' : baseSymbol
-  quoteSymbol = quoteSymbol === 'ETH' ? 'WETH' : quoteSymbol
-
-  return `${baseSymbol}/${quoteSymbol}`
-}
 
 export const getPairSymbol = (baseTokenSymbol: string, quoteTokenSymbol: string) => {
   return `${baseTokenSymbol}/${quoteTokenSymbol}`;

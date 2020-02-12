@@ -24,6 +24,7 @@ import {
   Collapse
 } from '@blueprintjs/core';
 
+import type { Node } from 'react'
 import type { Trade } from '../../types/trades';
 import type { TokenPair } from '../../types/tokens';
 import { AutoSizer } from 'react-virtualized'
@@ -35,10 +36,10 @@ type Props = {
   trades: Array<Trade>,
   userTrades: Array<Trade>,
   toggleCollapse: (SyntheticEvent<>) => void,
-  openEtherscanLink: string => void,
+  openExplorerLink: string => void,
   isOpen: boolean,
   expand: SyntheticEvent<> => void,
-  onContextMenu: void => void,
+  onContextMenu: void => Node,
   authenticated: boolean
 };
 
@@ -51,7 +52,7 @@ const TradesTableRenderer = (props: Props) => {
     trades, 
     userTrades, 
     toggleCollapse,
-    openEtherscanLink,
+    openExplorerLink,
     expand,
     onContextMenu,
     authenticated
@@ -102,7 +103,7 @@ const TradesTableRenderer = (props: Props) => {
                     panel={
                       <MarketTradesPanel 
                         trades={trades} 
-                        openEtherscanLink={openEtherscanLink}
+                        openExplorerLink={openExplorerLink}
                         width={width}
                       />
                     }
@@ -113,7 +114,7 @@ const TradesTableRenderer = (props: Props) => {
                     panel={
                       <UserTradesPanel 
                         trades={userTrades}
-                        openEtherscanLink={openEtherscanLink}
+                        openExplorerLink={openExplorerLink}
                         width={width}
                         authenticated={authenticated}
                       />
@@ -129,9 +130,10 @@ const TradesTableRenderer = (props: Props) => {
 };
 
 const MarketTradesPanel = (props: *) => {
-  const { trades, openEtherscanLink, width } = props;
+  let { trades, openExplorerLink, width } = props;
 
   if (!trades) return <Loading />
+  trades = trades.filter(trade => ["SUCCESS", "COMMITTED"].includes(trade.status))
   if (trades.length === 0) return <CenteredMessage message="No trades for this token pair" />
 
   return (
@@ -149,12 +151,12 @@ const MarketTradesPanel = (props: *) => {
           </HeadingRow>
         </ListHeader>
         <ListBody>
-        <ReactCSSTransitionGroup transitionName="flash-buy">
+        <ReactCSSTransitionGroup transitionName="flash-buy" transitionEnterTimeout={500} transitionLeaveTimeout={500}>
           {trades.map((trade, index) => (
             <Row 
               color={trade.change === 'positive' ? Colors.BUY_MUTED : Colors.SELL_MUTED} 
               key={trade.hash}
-              onClick={() => openEtherscanLink(trade.txHash)}
+              onClick={() => openExplorerLink(trade.txHash)}
               >
                 <Cell color={trade.change === 'positive' ? Colors.BUY : Colors.SELL}>
                 <Icon icon={trade.change === 'positive' ? 'chevron-up' : 'chevron-down'} iconSize={14}/>
@@ -186,10 +188,11 @@ const MarketTradesPanel = (props: *) => {
 };
 
 const UserTradesPanel = (props: *) => {
-  const { trades, width, authenticated } = props;
+  let { trades, width, authenticated } = props;
 
   if (!trades) return <Loading />
   if (!authenticated) return <CenteredMessage message="Not logged in" />
+  trades = trades.filter(trade => ["SUCCESS", "COMMITTED"].includes(trade.status))
   if (trades.length === 0) return <CenteredMessage message="No trades for this token pair" />
 
   return (
@@ -205,7 +208,7 @@ const UserTradesPanel = (props: *) => {
         </HeadingRow>
       </ListHeader>
       <ListBody>
-      <ReactCSSTransitionGroup transitionName="flash-buy">
+      <ReactCSSTransitionGroup transitionName="flash-buy" transitionEnterTimeout={500} transitionLeaveTimeout={500}>
         {trades.map((trade, index) => (
           <Row color={trade.status === 'EXECUTED' ? Colors.BUY_MUTED : Colors.SELL_MUTED} key={trade.hash}>
             <Cell>

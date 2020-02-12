@@ -10,38 +10,28 @@ import {
 } from '../domains'
 
 import { quoteTokens } from '../../config/quotes'
-import { getCurrentBlock } from '../services/wallet'
-import { ALLOWANCE_THRESHOLD } from '../../utils/constants'
 import { parseQueryAccountDataError } from '../../config/errors'
 import { pricedTokens } from '../../config'
-
-import { 
-  parseWETHPair,
-  parseETHtoWETHToken,
-  parseToWETHPair
-} from '../../utils/helpers'
+import { EXCHANGE_ADDRESS } from '../../config/environment.js'
 
 import type { State, ThunkAction } from '../../types'
 
 export default function walletPageSelector(state: State) {
   let accountBalancesDomain = getAccountBalancesDomain(state)
   let tokenDomain = getTokenDomain(state)
-  let { authenticated, currentBlock, showHelpModal, referenceCurrency } = getAccountDomain(state)
+  let { authenticated, showHelpModal, referenceCurrency } = getAccountDomain(state)
 
   let tokens = tokenDomain.tokens()
   let quoteTokens = tokenDomain.quoteTokens()
   let baseTokens = tokenDomain.baseTokens()
-  let tokenData = accountBalancesDomain.getBalancesAndAllowances(tokens, referenceCurrency)
+  let tokenData = accountBalancesDomain.getBalances(tokens, referenceCurrency)
 
   return {
     balancesLoading: accountBalancesDomain.loading(),
-    WETHBalance: accountBalancesDomain.tokenBalance('WETH'),
-    WETHAllowance: accountBalancesDomain.tokenAllowance('WETH'),
     tokenData: tokenData,
     quoteTokens: quoteTokens,
     baseTokens: baseTokens,
     authenticated: authenticated,
-    currentBlock: currentBlock,
     showHelpModal: showHelpModal,
     connected: true,
     referenceCurrency: referenceCurrency.symbol,
@@ -53,27 +43,29 @@ export function queryAccountData(): ThunkAction {
     const state = getState()
     const { address: accountAddress } = getAccountDomain(state)
     const savedTokens = getTokenDomain(state).tokens()
+    const tokensBySymbol = getTokenDomain(state).bySymbol()
 
 
     let balances = []
-    let allowances = []
 
     try {
       let [
-        currentBlock,
         tokens,
         pairs,
-        exchangeAddress,
-        txs
+        //exchangeAddress,
+        operatorAddress,
+        assocBalances,
+        //txs
       ] = await Promise.all([
-        getCurrentBlock(),
         api.getTokens(),
         api.fetchPairs(),
-        api.getExchangeAddress(),
-        provider.queryTransactionHistory(accountAddress)
+        //api.getExchangeAddress(),
+        api.getOperatorAddress(),
+        api.getBalances(accountAddress),
+        //provider.queryTransactionHistory(accountAddress)
       ])
-
-      if (!currentBlock) throw new Error('')
+      let exchangeAddress = EXCHANGE_ADDRESS;
+      let txs = [];
 
       tokens = [ ...new Set([ ...savedTokens, ...tokens ])]
       // let tokenSymbols = tokens.map(token => token.symbol)
@@ -91,36 +83,16 @@ export function queryAccountData(): ThunkAction {
         }
       })
 
-      dispatch(actionCreators.updateWalletPageData(currentBlock, tokens, pairs, exchangeAddress, txs))
+      dispatch(actionCreators.updateWalletPageData(tokens, pairs, exchangeAddress, operatorAddress, txs))
 
-      //we remove the ETH 'token' because the process to obtain balances for ETH and others tokens is different
-      tokens = tokens.filter(token => token.symbol !== 'ETH')
-
-      let [
-        etherBalance,
-        tokenBalanceResult,
-        tokenAllowanceResult,
-      ] = await Promise.all([
-        provider.queryEtherBalance(accountAddress),
-        provider.queryTokenBalances(accountAddress, tokens),
-        provider.queryExchangeTokenAllowances(accountAddress, tokens)
-      ])
-
-      balances.push(etherBalance)
-
-      let { errors: tokenBalanceErrors, tokenBalances } = tokenBalanceResult
-      balances.concat(tokenBalances)
-      let { errors: tokenAllowanceErrors, tokenAllowances } = tokenAllowanceResult
-      allowances = tokenAllowances
-      balances = [etherBalance].concat(tokenBalances)
+      for (var symbol in assocBalances)
+        balances.push({balance: assocBalances[symbol] / Math.pow(10, tokensBySymbol[symbol].decimals), symbol});
       
       // TODO handle unsubscriptions
+      /*
       provider.subscribeTokenBalances(accountAddress, tokens, balance =>
         dispatch(actionCreators.updateBalance(balance)))
-      provider.subscribeEtherBalance(accountAddress, balance =>
-        dispatch(actionCreators.updateBalance({ symbol: 'ETH', balance: balance })))
-      provider.subscribeTokenAllowances(accountAddress, tokens, allowance => {
-        dispatch(actionCreators.updateAllowance(allowance))})
+      */
 
     } catch (e) {
       console.log(e)
@@ -128,7 +100,6 @@ export function queryAccountData(): ThunkAction {
       dispatch(notifierActionCreators.addErrorNotification({ message }))
     } finally {
       dispatch(actionCreators.updateBalances(balances))
-      dispatch(actionCreators.updateAllowances(allowances))
     }
   }
 }
@@ -137,14 +108,13 @@ export function redirectToTradingPage(symbol: string): ThunkAction {
   return async (dispatch, getState, { mixpanel }) => {
     mixpanel.track('wallet-page/redirect-to-trading-page')
 
-    let tradedTokenSymbol = parseETHtoWETHToken(symbol)
     let quoteTokenSymbols = quoteTokens.map(token => token.symbol)
-    let quoteTokenIndex = quoteTokenSymbols.indexOf(tradedTokenSymbol)
+    let quoteTokenIndex = quoteTokenSymbols.indexOf(symbol)
     let baseTokenSymbol, quoteTokenSymbol
 
     if (quoteTokenIndex === 0) {
-      quoteTokenSymbol = quoteTokens[0].symbol
-      baseTokenSymbol = quoteTokens[1].symbol
+      quoteTokenSymbol = quoteTokens[1].symbol
+      baseTokenSymbol = quoteTokens[0].symbol
     } else {
       quoteTokenSymbol = quoteTokens[0].symbol
       baseTokenSymbol = symbol      
@@ -154,68 +124,5 @@ export function redirectToTradingPage(symbol: string): ThunkAction {
 
     dispatch(actionCreators.updateCurrentPair(pair))
     dispatch(push('/trade'))
-  }
-}
-
-export function toggleAllowance(symbol: string): ThunkAction {
-  return async (dispatch, getState, { txProvider, mixpanel }) => {
-    mixpanel.track('wallet-page/toggle-allowance')
-
-    try {
-      const state = getState()
-      const tokens = getTokenDomain(state).bySymbol()
-      const isAllowed = getAccountBalancesDomain(state).isAllowed(symbol)
-      const isPending = getAccountBalancesDomain(state).isAllowancePending(symbol)
-      const tokenContractAddress = tokens[symbol].address
-      const txType = isAllowed ? 'Token Locked' : 'Token Unlocked'
-
-      if (isPending) throw new Error('Trading approval pending')
-
-      const lockTxSentHandler = (txHash) => {
-        let tx = { type: txType, hash: txHash, time: Date.now(), status: 'PENDING' }
-        dispatch(actionCreators.lockToken(symbol, txHash, tx))
-      }
-
-      const unlockTxSentHandler = (txHash) => {
-        let tx = { type: txType, hash: txHash, time: Date.now(), status: 'PENDING' }
-        dispatch(actionCreators.unlockToken(symbol, txHash, tx))
-      }
-
-      const lockTxConfirmedHandler = (txConfirmed, txHash) => {
-        if (txConfirmed) {
-          let tx = { type: txType, hash: txHash, time: Date.now(), status: 'CONFIRMED' }
-          dispatch(actionCreators.confirmLockToken(symbol, txHash, tx))
-
-        } else {
-          let tx = { type: txType, hash: txHash, time: Date.now(), status: 'ERROR' }
-          let errorMessage = `${symbol} Approval Failed. Please try again.`
-          dispatch(actionCreators.errorLockToken(symbol, txHash, tx, errorMessage))
-        }
-      }
-
-      const unlockTxConfirmedHandler = (txConfirmed, txHash) => {      
-        if (txConfirmed) {
-          let tx = { type: txType, hash: txHash, time: Date.now(), status: 'CONFIRMED' }
-          dispatch(actionCreators.confirmUnlockToken(symbol, txHash, tx))
-
-        } else {
-          let tx = { type: txType, hash: txHash, time: Date.now(), status: 'ERROR' }
-          let message = `${symbol} Allowance Removal Failed. Please try again.`
-          dispatch(actionCreators.errorUnlockToken(symbol, txHash, tx, message))
-        }
-      }
-
-      if (isAllowed) {
-        await txProvider.updateExchangeAllowance(tokenContractAddress, 0, lockTxConfirmedHandler, lockTxSentHandler)
-      } else {
-        await txProvider.updateExchangeAllowance(tokenContractAddress, ALLOWANCE_THRESHOLD, unlockTxConfirmedHandler, unlockTxSentHandler)
-      }
-      
-    } catch (e) {
-      console.log(e)
-      if (e.message === 'Trading approval pending') {
-        dispatch(notifierActionCreators.addErrorNotification({ message: 'Trading approval pending' }))
-      }
-    }
   }
 }

@@ -15,23 +15,20 @@ import { Responsive } from 'react-grid-layout'
 
 const ResponsiveReactGridLayout = Responsive
 
+type Layout = Array<Object>
+type LayoutMap = { [string]: Layout }
+
 type Props = {
   authenticated: boolean,
   isConnected: boolean,
   isInitiated: boolean,
   balancesLoading: boolean,
-  baseTokenBalance: string,
-  quoteTokenBalance: string,
-  baseTokenAllowance: string,
-  quoteTokenAllowance: string,
+  baseTokenBalance: number,
+  quoteTokenBalance: number,
   baseTokenSymbol: string,
   quoteTokenSymbol: string,
-  pairIsAllowed: boolean,
   pairName: string,
   queryTradingPageData: () => void,
-  makeFee: string, 
-  takeFee: string,
-  toggleAllowances: (string, string) => void,
 }
 
 type State = {
@@ -42,9 +39,6 @@ type State = {
   collapsedItems: any,
   currentBreakpoint: string,
 }
-
-type Layout = Array<Object>
-type LayoutMap = { [string]: Layout }
 
 const defaultSizes = {
   'lg': {
@@ -147,51 +141,9 @@ class TradingPage extends React.PureComponent<Props, State> {
       intent: 'danger',
       message: 'Please authenticate to start trading'
     }),
-    quoteTokensLocked: () => {
-      const { baseTokenSymbol, quoteTokenSymbol } = this.props
-      
-    return {
-      title: `Unlock tokens to start trading`,
-      intent: 'danger',
-      message: (
-          <React.Fragment>
-            To start trading a currency pair, unlock trading for both tokens ({baseTokenSymbol} and {quoteTokenSymbol}).
-            Click <EmphasizedText onClick={() => this.props.toggleAllowances(baseTokenSymbol, quoteTokenSymbol)}>here</EmphasizedText> to unlock {baseTokenSymbol}/{quoteTokenSymbol}
-          </React.Fragment>
-        )
-      }
-    },
-    baseTokensLocked: () => {
-      const { 
-        baseTokenSymbol, 
-        quoteTokenSymbol, 
-      } = this.props
 
-      return {
-        title: `Unlock tokens to start trading`,
-        intent: 'danger',
-        message: (
-          <React.Fragment>
-            To start trading a currency pair, unlock trading for both tokens ({baseTokenSymbol} and {quoteTokenSymbol}).
-            Click <EmphasizedText onClick={() => this.props.toggleAllowances(baseTokenSymbol, quoteTokenSymbol)}>here</EmphasizedText> to unlock {baseTokenSymbol}/{quoteTokenSymbol}
-          </React.Fragment>
-        )
-      }
-    },
-    tokensLocked: () => {
-      const { baseTokenSymbol, quoteTokenSymbol } = this.props
 
-      return {
-        title: `Unlock tokens to start trading`,
-        intent: `danger`,
-        message: (
-            <React.Fragment>
-              To start trading a currency pair, unlock trading for both tokens ({baseTokenSymbol} and {quoteTokenSymbol}).
-              Click <EmphasizedText onClick={() => this.props.toggleAllowances(baseTokenSymbol, quoteTokenSymbol)}>here</EmphasizedText> to unlock {baseTokenSymbol}/{quoteTokenSymbol}
-            </React.Fragment>
-          )
-        }
-      }
+
     }
 
   componentDidMount() {
@@ -215,7 +167,6 @@ class TradingPage extends React.PureComponent<Props, State> {
       authenticated,
       baseTokenBalance,
       quoteTokenBalance,
-      pairIsAllowed,
      } = this.props
 
     if (!authenticated) {
@@ -227,10 +178,6 @@ class TradingPage extends React.PureComponent<Props, State> {
       return
     }
 
-    if (!pairIsAllowed) {
-      let calloutOptions = this.callouts.tokensLocked()
-      return this.setState({ calloutVisible: true, calloutOptions })
-    }
   }
 
   closeCallout = () => {

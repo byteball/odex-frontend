@@ -3,15 +3,11 @@ import React from 'react';
 import styled from 'styled-components'
 import { Redirect } from 'react-router-dom';
 
-import { getLocalStorageWallets } from '../../store/services/storage';
-import WalletSettingsForm from '../../components/WalletSettingsForm/index.js';
-import SignerSettingsForm from '../../components/SignerSettingsForm/index.js';
 import { Box } from '../../components/Common';
 
 import { Devices } from '../../components/Common/Variables'
 import { Spring } from 'react-spring'
 
-import type { Wallet } from '../../types/wallets'
 import type { Address } from '../../types/common'
 
 type Props = {
@@ -19,21 +15,13 @@ type Props = {
 }
 
 type State = {
-  wallets: Array<Wallet>
 }
 
 class SettingsPage extends React.PureComponent<Props, State> {
   state = {
-    wallets: getLocalStorageWallets()
-  };
-
-  removeWallet = (address: Address) => {
-    localStorage.removeItem(address);
-    this.setState({ wallets: getLocalStorageWallets() });
   };
 
   render() {
-    const { wallets } = this.state;
 
     if (!this.props.authenticated) {
       return (
@@ -45,12 +33,12 @@ class SettingsPage extends React.PureComponent<Props, State> {
       <Spring from={{ opacity: 0 }} to= {{ opacity: 1}} >
       {props =>
         <Box style={props}>
-          <WalletSettingsFormBox p={2} pt={3}>
+          {/* {<WalletSettingsFormBox p={2} pt={3}>
             <WalletSettingsForm wallets={wallets} removeWallet={this.removeWallet} />
           </WalletSettingsFormBox>
           <SignerSettingsFormBox p={2} pb={3}>
             <SignerSettingsForm />
-          </SignerSettingsFormBox>
+          </SignerSettingsFormBox>} */}
         </Box>
       }
       </Spring>

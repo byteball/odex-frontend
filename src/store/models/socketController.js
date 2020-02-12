@@ -1,20 +1,20 @@
 //@flow
-import { utils } from 'ethers'
 
 import * as appActionCreators from '../actions/app'
 import * as actionCreators from '../actions/socketController'
-import { getAccountDomain, getTokenPairsDomain } from '../domains'
-import { getSigner } from '../services/signer'
+import * as balanceActionCreators from '../actions/accountBalances';
+import { getAccountDomain, getTokenPairsDomain, getTokenDomain } from '../domains'
 import { parseOrder, parseTrade, parseTrades, parseOrderBookData, parseOHLCV } from '../../utils/parsers'
 
 import type { State, ThunkAction } from '../../types/'
 import type { WebsocketEvent, WebsocketMessage } from '../../types/websocket'
 
 export default function socketControllerSelector(state: State) {
-  let { authenticated } = getAccountDomain(state)
+  let { authenticated, address } = getAccountDomain(state)
 
   return {
     authenticated,
+    address,
     pairs: getTokenPairsDomain(state).getPairsByCode()
   }
 }
@@ -32,6 +32,11 @@ export function openConnection(): ThunkAction {
         case 'error':
           return handleWebsocketErrorMessage(dispatch, event, closeConnection)
         case 'open':
+          let state = getState();
+          let { address, sessionId } = getAccountDomain(state)
+          socket.subscribeLogin(sessionId)
+          if (address)
+            socket.sendAddressMessage(address);
           return handleWebsocketOpenMessage(dispatch, event)
         default:
           break
@@ -50,6 +55,10 @@ export function openConnection(): ThunkAction {
           return dispatch(handleTradesMessage(event))
         case 'ohlcv':
           return dispatch(handleOHLCVMessage(event))
+        case 'login':
+          return dispatch(handleLoginMessage(event))
+        case 'balances':
+          return dispatch(handleBalancesMessage(event))
         default:
           console.log(channel, event)
           break
@@ -94,8 +103,10 @@ const handleOrderMessage = (dispatch, event: WebsocketEvent) => {
       return dispatch(handleOrderSuccess(event))
     case 'ORDER_PENDING':
       return dispatch(handleOrderPending(event))
-    case 'ERROR':
+    case 'ORDER_ERROR':
       return dispatch(handleOrderError(event))
+    case 'ERROR':
+      return dispatch(handleError(event))
     default:
       console.log('Unknown', event)
       return
@@ -140,6 +151,25 @@ function handleOrderCancelled(event: WebsocketEvent): ThunkAction {
   }
 }
 
+function handleOrderError(event: WebsocketEvent): ThunkAction {
+  return async (dispatch, getState, { socket }) => {
+    try {
+      let state = getState()
+      let  { pairs } = socketControllerSelector(state)
+      let order = event.payload
+      let pairInfo = pairs[order.pairName]
+      
+      order = parseOrder(order, pairInfo)
+
+      dispatch(appActionCreators.addErrorNotification({ message: `Order failed` }))
+      dispatch(actionCreators.updateOrdersTable([order]))
+    } catch (e) {
+      console.log(e)
+      dispatch(appActionCreators.addErrorNotification({ message: e.message }))
+    }
+  }
+}
+
 function handleOrderMatched(event: WebsocketEvent): ThunkAction {
   return async (dispatch, getState, { socket }) => {
     try {
@@ -164,16 +194,14 @@ function handleOrderSuccess(event: WebsocketEvent): ThunkAction {
   return async (dispatch, getState, { socket }) => {
     try {
       let state = getState()
-      let { pairs } = socketControllerSelector(state)
-      let signer = getSigner()
-      let signerAddress = await signer.getAddress()
+      let { pairs, address } = socketControllerSelector(state)
       let matches = event.payload.matches
       let trades = matches.trades
       let txHash = trades[0].txHash
       let pairName = trades[0].pairName
       let userOrders = []
       let userTrades = []
-      let userIsTaker = utils.getAddress(matches.takerOrder.userAddress) === signerAddress
+      let userIsTaker = matches.takerOrder.userAddress === address
       let pairInfo = pairs[pairName]
 
       if (userIsTaker) {
@@ -187,7 +215,7 @@ function handleOrderSuccess(event: WebsocketEvent): ThunkAction {
 
       } else {
         matches.makerOrders.forEach(order => {
-          if (utils.getAddress(order.userAddress) === signerAddress) {
+          if (order.userAddress === address) {
             let parsedOrder = parseOrder(order, pairInfo)
             userOrders.push(parsedOrder)
             let { price, amount, filled, side, pair } = parsedOrder
@@ -196,7 +224,7 @@ function handleOrderSuccess(event: WebsocketEvent): ThunkAction {
         })
 
         matches.trades.forEach(trade => {
-          if (utils.getAddress(trade.maker) === signerAddress || utils.getAddress(trade.maker) === signerAddress) {
+          if (trade.maker === address || trade.maker === address) {
             userTrades.push(parseTrade(trade, pairInfo))
           }
         })
@@ -215,17 +243,15 @@ function handleOrderSuccess(event: WebsocketEvent): ThunkAction {
 function handleOrderPending(event: WebsocketEvent): ThunkAction {
   return async (dispatch, getState, { socket }) => {
     try {
-      let signer = getSigner()
       let state = getState()
-      let { pairs } = socketControllerSelector(state)
-      let signerAddress = await signer.getAddress()
+      let { pairs, address } = socketControllerSelector(state)
       let matches = event.payload.matches
       let trades = matches.trades
       let txHash = trades[0].txHash
       let pairName = trades[0].pairName
       let userOrders = []
       let userTrades = []
-      let userIsTaker = utils.getAddress(matches.takerOrder.userAddress) === signerAddress
+      let userIsTaker = matches.takerOrder.userAddress === address
       let pairInfo = pairs[pairName]
 
       if (userIsTaker) {
@@ -238,7 +264,7 @@ function handleOrderPending(event: WebsocketEvent): ThunkAction {
 
       } else {
         matches.makerOrders.forEach(order => {
-          if (utils.getAddress(order.userAddress) === signerAddress) {
+          if (order.userAddress === address) {
             let parsedOrder = parseOrder(order, pairInfo)
 
             userOrders.push(parsedOrder)
@@ -248,7 +274,7 @@ function handleOrderPending(event: WebsocketEvent): ThunkAction {
         })
 
         matches.trades.forEach(trade => {
-          if (utils.getAddress(trade.maker) === signerAddress || utils.getAddress(trade.maker) === signerAddress) {
+          if (trade.maker === address || trade.maker === address) {
             userTrades.push(parseTrade(trade, pairInfo))
           }
         })
@@ -263,10 +289,10 @@ function handleOrderPending(event: WebsocketEvent): ThunkAction {
   }
 }
 
-function handleOrderError(event: WebsocketEvent): ThunkAction {
+function handleError(event: WebsocketEvent): ThunkAction {
   return async dispatch => {
     let { message } = event.payload
-    dispatch(appActionCreators.addErrorNotification({ message: `Error: ${message}` }))
+    dispatch(appActionCreators.addErrorNotification({ message: `Error: ${message || event.payload}` }))
   }
 }
 
@@ -368,5 +394,47 @@ const handleOHLCVMessage = (event: WebsocketMessage): ThunkAction => {
       console.log(e)
       dispatch(appActionCreators.addErrorNotification({ message: e.message }))
     }
+  }
+}
+
+
+const handleLoginMessage = (event: WebsocketMessage): ThunkAction => {
+  return async (dispatch, getState, { socket }) => {
+    let state = getState()
+    let { pairs } = socketControllerSelector(state)
+
+    if (event.type === 'ERROR' || !event.payload) return
+    if (event.payload.length === 0) return
+
+    let address = event.payload
+    socket.sendAddressMessage(address);
+    dispatch(actionCreators.login(address))
+    dispatch(appActionCreators.addSuccessNotification({ message: 'Signed in with app' }));
+  }
+}
+
+const handleBalancesMessage = (event: WebsocketMessage): ThunkAction => {
+  return async (dispatch, getState, { socket }) => {
+    let state = getState()
+    const tokensBySymbol = getTokenDomain(state).bySymbol()
+
+    if (event.type === 'ERROR' || !event.payload) return
+    if (!event.payload) return
+
+    let assocBalances = event.payload.balances
+    let ev = event.payload.event
+    let balances = []
+    for (var symbol in assocBalances)
+      balances.push({balance: assocBalances[symbol] / Math.pow(10, tokensBySymbol[symbol].decimals), symbol});
+
+    dispatch(balanceActionCreators.updateBalances(balances));
+    if (ev === 'deposit')
+      dispatch(appActionCreators.addSuccessNotification({ message: 'Deposit received' }));
+    else if (ev === 'pending_deposit')
+      dispatch(appActionCreators.addSuccessNotification({ message: 'Pending deposit received' }));
+    else if (ev === 'withdrawal')
+      dispatch(appActionCreators.addSuccessNotification({ message: 'Withdrawal completed' }));
+    else if (ev === 'pending_withdrawal')
+      dispatch(appActionCreators.addSuccessNotification({ message: 'Withdrawal submitted' }));
   }
 }

@@ -182,6 +182,8 @@ export default function domain(state: OrderBookState) {
 
     getBidPrice: () => (state.bids[state.sortedBids[0]] ? state.bids[state.sortedBids[0]].price : 0),
     getAskPrice: () => (state.asks[state.sortedAsks[0]] ? state.asks[state.sortedAsks[0]].price : 0),
+    getBestBidMatcher: () => (state.bids[state.sortedBids[0]] ? state.bids[state.sortedBids[0]].matcher : null),
+    getBestAskMatcher: () => (state.asks[state.sortedAsks[0]] ? state.asks[state.sortedAsks[0]].matcher : null),
     getQuoteToken: () => state.quoteToken,
     getBaseToken: () => state.baseToken
   }

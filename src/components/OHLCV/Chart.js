@@ -99,6 +99,7 @@ class OHLCVChart extends React.Component {
     const {
       type,
       data: initialData,
+      baseSymbol,
       width,
       ratio,
       indicatorHeight,
@@ -221,7 +222,7 @@ class OHLCVChart extends React.Component {
                 {...edgeIndicatorAppearance}
               />
 
-              <OHLCTooltip origin={[-30, 0]} {...mouseEdgeAppearance} />
+              <OHLCTooltip origin={[-30, 0]} {...mouseEdgeAppearance} volumeFormat={v => format(".4r")(v) + " " + baseSymbol} />
 
               <MovingAverageTooltip
                 onClick={e => console.log()}
@@ -301,11 +302,11 @@ class OHLCVChart extends React.Component {
               <YAxis axisAt="right" orient="right" ticks={10} {...yGrid} {...axisAppearance} outerTickSize={0} />
               <LineSeries yAccessor={d => d.close} strokeDasharray="Solid" />
               <ScatterSeries yAccessor={d => d.close} marker={CircleMarker} markerProps={{ r: 3 }} />
-              <OHLCTooltip forChart={1} origin={[-40, 0]} />
+              <OHLCTooltip forChart={1} origin={[-40, 0]} volumeFormat={v => format(".4r")(v) + " " + baseSymbol} />
             </Chart>
           )}
 
-          {currentChart.name === 'Line' && (
+          {/*currentChart.name === 'Line' && (
             <Chart id={1} height={chartHeight} yExtents={d => [d.high, d.low]}>
               <MouseCoordinateX
                 at="bottom"
@@ -328,7 +329,7 @@ class OHLCVChart extends React.Component {
               <ScatterSeries yAccessor={d => d.close} marker={CircleMarker} markerProps={{ r: 3 }} />
               <OHLCTooltip forChart={1} origin={[-40, 0]} />
             </Chart>
-          )}
+          )*/}
 
           {currentChart.name === 'Heikin Ashi' && (
             <Chart
@@ -415,7 +416,7 @@ class OHLCVChart extends React.Component {
                 {...edgeIndicatorAppearance}
               />
 
-              <OHLCTooltip origin={[-40, 0]} />
+              <OHLCTooltip origin={[-40, 0]} volumeFormat={v => format(".4r")(v) + " " + baseSymbol} />
               <MovingAverageTooltip
                 origin={[-28, 15]}
                 options={[

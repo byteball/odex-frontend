@@ -1,49 +1,25 @@
 //@flow
 import type {
-  CreateWalletAction,
   LoginErrorAction,
-  LoginWithMetamaskAction,
-  LoginWithWalletAction,
-  LoginWithLedgerAction,
+  loginWithAppAction,
   RequestLoginAction,
 } from '../../types/loginPage';
 
 const actionTypes = {
-  createWallet: 'loginPage/CREATE_WALLET',
   requestLogin: 'loginPage/REQUEST_LOGIN',
-  loginWithMetamask: 'loginPage/LOGIN_WITH_METAMASK',
-  loginWithWallet: 'loginPage/LOGIN_WITH_WALLET',
-  loginWithLedger: 'loginPage/LOGIN_WITH_LEDGER',
+  loginWithApp: 'loginPage/LOGIN_WITH_APP',
   loginError: 'loginPage/LOGIN_ERROR',
 };
 
-export function createWallet(address: string, encryptedWallet: string): CreateWalletAction {
-  return {
-    type: actionTypes.createWallet,
-    payload: { address, encryptedWallet },
-  };
-}
 
-export function loginWithMetamask(address: string): LoginWithMetamaskAction {
+export function loginWithApp(address: string): loginWithAppAction {
   return {
-    type: actionTypes.loginWithMetamask,
+    type: actionTypes.loginWithApp,
     payload: { address },
   };
 }
 
-export function loginWithWallet(address: string, privateKey: string): LoginWithWalletAction {
-  return {
-    type: actionTypes.loginWithWallet,
-    payload: { address, privateKey },
-  };
-}
 
-export function loginWithLedger(address: string): LoginWithLedgerAction {
-  return {
-    type: actionTypes.loginWithLedger,
-    payload: { address }
-  }
-}
 
 export function loginError(error: string): LoginErrorAction {
   return {

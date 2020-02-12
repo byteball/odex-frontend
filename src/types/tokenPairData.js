@@ -2,21 +2,21 @@
 export type TokenPairDataState = {
   +[string]: {
     +pair: string,
-    +lastPrice: string,
+    +lastPrice: number,
     +change: string,
-    +high: string,
-    +low: string,
-    +volume: string,
+    +high: number,
+    +low: number,
+    +volume: number,
   },
 };
 
 export type TokenPairData = {
   pair: string,
-  lastPrice: string,
+  lastPrice: number,
   change: string,
-  high: string,
-  low: string,
-  volume: string,
+  high: number,
+  low: number,
+  volume: number,
 };
 
 export type TokenPairDataArray = Array<TokenPairData>;

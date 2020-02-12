@@ -12,24 +12,13 @@ type Props = {
   step: string,
   goToSecondStep: void => void,
   goToThirdStep: void => void,
-  userHasETH: boolean,
-  userHasWETH: boolean,
-  userHasApprovedWETH: boolean,
-  handleConvertETH: void => void,
-  handleApproveWETH: void => void,
-  ETHBalance: number,
-  WETHBalance: number,
-  convertAmount: number,
-  convertFraction: number,
-  changeConvertETHFraction: number => void,
-  ETHAddress: string,
-  approveTxStatus: string,
-  approveTxHash: string,
-  convertTxStatus: string,
-  convertTxHash: string,
+  userHasBytes: boolean,
+  GBYTEBalance: number,
+  address: string,
   showHelpModalChecked: boolean,
   toggleShowHelpModalCheckBox: void => void,
-  
+  currentTab: string,
+  handleChangeTab: string => void, 
 }
 
 const FirstStep = (props: Props) => {
@@ -100,25 +89,27 @@ const GetStartedSectionRenderer = (props: Props) => {
       <ModalBody>
         <ModalText>
         <Callout intent='warning' >
-        Please take some time to read some of the information before you start trading
+        Please take some time to read the below information before you start trading
         </Callout>
         <br />
         <Header>Welcome</Header>
-        <p>• AMP is an open-source cryptocurrency exchange which gives you full control over your funds.</p>
-        <p>• We allow you to trade directly from your wallet without the need for deposits and withdrawals.</p>
+        <p>• ODEX is an open-source decentralized cryptocurrency exchange for Obyte tokens.</p>
+        <p>• All trades and other operations are executed by an Autonomous Agent strictly according to a program associated with the AA. The program is open-source, published on the Obyte DAG, and nobody can change it or intervene with its operation.</p>
+        <p>
+          • Trades performed on ODEX are immediately settled on the Obyte DAG. For better performance and UX,
+          the orderbook is kept off-chain and can be shared by multiple exchanges built on ODEX technology.
+        </p>
         <p>• We do not control your account and therefore cannot help you recover your funds if you send them to the wrong address or lose your private key. 
         You are fully responsible for your security.</p>
-        <p>• Trades performed on AMP are immediately settled on the Ethereum blockchain. For better performance and UX, the orderbook is currently centralized.</p>
         <br />
         <Header>🛡️ Security advice</Header>
-        <p>• Verify that you are on https://amp.exchange everytime you log in</p>
-        <p>• We recommend to use Metamask for the most secure trading experience</p>
+        <p>• Verify that you are on https://odex.ooo everytime you log in</p>
+        <p>• We recommend to use Obyte Wallet for the most secure trading experience</p>
         <p>• We do not control your account and therefore cannot help you recover your funds if you send them to the wrong address or lose your private key. You are fully responsible for your security.</p>
         <p>• Only invest and trade what you can afford to risk</p>
         <br />
-        <Header>❔ Ask for help or join the Proofsuite community</Header>
-        <p>• Write to us anytime at: support@proofsuite.com</p>
-        <p>• If you have any suggestions, or want to get involved with the project, join us on <a href={DISCORD_URL}>Discord</a></p>
+        <Header>❔ Ask for help or join the ODEX community</Header>
+        <p>• If you have any suggestions, or want to get involved with the project, join us on <a href={DISCORD_URL}>Obyte Discord</a> in #odex channel.</p>
         <br />
         </ModalText>
       </ModalBody>
@@ -151,32 +142,29 @@ const SecuritySectionRenderer = (props: Props) => {
           </Callout>
           <br />
           <Header>Stay secure</Header>
-            <p>• Verify that you are on https://amp.exchange everytime you log in.</p>
-            <p>• We recommend to use Metamask for the most secure trading experience.</p>
+            <p>• Verify that you are on https://odex.ooo everytime you log in.</p>
+            <p>• We recommend to use Obyte Wallet for the most secure trading experience.</p>
             <p>• We cannot recover your funds or freeze your account if you visit a phising ite or lose your private key.</p>
-            <p>• Blockchain transactions are irreversible. We can not undo a transaction you've just sent. </p>
-            <p>• Never disclose your password, private keys or other authentication elements to anyone, including Proof Suite support.</p>
-            <p>• Be diligent to keep your private key and password safe.</p>
+            <p>• All transactions on the DAG are irreversible. We cannot undo a transaction you've just sent. </p>
+            <p>• Never disclose your wallet seed, private keys, backups, or other authentication elements of your Obyte wallet to anyone.</p>
+            <p>• Be diligent to keep your Obyte wallet safe.</p>
           <br />        
           <Header>Scams and Hacks</Header>
-          <p>• Do not store your private key in Dropbox, Google Drive or other cloud storage. If that account is compromised, your funds will be stolen.</p>
-          <p>• If you enter your private key on a phishing website, you will have all your funds taken. </p>
-          <p>• If you send your public key (address) to someone, they now have full control of your account. </p>
+          <p>• Do not store your wallet seed unencrypted in Dropbox, Google Drive or other cloud storage. If that account is compromised, your funds will be stolen.</p>
+          <p>• If you log in to a phishing website, they might trick you to sending a fake "deposit" to their address. </p>
           <p>• Do not trust messages or links sent to you randomly via email, Slack, Discord, Reddit, Twitter, etc.</p>
-          <p>• Always naviate directly to a site before you enter information. Do not enter information after clicking a link
+          <p>• Always navigate directly to a site before you enter information. Do not enter information after clicking a link
             from a message or email. </p>
           <p>• Do not run remote-access software (Teamviewer).</p>
           <p>• Do not click on advertisements.</p>
           <br />
           <Header>Technology Risks</Header>
-          <p>• Ethereum tokens are highly volatile.</p>
-          <p>• Ethereum token values are strictly determined by the value market participants place on them through their transactions, which means 
-          a loss of confidence may lead to an abrupt drop in value.</p>
+          <p>• Distributed ledgers is a new emergent technology, therefore bugs, security vulnerabilities, hacks, and downtimes are never excluded.</p>
           <br />
           <Header>Financial Risks</Header>
           <p>• Only invest and trade what you can afford to lose.</p>
-          <p>• Ethereum tokens are highly volatile.</p>
-          <p>• Ethereum token values are strictly determined by the value market participants place on them through their transactions, which means 
+          <p>• Obyte tokens are highly volatile.</p>
+          <p>• Obyte token values are strictly determined by the value market participants place on them through their transactions, which means 
           a loss of confidence may lead to an abrupt drop in value. </p>
           <br />
         </ModalText>
@@ -200,26 +188,18 @@ const NewsSectionRenderer = (props: Props) => {
       <ModalBody>
         <ModalText>
           <Callout>
-            The latest news on everything AMP and Proofsuite
+            The latest news on everything ODEX
           </Callout>
           <br />
-          <Link url={MEDIUM_URLS.AMP_INTRODUCTION}>
-            <Header>🛸 Quick Introduction to the AMP decentralized exchange</Header>
+          <Link url={MEDIUM_URLS.ODEX_INTRODUCTION}>
+            <Header>🛸 Quick Introduction to the ODEX decentralized exchange</Header>
           </Link>
-          <p>A quick introduction to the AMP decentralized and everything you can do with it.</p>
+          <p>A quick introduction to the ODEX decentralized and everything you can do with it.</p>
 
-          <Link url={MEDIUM_URLS.AMP_JPMORGAN}>
-            <Header mt={5}>🏦 JP Morgan's Blockchain supported by Proof Suite's decentralized exchange.</Header>
-          </Link>
 
-          <Link url={MEDIUM_URLS.AVOCADO_POWER}>
-            <Header mt={5}>🥑 The power of the avocado terminal</Header>
-          </Link>
-          <p>An in-depth presentation of some of the functionalities of the Avocado terminal, the flagship Proofsuite product.</p>
-
-          <Header mt={5}>❔ Ask for help or join the Proofsuite community</Header>
-          <p>• Write to us anytime at: support@proofsuite.com</p>
-          <p>• If you have any suggestions, or want to get involved with the project, join us on <Link url={DISCORD_URL}>Discord</Link>.</p>
+          <Header mt={5}>❔ Ask for help or join the ODEX community</Header>
+          <p>• If you have any suggestions, or want to get involved with the project, join us on <Link url={DISCORD_URL}>Discord</Link>, channel #odex.</p>
+          <p>• If you'd like to contribute to ODEX and make it better, or run your own ODEX based exchange, see our <Link url="https://github.com/byteball">Github</Link>.</p>
         </ModalText>
       </ModalBody>
       <ModalFooter>
@@ -241,18 +221,11 @@ const BasicsSectionRenderer = (props: Props) => {
       <ModalBody>
         <ModalText>
           <br />
-          <Header>Where can i get Ether ?</Header>
-          <p>• Buy Ether with any credit card at <Link url="https://changelly.com/exchange/USD/ETH/40.00?ref_id=7p3c4jpz35b1nwak">Changelly</Link>.</p>
+          <Header>Where can I get Bytes ?</Header>
+          <p>Buy Bytes on exchanges listed on <Link url="https://obyte.org/#exchanges">Obyte website</Link>. <Link url="https://global.bittrex.com/Market/Index?MarketName=BTC-GBYTE">Bittrex</Link> is currently the most liquid exchange trading Bytes.</p>
           <br />
-          <Header>What is WETH and why do i have to use it ?</Header>
-          <p>• Ether or ETH is the native currency of the Ethereum blockchain. ETH is not an ERC20 token. </p>
-          <p>• WETH is an ERC20 version of ETH. When you are converting ETH to WETH, you the same amount of WETH you've converted. </p>
-          <p>• WETH allows decentralized applications such as the AMP decentralized exchange to offer better functionality and a better user experience. Learn more about WETH <Link url="https://weth.io/">here</Link>.</p>
-          <br />
-          <Header>What happens if I unlock a token or token pair ?</Header>
-          <p>• To trade a token pair, you need to unlock both tokens. Alternatively you can unlock the pair directly on the trading page. </p>
-          <p>• Unlocking a token pair allows our smart-contract to settle transactions directly between two user wallets. </p>
-          <p>• With this system you can keep your tokens in your wallet while making orders and trades on AMP. </p>
+          <Header>What happens when I deposit my coins to ODEX ?</Header>
+          <p>Your coins are stored on ODEX Autonomous Agent and you can withdraw them at any time. Nobody but you has access to these coins, only you can send orders to exchange one token for another. </p>
           <br />
         </ModalText>
       </ModalBody>
@@ -275,24 +248,20 @@ const StartTradingContentRenderer = (props: Props) => {
       <ModalBody>
         <ModalText>
           <Callout intent="warning">
-            The latest news about AMP and Proofsuite
+            Start trading
           </Callout>
           <br />
-          <Header>What is AMP ?</Header>
-          <p>• AMP is an open-source cryptocurrency exchange which gives you full control over your funds.</p>
-          <p>• We allow you to trade directly from your wallet without the need for deposits and withdrawals.</p>
+          <Header>What is ODEX ?</Header>
+          <p>• ODEX is an open-source decentralized cryptocurrency exchange for Obyte tokens.</p>
+          <p>• All trades and other operations are executed by an Autonomous Agent strictly according to a program associated with the AA. The program is open-source, published on the Obyte DAG, and nobody can change it or interveve with its operation.</p>
           <p>
-            • We do not control your account and therefore cannot help you recover your funds if you send them to the
-            wrong address or lose your private key. You are fully responsible for your security.
-          </p>
-          <p>
-            • Trades performed on AMP are immediately settled on the Ethereum blockchain. For better performance and UX,
-            the orderbook is currently centralized.
+            • Trades performed on ODEX are immediately settled on the Obyte DAG. For better performance and UX,
+            the orderbook is kept off-chain and can be shared by multiple exchanges built on ODEX technology.
           </p>
           <br />
           <Header>Security advice</Header>
-          <p>• Verify that you are on https://amp.exchange everytime you log in.</p>
-          <p>• We recommend to use Metamask for the most secure trading experience.</p>
+          <p>• Verify that you are on https://odex.ooo everytime you log in.</p>
+          <p>• We recommend to use Obyte Wallet for the most secure trading experience.</p>
           <p>
             • We do not control your account and therefore cannot help you recover your funds if you send them to the
             wrong address or lose your private key. You are fully responsible for your security.

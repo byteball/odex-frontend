@@ -19,19 +19,12 @@ import {
   Spinner,
 } from '@blueprintjs/core';
 
-import type { Trade } from '../../types/trades';
-import type { TokenPair } from '../../types/tokens';
+//import type { Trade } from '../../types/trades';
+//import type { TokenPair } from '../../types/tokens';
 import type { Tx } from '../../types/transactions'
 
 type Props = {
-  selectedTabId: string,
-  currentPair: TokenPair,
-  onChange: string => void,
-  trades: Array<Trade>,
-  userTrades: Array<Trade>,
-  toggleCollapse: (SyntheticEvent<>) => void,
-  openEtherscanLink: string => void,
-  isOpen: boolean,
+  openExplorerLink: string => void,
   transactions: Array<Tx>
 };
 
@@ -39,7 +32,7 @@ type Props = {
 const RecentTxTableRenderer = (props: Props) => {
   const { 
     transactions,
-    openEtherscanLink
+    openExplorerLink
   } = props;
 
 
@@ -62,7 +55,7 @@ const RecentTxTableRenderer = (props: Props) => {
           transactions.map((tx, index) => (
           <Row 
             key={index}
-            onClick={() => openEtherscanLink(tx.hash)}
+            onClick={() => openExplorerLink(tx.hash)}
           >
             {
               {

@@ -90,6 +90,16 @@ export type UnsubscribeOrderBookAction = {
   payload: { pair: any }
 }
 
+export type SubscribeLoginAction = {
+  type: 'socketController/SUBSCRIBE_LOGIN',
+  payload: { sessionId: string }
+}
+
+export type LoginAction = {
+  type: 'socketController/LOGIN',
+  payload: { address: string }
+}
+
 export type socketControllerAction =
   | CreateConnectionAction
   | OpenConnectionAction
@@ -107,3 +117,5 @@ export type socketControllerAction =
   | UpdateOrderBookAction
   | SubscribeOrderBookAction
   | UnsubscribeOrderBookAction
+  | SubscribeLoginAction
+  | LoginAction

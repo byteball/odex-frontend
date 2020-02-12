@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { rand, randInt, round } from '../utils/helpers';
 import tokenPairs from '../jsons/tokenPairs.json';
-import { utils } from 'ethers';
+const crypto = require('crypto');
 
 let trades = [];
 let buys = [];
@@ -23,7 +23,7 @@ const randomTimestamp = () => randInt(minTimeStamp, maxTimeStamp);
 const randomPrice = () => rand(minPrice, maxPrice);
 const randomBidPrice = () => rand(minPrice, middlePrice);
 const randomAskPrice = () => rand(middlePrice, maxPrice);
-const randomHash = () => utils.sha256(utils.randomBytes(100));
+const randomHash = () => crypto.createHash('sha256').update(crypto.randomBytes(100)).digest('base64');
 const randomAddress = () => randomHash().slice(0, 42);
 const roundToInteger = () => rand(0, 1) / 0.2 > 1;
 

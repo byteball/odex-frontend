@@ -34,7 +34,7 @@ type Props = {
     mostTradedToken: string,
     mostTradedPair: string,
     tradeSuccessRatio: number,
-    totalBuyBalue: number,
+    totalBuyValue: number,
     totalSellValue: number,
     numberOfTrades: number,
     numberOfOrders: number,
@@ -107,7 +107,7 @@ const StatisticsBoardRenderer = (props: Props) => {
                         <FlexColumn alignItems="center">
                             <InfoHeader muted large>Most Traded Pair </InfoHeader>
                             <Box p={2}>
-                                <CryptoIconPair baseToken={"WETH"} quoteToken={"USDC"} size={96} />
+                                <CryptoIconPair baseToken={"GBYTE"} quoteToken={"USDC"} size={96} />
                             </Box>
                         </FlexColumn>
                     </FlexRow>
@@ -120,7 +120,7 @@ const StatisticsBoardRenderer = (props: Props) => {
                             </FlexColumn>
                             <FlexColumn alignItems="center">
                                 <InfoHeader muted large>Total Orderbook Volume
-                                <Help ml={1} position={Position.RIGHT}>Total value of all orders in AMP orderbooks. This number does not include non-listed tokens</Help>
+                                <Help ml={1} position={Position.RIGHT}>Total value of all orders in ODEX orderbooks. This number does not include non-listed tokens</Help>
                                 </InfoHeader>
                                 <InfoNumber large pl={2}>
                                     {totalOrderVolume ? `${formatNumber(totalOrderVolume)} ${currency}` : 'N.A'} </InfoNumber>
