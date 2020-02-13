@@ -1,0 +1,21 @@
+{
+	"version": "1.0",
+	"description": "ODEX AA. A decentralized exchange for trading tokens issued on Obyte.",
+	"homepage_url": "https://odex.ooo",
+	"source_url": "https://github.com/byteball/odex-wallet",
+	"field_descriptions": {
+		"withdraw": "Command to withdraw funds. Set the value to 1.",
+		"asset": "ID of asset you want to withdraw (44 characters).",
+		"amount": "The amount you want to withdraw.",
+		"to": "The address to deposit to or withdraw from (if different from your address).",
+		"cancel": "Command to cancel an order. Set the value to 1.",
+		"order": "The order to be cancelled (object).",
+		"revoke": "Command to revoke trading authorization from an address. Set the value to 1.",
+		"grant": "Command to grant trading authorization to an address. Set the value to 1.",
+		"address": "The address whose trading authorization is to be granted or revoked.",
+		"order1": "Maker order to be traded (object).",
+		"order2": "Taker order to be traded (object).",
+		"matcher_fee1": "Matcher fee to be charged from the author of order1 if it is lower than the default",
+		"matcher_fee2": "Matcher fee to be charged from the author of order2 if it is lower than the default"
+	}
+}
