@@ -12,6 +12,26 @@ The ODEX decentralized exchange is a hybrid decentralized exchange that aims at 
 Several matchers can operate exchanges based on ODEX technology at the same time. They share their orderbooks and exchange all new orders among themselves, thus improving liquidity for all ODEX exchanges. An order can be submitted through any ODEX exchange, however to be matched, both maker and taker orders have to indicate the same matcher. The exchange that was used to submit the order serves as an affliate and can charge a fee from its users.  Anyone can become a matcher or affiliate, or just watch the orders that are being exchanged among the matchers and detect any possible misbehavior by matchers.
 
 
+# Installation
+```
+git clone https://github.com/byteball/odex-frontend
+cd odex-frontend
+yarn
+```
+Copy the appropriate `.env.XXXX` file to `.env`. Edit if necessary to reflect your domain name.
+
+To start the frontend in development environment:
+```
+yarn start
+```
+To deploy a production (livenet or testnet) frontend:
+```
+yarn sass
+yarn build
+```
+This builds all static files and puts them in `build` folder. Set this folder as web root in your nginx. See [an example of nginx vertual host config](blob/develop/nginx.conf).
+
+
 # Contributions
 
 Thank you for considering helping the ODEX project! We accept contributions from anyone and are grateful even for the smallest fixes.
