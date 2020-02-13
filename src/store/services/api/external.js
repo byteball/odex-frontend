@@ -9,7 +9,7 @@ const request = (endpoint, options) => {
       Accept: 'application/json',
       'Content-Type': 'application/json'
     },
-    // mode: 'cors',
+    mode: 'cors',
     ...options
   })
 }
