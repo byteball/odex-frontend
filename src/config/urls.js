@@ -4,9 +4,9 @@ export const ENGINE_HTTP_URL = env.ENGINE_HTTP_URL
 export const ENGINE_WS_URL = env.ENGINE_WS_URL
 
 
-export const EXCHANGE_RATE_API_URL = "/rates"
+//export const EXCHANGE_RATE_API_URL = "/rates"
 export const DISCORD_URL = 'https://discord.obyte.org'
-// export const EXCHANGE_RATE_API_URL = 'https://min-api.cryptocompare.com'
+export const EXCHANGE_RATE_API_URL = 'https://min-api.cryptocompare.com'
 
 const EXPLORER_LIVENET_URL = 'https://explorer.obyte.org'
 const EXPLORER_TESTNET_URL = 'https://testnetexplorer.obyte.org'
