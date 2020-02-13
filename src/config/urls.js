@@ -14,7 +14,7 @@ const EXPLORER_TESTNET_URL = 'https://testnetexplorer.obyte.org'
 const TESTNET_PROTOCOL = "obyte-tn:"
 const LIVENET_PROTOCOL = "obyte:"
 
-const CHATBOT_TESTNET_URL = TESTNET_PROTOCOL + "AmjBNeOTQIUPTv5/bycfSak5SgREkcQ38y2JH6zXwnQc@obyte.org/bb-test#"
+const CHATBOT_TESTNET_URL = TESTNET_PROTOCOL + "Aov0gHIuORwpbnhYSA0dEMesrbTaiY00ncePnMU+xj+o@obyte.org/bb-test#"
 const CHATBOT_LIVENET_URL = LIVENET_PROTOCOL + "AmjBNeOTQIUPTv5/bycfSak5SgREkcQ38y2JH6zXwnQc@obyte.org/bb#"
 
 export const MEDIUM_URLS = {
