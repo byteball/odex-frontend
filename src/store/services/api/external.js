@@ -5,7 +5,7 @@ import fetch from 'isomorphic-fetch'
 const request = (endpoint, options) => {
   return fetch(`${EXCHANGE_RATE_API_URL}${endpoint}`, {
     headers: {
-      'Access-Control-Allow-Origin': '*',
+    //  'Access-Control-Allow-Origin': '*',
       Accept: 'application/json',
       'Content-Type': 'application/json'
     },
