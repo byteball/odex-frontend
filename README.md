@@ -1,11 +1,4 @@
-# odex-client
-ODEX decentralized exchange front end
-
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-![Contributions welcome](https://img.shields.io/badge/contributions-welcome-orange.svg)
-[![Chat on discord](https://img.shields.io/discord/308323056592486420.svg?logo=discord)](https://discord.gg/gvxeqMf)
-
-# The ODEX Decentralized Exchange
+# ODEX decentralized exchange front end
 
 The ODEX decentralized exchange is a hybrid decentralized exchange that aims at bringing together the ease of use of centralized exchanges along with the security and privacy features of decentralized exchanges. Orders are matched through an off-chain orderbook. After orders are matched and signed, the decentralized exchange operator (matcher) has the sole ability to perform a transaction to the Autonomous Agent. This provides for the best UX as the exchange operator is the only party having to interact directly with the DAG. Exchange users simply sign orders which are broadcasted then to the orderbook. This design enables users to queue and cancel their orders seamlessly.
 
