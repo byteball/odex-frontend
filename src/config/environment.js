@@ -16,6 +16,7 @@ if (window.env) {
 }
 
 export const MATCHER_FEE = 0.001;
+export const MAX_PRICE_PRECISION = 8;
 
 export {
   ENGINE_HTTP_URL,

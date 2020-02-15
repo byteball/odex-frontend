@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
 import styled from 'styled-components'
-import { MATCHER_FEE } from '../../config/environment';
+import { MATCHER_FEE, MAX_PRICE_PRECISION } from '../../config/environment';
 import { CHATBOT_URL } from '../../config/urls'
 
 import { 
@@ -65,6 +65,28 @@ type Props = {
   expand: SyntheticEvent<> => void,
   onContextMenu: void => Node,
   buttonType: "BUY" | "SELL" | "BUY_UNLOCK" | "SELL_UNLOCK" | "BUY_LOGIN" | "SELL_LOGIN" | "BUY_UNLOCK_PENDING" | "SELL_UNLOCK_PENDING",
+}
+
+
+function dropExcessivePrecision(price) {
+	let strPrice = price.toPrecision(MAX_PRICE_PRECISION);
+	return parseFloat(strPrice);
+}
+
+function getFirstAsset(sell_asset, buy_asset) {
+	if (sell_asset === 'base')
+		return sell_asset;
+	if (buy_asset === 'base')
+		return buy_asset;
+	return (sell_asset < buy_asset) ? sell_asset : buy_asset;
+}
+
+function getPriceInAllowedPrecision(order_data) {
+	const first_asset = getFirstAsset(order_data.sell_asset, order_data.buy_asset);
+	if (first_asset === order_data.sell_asset)
+		return dropExcessivePrecision(order_data.price);
+	else
+		return 1 / dropExcessivePrecision(1 / order_data.price);
 }
 
 const OrderFormRenderer = (props: Props) => {
@@ -306,6 +328,15 @@ const LimitOrderPanel = props => {
     aa: exchangeAddress,
     address
   } : {};
+  if (order.price > 0){
+    // Due to limited precision, the price can only change stepwise.
+    // Find the closest allowed price and recalculate matcher_fee
+    order.price = getPriceInAllowedPrecision(order);
+		if (order.sell_asset === order.matcher_fee_asset)
+			order.matcher_fee = Math.ceil(order.sell_amount * MATCHER_FEE);
+		else if (order.buy_asset === order.matcher_fee_asset)
+			order.matcher_fee = Math.ceil(order.sell_amount * order.price * MATCHER_FEE);
+  }
   console.log(order);
   let pairing_secret = btoa(JSON.stringify(order));
   let link = CHATBOT_URL + pairing_secret;
