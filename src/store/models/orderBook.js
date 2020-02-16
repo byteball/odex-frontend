@@ -16,7 +16,7 @@ export default function orderBookSelector(state: State) {
 
   if (bids[0] && asks[0]) {
     midMarketPrice = (bids[0].price + asks[0].price) / 2
-    spread = (asks[0].price - bids[0].price) / asks[0].price  
+    spread = (asks[0].price - bids[0].price) / asks[0].price * 100
   }
 
   return {
