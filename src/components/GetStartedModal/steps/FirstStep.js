@@ -199,7 +199,7 @@ const NewsSectionRenderer = (props: Props) => {
 
           <Header mt={5}>❔ Ask for help or join the ODEX community</Header>
           <p>• If you have any suggestions, or want to get involved with the project, join us on <Link url={DISCORD_URL}>Discord</Link>, channel #odex.</p>
-          <p>• If you'd like to contribute to ODEX and make it better, or run your own ODEX based exchange, see our <Link url="https://github.com/byteball">Github</Link>.</p>
+          <p>• If you'd like to contribute to ODEX and make it better, or run your own ODEX based exchange, see our <Link url="https://github.com/byteball/odex-wallet">Github</Link>.</p>
         </ModalText>
       </ModalBody>
       <ModalFooter>

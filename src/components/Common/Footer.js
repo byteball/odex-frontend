@@ -139,7 +139,7 @@ const Footer = () => (
             </NormalListItem>
             <NormalListItem>
               <LinkText
-                href="https://github.com/obyte/odex-frontend" 
+                href="https://github.com/byteball/odex-wallet" 
                 target="_blank"
                 rel="noopener"
                 >
