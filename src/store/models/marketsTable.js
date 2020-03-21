@@ -10,18 +10,19 @@ import {
 
 import * as actionCreators from '../actions/marketsTable'
 import * as notifierActionCreators from '../actions/app'
-import { quoteTokenSymbols as rawQuoteTokens } from '../../config/quotes'
+//import { quoteTokenSymbols as rawQuoteTokens } from '../../config/quotes'
 import type { State, ThunkAction } from '../../types'
 import { parseTokenPairArray } from '../../utils/helpers'
 
 export default function marketsTableSelector(state: State) {
     let { referenceCurrency } = getAccountDomain(state)
     let pairsDomain = getTokenPairsDomain(state)
+    let tokenDomain = getTokenDomain(state)
 
     let rawPairs = pairsDomain.getTokenPairsWithDataArray()
     let pairs = parseTokenPairArray(rawPairs)
 
-    let quoteTokens = rawQuoteTokens
+    let quoteTokens = tokenDomain.quoteTokens().map(token => token.symbol)
 
     return {
         pairs,

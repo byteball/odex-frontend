@@ -9,7 +9,7 @@ import {
   getTokenDomain,
 } from '../domains'
 
-import { quoteTokens } from '../../config/quotes'
+//import { quoteTokens } from '../../config/quotes'
 import { parseQueryAccountDataError } from '../../config/errors'
 import { pricedTokens } from '../../config'
 import { EXCHANGE_ADDRESS } from '../../config/environment.js'
@@ -108,6 +108,9 @@ export function redirectToTradingPage(symbol: string): ThunkAction {
   return async (dispatch, getState, { mixpanel }) => {
     mixpanel.track('wallet-page/redirect-to-trading-page')
 
+    const state = getState()
+    const quoteTokens = getTokenDomain(state).quoteTokens()
+    quoteTokens.sort((t1, t2) => t2.rank - t1.rank)
     let quoteTokenSymbols = quoteTokens.map(token => token.symbol)
     let quoteTokenIndex = quoteTokenSymbols.indexOf(symbol)
     let baseTokenSymbol, quoteTokenSymbol

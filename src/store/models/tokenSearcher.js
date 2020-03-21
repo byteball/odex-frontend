@@ -6,6 +6,7 @@ import type {
 
 import { 
   getTokenPairsDomain, 
+  getTokenDomain,
   getAccountBalancesDomain,
   getOrdersDomain,
   getAccountDomain
@@ -23,10 +24,12 @@ export default function tokenSearcherSelector(state: State) {
   let ordersDomain = getOrdersDomain(state)
   let tokenPairs = domain.getTokenPairsDataArray()
   let favoriteTokenPairs = domain.getFavoritePairs()
+  const quoteTokens = getTokenDomain(state).quoteTokens()
+  quoteTokens.sort((t1, t2) => t2.rank - t1.rank)
+  let quoteTokenSymbols = quoteTokens.map(token => token.symbol)
   let tokenPairsByQuoteToken = {}
-  let quotes = ['USDC', 'GBYTE']
 
-  for (let quote of quotes) {
+  for (let quote of quoteTokenSymbols) {
     let rawQuote = quote
 
     //We look for pairs with the corresponding "quote".
