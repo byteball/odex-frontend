@@ -75,11 +75,12 @@ export function queryAccountData(): ThunkAction {
       let exchangeRates = await api.fetchExchangeRates(tokenSymbols, currencySymbols)
 
       tokens = tokens.map(token => {
+        let symbol = token.symbol.replace(/_.*$/, '') // strip the expiry date if any
         return {
           ...token,
-          USDRate: exchangeRates[token.symbol] ? exchangeRates[token.symbol].USD : 0,
-          EURRate: exchangeRates[token.symbol] ? exchangeRates[token.symbol].EUR : 0,
-          JPYRate: exchangeRates[token.symbol] ? exchangeRates[token.symbol].JPY : 0,
+          USDRate: exchangeRates[symbol] ? exchangeRates[symbol].USD : 0,
+          EURRate: exchangeRates[symbol] ? exchangeRates[symbol].EUR : 0,
+          JPYRate: exchangeRates[symbol] ? exchangeRates[symbol].JPY : 0,
         }
       })
 

@@ -25,4 +25,5 @@ export const pricedTokens = [
   "WTC",
   "ZRX",
   "USDC",
+  "BTC",
 ]
