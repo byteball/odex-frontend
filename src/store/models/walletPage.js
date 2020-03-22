@@ -87,7 +87,8 @@ export function queryAccountData(): ThunkAction {
       dispatch(actionCreators.updateWalletPageData(tokens, pairs, exchangeAddress, operatorAddress, txs))
 
       for (var symbol in assocBalances)
-        balances.push({balance: assocBalances[symbol] / Math.pow(10, tokensBySymbol[symbol].decimals), symbol});
+        if (tokensBySymbol[symbol])
+          balances.push({balance: assocBalances[symbol] / Math.pow(10, tokensBySymbol[symbol].decimals), symbol});
       
       // TODO handle unsubscriptions
       /*

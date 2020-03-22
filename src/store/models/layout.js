@@ -67,7 +67,8 @@ export function queryAppData(): ThunkAction {
 
     let balances = []
     for (var symbol in assocBalances)
-      balances.push({balance: assocBalances[symbol] / Math.pow(10, tokensBySymbol[symbol].decimals), symbol});
+      if (tokensBySymbol[symbol])
+        balances.push({balance: assocBalances[symbol] / Math.pow(10, tokensBySymbol[symbol].decimals), symbol});
 
     dispatch(balanceActionCreators.updateBalances(balances));
     dispatch(actionCreators.updateAppData(tokens, pairs))
