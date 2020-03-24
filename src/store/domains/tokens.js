@@ -1,11 +1,12 @@
 // @flow
 import type { TokenState, Tokens, TokenRates } from '../../types/tokens';
+import { quoteTokensBySymbols } from '../../config/quotes';
 
 const initialState = {
-  bySymbol: {
-    'GBYTE': { symbol: 'GBYTE', asset: 'base', decimals: 9, quote: true }
-  }
+  bySymbol: quoteTokensBySymbols
 };
+for (let symbol in initialState.bySymbol)
+  initialState.bySymbol[symbol].quote = true;
 
 export const initialized = () => {
   const event = (state: TokenState = initialState) => state;
