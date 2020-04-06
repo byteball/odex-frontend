@@ -117,7 +117,7 @@ const defaultLayouts = {
   ]
 }
 
-class TradingPage extends React.Component<Props, State> {
+class TradingPage extends React.PureComponent<Props, State> {
 
   state = {
     items: ['tokenSearcher', 'orderForm', 'ohlcv', 'ordersTable', 'orderBook', 'tradesTable'],
