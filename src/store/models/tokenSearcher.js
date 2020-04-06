@@ -1,11 +1,11 @@
 // @flow
-import type { 
-  State, 
-  ThunkAction 
+import type {
+  State,
+  ThunkAction
 } from '../../types'
 
-import { 
-  getTokenPairsDomain, 
+import {
+  getTokenPairsDomain,
   getTokenDomain,
   getAccountBalancesDomain,
   getOrdersDomain,
@@ -63,8 +63,12 @@ export default function tokenSearcherSelector(state: State) {
   let baseTokenSymbol = rawPair.baseTokenSymbol
   let quoteTokenSymbol = rawPair.quoteTokenSymbol
   let currentPair = { ...rawPair, pair: currentPairName, baseTokenSymbol, quoteTokenSymbol }
+  let pairsList = domain.getListedPairs()
 
   return {
+    tokenPairs,
+    quoteTokenSymbols,
+    pairsList,
     tokenPairsByQuoteToken,
     currentPair,
     baseTokenBalance,
