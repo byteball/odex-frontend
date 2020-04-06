@@ -79,7 +79,7 @@ class TokenSearcher extends React.PureComponent<Props, State> {
             const urlPair = pairsList.find(pair => pair.pair === pairInURL);
             if (urlPair) {
               nextProps.updateCurrentPair(urlPair.pair);
-              return { initPairs: true, selectedPair: urlPair[0] }
+              return { initPairs: true, selectedPair: urlPair }
             }
 
           }
