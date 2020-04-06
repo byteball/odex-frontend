@@ -44,7 +44,7 @@ const defaultSizes = {
   'lg': {
     'tokenSearcher': { x: 0, y: 0, w: 12, h: 30, minW: 12 },
     'orderForm': { x: 0, y: 30, w: 12, h: 16, minH: 16, maxH: 16 },
-    'ohlcv': { x: 12, y: 0, w: 36, h: 28},
+    'ohlcv': { x: 12, y: 0, w: 36, h: 28 },
     'ordersTable': { x: 12, y: 35, w: 23, h: 16 },
     'orderBook': { x: 48, y: 0, w: 12, h: 28, minW: 10 },
     'tradesTable': { x: 35, y: 35, w: 25, h: 16 },
@@ -72,48 +72,48 @@ const defaultSizes = {
     'ordersTable': { x: 0, y: 56, w: 60, h: 20 },
     'orderBook': { x: 0, y: 76, w: 60, h: 30 },
     'tradesTable': { x: 0, y: 96, w: 60, h: 30 },
-  },  
+  },
 }
 
 const fullScreenOHLCVLayouts: LayoutMap = {
-  'lg': [ {i: 'ohlcv', x: 0, y: 0, w: 60, h: 60 } ],
-  'md': [ {i: 'ohlcv', x: 0, y: 0, w: 60, h: 60 } ],
-  'sm': [ {i: 'ohlcv', x: 0, y: 0, w: 60, h: 60 } ],
-  'xs': [ {i: 'ohlcv', x: 0, y: 0, w: 60, h: 60 } ],
+  'lg': [{ i: 'ohlcv', x: 0, y: 0, w: 60, h: 60 }],
+  'md': [{ i: 'ohlcv', x: 0, y: 0, w: 60, h: 60 }],
+  'sm': [{ i: 'ohlcv', x: 0, y: 0, w: 60, h: 60 }],
+  'xs': [{ i: 'ohlcv', x: 0, y: 0, w: 60, h: 60 }],
 }
 
 const defaultLayouts = {
   'lg': [
-    {i: 'tokenSearcher', x: 0, y: 0, w: 12, h: 28, minW: 12 },
-    {i: 'orderForm', x: 0, y: 35, w: 12, h: 16, minH: 16, maxH: 16 },
-    {i: 'ohlcv', x: 12, y: 0, w: 36, h: 28, minW: 10 },
-    {i: 'ordersTable', x: 12, y: 35, w: 23, h: 16, minW: 10 },
-    {i: 'orderBook', x: 48, y: 0, w: 12, h: 28, minW: 10 },
-    {i: 'tradesTable', x: 35, y: 35, w: 25, h: 16, minW: 10 },
+    { i: 'tokenSearcher', x: 0, y: 0, w: 12, h: 28, minW: 12 },
+    { i: 'orderForm', x: 0, y: 35, w: 12, h: 16, minH: 16, maxH: 16 },
+    { i: 'ohlcv', x: 12, y: 0, w: 36, h: 28, minW: 10 },
+    { i: 'ordersTable', x: 12, y: 35, w: 23, h: 16, minW: 10 },
+    { i: 'orderBook', x: 48, y: 0, w: 12, h: 28, minW: 10 },
+    { i: 'tradesTable', x: 35, y: 35, w: 25, h: 16, minW: 10 },
   ],
   'md': [
-    {i: 'tokenSearcher', x: 0, y: 0, w: 18, h: 30, minW: 12 },
-    {i: 'orderForm', x: 0, y: 30, w: 18, h: 16, minH: 16, maxH: 16 },
-    {i: 'ohlcv', x: 18, y: 0, w: 42, h: 30, minW: 15 },
-    {i: 'ordersTable', x: 18, y: 30, w: 42, h: 20, minW: 15 },
-    {i: 'orderBook', x: 18, y: 50, w: 21, h: 30, minW: 15 },
-    {i: 'tradesTable', x: 39, y: 50, w: 21, h: 30, minW: 12 },
+    { i: 'tokenSearcher', x: 0, y: 0, w: 18, h: 30, minW: 12 },
+    { i: 'orderForm', x: 0, y: 30, w: 18, h: 16, minH: 16, maxH: 16 },
+    { i: 'ohlcv', x: 18, y: 0, w: 42, h: 30, minW: 15 },
+    { i: 'ordersTable', x: 18, y: 30, w: 42, h: 20, minW: 15 },
+    { i: 'orderBook', x: 18, y: 50, w: 21, h: 30, minW: 15 },
+    { i: 'tradesTable', x: 39, y: 50, w: 21, h: 30, minW: 12 },
   ],
   'sm': [
-    {i: 'tokenSearcher', x: 0, y: 0, w: 30, h: 16, minW: 12 },
-    {i: 'orderForm', x: 30, y: 0, w: 30, h: 16, minH: 16, maxH: 16 },
-    {i: 'ohlcv', x: 0, y: 16, w: 60, h: 30 },
-    {i: 'ordersTable', x: 0, y: 106, w: 60, h: 20 },
-    {i: 'orderBook', x: 0, y: 46, w: 30, h: 30, minW: 20 },
-    {i: 'tradesTable', x: 30, y: 46, w: 30, h: 30 },
+    { i: 'tokenSearcher', x: 0, y: 0, w: 30, h: 16, minW: 12 },
+    { i: 'orderForm', x: 30, y: 0, w: 30, h: 16, minH: 16, maxH: 16 },
+    { i: 'ohlcv', x: 0, y: 16, w: 60, h: 30 },
+    { i: 'ordersTable', x: 0, y: 106, w: 60, h: 20 },
+    { i: 'orderBook', x: 0, y: 46, w: 30, h: 30, minW: 20 },
+    { i: 'tradesTable', x: 30, y: 46, w: 30, h: 30 },
   ],
   'xs': [
-    {i: 'tokenSearcher', x: 0, y: 0, w: 60, h: 20, minW: 60, maxW: 60 },
-    {i: 'orderForm', x: 0, y: 40, w: 60, h: 16, minH: 16, maxH: 16, minW: 60, maxW: 60 },
-    {i: 'ohlcv', x: 0, y: 20, w: 60, h: 20, minW: 60, maxW: 60 },
-    {i: 'ordersTable', x: 0, y: 56, w: 60, h: 20, minW: 60, maxW: 60 },
-    {i: 'orderBook', x: 0, y: 76, w: 60, h: 20, minW: 60, maxW: 60 },
-    {i: 'tradesTable', x: 0, y: 96, w: 60, h: 20, minW: 60, maxW: 60 },
+    { i: 'tokenSearcher', x: 0, y: 0, w: 60, h: 20, minW: 60, maxW: 60 },
+    { i: 'orderForm', x: 0, y: 40, w: 60, h: 16, minH: 16, maxH: 16, minW: 60, maxW: 60 },
+    { i: 'ohlcv', x: 0, y: 20, w: 60, h: 20, minW: 60, maxW: 60 },
+    { i: 'ordersTable', x: 0, y: 56, w: 60, h: 20, minW: 60, maxW: 60 },
+    { i: 'orderBook', x: 0, y: 76, w: 60, h: 20, minW: 60, maxW: 60 },
+    { i: 'tradesTable', x: 0, y: 96, w: 60, h: 20, minW: 60, maxW: 60 },
   ]
 }
 
@@ -144,7 +144,7 @@ class TradingPage extends React.PureComponent<Props, State> {
 
 
 
-    }
+  }
 
   componentDidMount() {
     if (this.props.isConnected) {
@@ -167,7 +167,7 @@ class TradingPage extends React.PureComponent<Props, State> {
       authenticated,
       baseTokenBalance,
       quoteTokenBalance,
-     } = this.props
+    } = this.props
 
     if (!authenticated) {
       let calloutOptions = this.callouts.notAuthenticated()
@@ -192,17 +192,18 @@ class TradingPage extends React.PureComponent<Props, State> {
     currentLayout.forEach(elem => {
       if (elem.i === item) {
         this.state.collapsedItems[item]
-        ? newLayout.push({ ...elem, h: defaultSizes[currentBreakpoint][item].h })
-        : newLayout.push({ ...elem, h: 4 })
+          ? newLayout.push({ ...elem, h: defaultSizes[currentBreakpoint][item].h })
+          : newLayout.push({ ...elem, h: 4 })
       } else {
         newLayout.push(elem)
       }
     })
 
     let newLayouts = { ...this.state.layouts, [currentBreakpoint]: newLayout }
-    this.setState({ layouts: newLayouts, collapsedItems: {
-      ...this.state.collapsedItems, 
-      [item]: !this.state.collapsedItems[item]
+    this.setState({
+      layouts: newLayouts, collapsedItems: {
+        ...this.state.collapsedItems,
+        [item]: !this.state.collapsedItems[item]
       }
     })
   }
@@ -220,7 +221,7 @@ class TradingPage extends React.PureComponent<Props, State> {
   }
 
   onResetDefaultLayout = () => {
-    this.setState({ 
+    this.setState({
       layouts: defaultLayouts,
       items: ['tokenSearcher', 'orderForm', 'ohlcv', 'ordersTable', 'orderBook', 'tradesTable'],
       collapsedItems: {
@@ -248,15 +249,14 @@ class TradingPage extends React.PureComponent<Props, State> {
 
     otherItems.forEach(elem => {
       let { x, y, h, w, i } = elem
-      
+
       // check if items heights overlap
-      if ((yc < (y + h) && (yc + hc) >= (y + h)) || (yc <= y && (yc + hc) > y))
-      {
+      if ((yc < (y + h) && (yc + hc) >= (y + h)) || (yc <= y && (yc + hc) > y)) {
         //left side collision detection
         if ((x + w) <= xc) {
           if ((x + w) > newX) newX = x + w
         }
-        
+
         //probably x + w
         //right side collision detection        
         if (x >= (xc + wc)) {
@@ -265,8 +265,7 @@ class TradingPage extends React.PureComponent<Props, State> {
       }
 
       // check if items lengths overlap
-      if (((xc > x) && (xc <= (x + w))) || (((xc + wc) > x) && ((xc+wc) <= (x + w))))
-      {
+      if (((xc > x) && (xc <= (x + w))) || (((xc + wc) > x) && ((xc + wc) <= (x + w)))) {
         //down side side collision detection
         //we only expand vertically if the difference below is small
         if ((yc + hc) <= y && (y < (yc + hc + 100))) {
@@ -292,69 +291,71 @@ class TradingPage extends React.PureComponent<Props, State> {
   }
 
 
-  renderItem =(item: string) => {
+  renderItem = (item: string) => {
     const { items } = this.state
     const fullScreen = (items[0] === "ohlcv" && items.length === 1)
 
 
     const renderedItems = {
-        tokenSearcher: (
-          <div key="tokenSearcher">
-            <TokenSearcher
-              onCollapse={this.onCollapse}
-              onExpand={this.onExpand}
-              onResetDefaultLayout={this.onResetDefaultLayout}
-            />
-          </div>
-        ),
-        orderForm: (
-          <div key="orderForm">
-              <OrderForm
-                onCollapse={this.onCollapse}
-                onExpand={this.onExpand}
-                onResetDefaultLayout={this.onResetDefaultLayout}
-              />
-          </div>
-        ),  
-        ohlcv: (
-          <div key="ohlcv">
-            <OHLCV
-              onCollapse={this.onCollapse}
-              onExpand={this.onExpand}
-              onResetDefaultLayout={this.onResetDefaultLayout}
-              onFullScreen={this.onFullScreenOHLCV}
-              fullScreen={fullScreen}
-            />
-          </div>
-        ),
-        ordersTable: (
-          <div key="ordersTable">
-            <OrdersTable
-              onCollapse={this.onCollapse}
-              onExpand={this.onExpand}
-              onResetDefaultLayout={this.onResetDefaultLayout}
-            />
-          </div>
-        ),
-        orderBook: (
-          <div key="orderBook">
-            <OrderBook
-              onCollapse={this.onCollapse}
-              onExpand={this.onExpand}
-              onResetDefaultLayout={this.onResetDefaultLayout}
-            />
-          </div>
-        ),
-        tradesTable: (
-          <div key="tradesTable">
-            <TradesTable
-              onCollapse={this.onCollapse}
-              onExpand={this.onExpand}
-              onResetDefaultLayout={this.onResetDefaultLayout}
-            />
-          </div>
-        )
-      }
+      tokenSearcher: (
+        <div key="tokenSearcher">
+          <TokenSearcher
+            onCollapse={this.onCollapse}
+            onExpand={this.onExpand}
+            onResetDefaultLayout={this.onResetDefaultLayout}
+            match={this.props.match}
+            isConnected={this.props.isConnected}
+          />
+        </div>
+      ),
+      orderForm: (
+        <div key="orderForm">
+          <OrderForm
+            onCollapse={this.onCollapse}
+            onExpand={this.onExpand}
+            onResetDefaultLayout={this.onResetDefaultLayout}
+          />
+        </div>
+      ),
+      ohlcv: (
+        <div key="ohlcv">
+          <OHLCV
+            onCollapse={this.onCollapse}
+            onExpand={this.onExpand}
+            onResetDefaultLayout={this.onResetDefaultLayout}
+            onFullScreen={this.onFullScreenOHLCV}
+            fullScreen={fullScreen}
+          />
+        </div>
+      ),
+      ordersTable: (
+        <div key="ordersTable">
+          <OrdersTable
+            onCollapse={this.onCollapse}
+            onExpand={this.onExpand}
+            onResetDefaultLayout={this.onResetDefaultLayout}
+          />
+        </div>
+      ),
+      orderBook: (
+        <div key="orderBook">
+          <OrderBook
+            onCollapse={this.onCollapse}
+            onExpand={this.onExpand}
+            onResetDefaultLayout={this.onResetDefaultLayout}
+          />
+        </div>
+      ),
+      tradesTable: (
+        <div key="tradesTable">
+          <TradesTable
+            onCollapse={this.onCollapse}
+            onExpand={this.onExpand}
+            onResetDefaultLayout={this.onResetDefaultLayout}
+          />
+        </div>
+      )
+    }
 
     return renderedItems[item]
   }
@@ -362,18 +363,18 @@ class TradingPage extends React.PureComponent<Props, State> {
   render() {
     const { authenticated, isInitiated } = this.props
     const { calloutOptions, calloutVisible, layouts, items } = this.state
-    
+
     // if (!authenticated) return <Redirect to="/login" />
     // if (!isInitiated) return null;
-    
+
     return (
       <AutoSizer style={{ width: '100%', height: '100%' }}>
         {({ width, height }) => (
           <ResponsiveReactGridLayout
             width={width}
             layouts={layouts}
-            breakpoints={{lg: Sizes.laptop, md: Sizes.tablet, sm: Sizes.mobileL, xs: Sizes.mobileM, xxs: Sizes.mobileS }}
-            cols={{lg:60, md: 60, sm: 60, xs: 60, xxs: 60 }}
+            breakpoints={{ lg: Sizes.laptop, md: Sizes.tablet, sm: Sizes.mobileL, xs: Sizes.mobileM, xxs: Sizes.mobileS }}
+            cols={{ lg: 60, md: 60, sm: 60, xs: 60, xxs: 60 }}
             onLayoutChange={(layout, layouts) => this.onLayoutChange(layout, layouts)}
             onBreakpointChange={this.onBreakpointChange}
             className="layout"
