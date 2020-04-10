@@ -74,8 +74,8 @@ export const fetchTokens = async () => {
   return data
 }
 
-export const fetchToken = async (asset: string) => {
-  const response = await request(`/tokens/${encodeURIComponent(asset)}`)
+export const fetchToken = async (assetOrSymbol: string) => {
+  const response = await request(`/tokens/${encodeURIComponent(assetOrSymbol)}`)
 
   if (response.status !== 200) {
     throw new Error('Error')
@@ -298,8 +298,8 @@ export const getBalances = async (address: string) => {
 }
 
 
-export const getToken = async(asset: string) => {
-  let tokens = await fetchToken(asset)
+export const getToken = async(assetOrSymbol: string) => {
+  let tokens = await fetchToken(assetOrSymbol)
   let parsedToken
 
   if (tokens) parsedToken = parseToken(tokens)
@@ -307,8 +307,8 @@ export const getToken = async(asset: string) => {
   return parsedToken
 }
 
-export const checkToken = async(asset: string) => {
-  const response = await request(`/tokens/check/${encodeURIComponent(asset)}`)
+export const checkToken = async(assetOrSymbol: string) => {
+  const response = await request(`/tokens/check/${encodeURIComponent(assetOrSymbol)}`)
 
   if (response.status !== 200) {
     throw new Error('Error')

@@ -229,7 +229,7 @@ const AddTokenPanel = (props: *) => {
             <FlexItem flex="1">
               <InputGroup
                 name="asset"
-                placeholder="asset ID (44 characters)"
+                placeholder="asset ID (44 characters) or symbol"
                 intent={assetStatus === "invalid" ? "danger" : ""}
                 onChange={handleChangeAsset}
                 value={asset}

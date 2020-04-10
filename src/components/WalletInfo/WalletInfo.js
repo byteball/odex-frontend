@@ -59,7 +59,7 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
     const { asset } = this.state
     const { detectToken } = this.props 
 
-    if (asset.length !== 44) {
+    if (asset.length !== 44 && asset !== asset.toUpperCase()) {
       return this.setState({ assetStatus: "invalid" })
     }
 
