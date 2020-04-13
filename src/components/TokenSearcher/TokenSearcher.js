@@ -67,26 +67,34 @@ class TokenSearcher extends React.PureComponent<Props, State> {
 
 
     const { token1, token2 } = nextProps.match.params;
-    const pairInURL = token1 && token2 ? token1 + "/" + token2 : null
+    const pairsInURL = token1 && token2 ? [token1 + "/" + token2, token2 + "/" + token1] : null
     if (isConnected) {
-      if (prevState.selectedPair && prevState.initPairs && pairInURL) {
-        if (currentPair && pairInURL !== currentPair.pair) {
+      if (prevState.selectedPair && prevState.initPairs && pairsInURL) {
+        if (currentPair && pairsInURL[0] !== currentPair.pair) {
           history.replace(`/trade/${currentPair.pair}`)
         }
-      } else if (prevState.selectedPair && !prevState.initPairs && pairInURL) {
-        if (currentPair && pairInURL !== currentPair.pair) {
-          if ("pairsList" in nextProps && nextProps.pairsList.length > 0) {
-            const urlPair = pairsList.find(pair => pair.pair === pairInURL);
+      } else if (prevState.selectedPair && !prevState.initPairs && pairsInURL) {
+        if ("pairsList" in nextProps && nextProps.pairsList.length > 0) {
+          if (currentPair && pairsInURL[0] !== currentPair.pair) {
+            const urlPair = pairsList.find(pair => pair.pair === pairsInURL[0]);
             if (urlPair) {
               nextProps.updateCurrentPair(urlPair.pair);
               return { initPairs: true, selectedPair: urlPair }
+            } else {
+              const reverseUrlPair = pairsList.find(pair => pair.pair === pairsInURL[1]);
+              if (reverseUrlPair) {
+                nextProps.updateCurrentPair(reverseUrlPair.pair);
+                return { initPairs: true, selectedPair: reverseUrlPair }
+              } else {
+                if (currentPair) {
+                  history.replace(`/trade/${currentPair.pair}`)
+                  return { initPairs: true }
+                }
+              }
             }
-
           }
-
         }
-
-      } else if (prevState.selectedPair && !prevState.initPairs && !pairInURL) {
+      } else if (prevState.selectedPair && !prevState.initPairs && !pairsInURL) {
         if (currentPair) {
           history.replace(`/trade/${currentPair.pair}`)
           return { initPairs: true }
@@ -96,7 +104,7 @@ class TokenSearcher extends React.PureComponent<Props, State> {
 
 
     if (!prevState.selectedPair) {
-      const initPairs = currentPair && pairInURL && pairInURL === currentPair.pair
+      const initPairs = currentPair && pairsInURL && pairsInURL[0] === currentPair.pair
       return {
         quoteTokens: quoteTokens,
         selectedTabId: currentQuoteToken,

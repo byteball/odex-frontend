@@ -41,9 +41,13 @@ export function detectToken(asset: string): ThunkAction {
 
             token = await api.getToken(asset)
             if (token) {
+                if (listedTokens.indexOf(token.asset) !== -1) {
+                    return { error: 'Token is already listed' }
+                }
                 return {
                     isRegistered: true,
                     decimals: token.decimals,
+                    asset: token.asset,
                     symbol: token.symbol
                 }
             }
@@ -54,6 +58,7 @@ export function detectToken(asset: string): ThunkAction {
                 return {
                     isRegistered: false,
                     decimals: token.decimals,
+                    asset: token.asset,
                     symbol: token.symbol
                 }
             }
@@ -86,7 +91,7 @@ export function addToken(asset: string): ThunkAction {
             }
 
             let token = await api.getToken(asset)
-            if (!token || !token.symbol)
+            if (!token || !token.symbol || !token.asset)
                 return { error: 'Asset not found' }
 
             let pairs = quoteTokens.map((quote) => {
@@ -134,7 +139,7 @@ export function registerToken(asset: string): ThunkAction {
             }
 
             let token = await api.getToken(asset)
-            if (token && token.symbol){ // already registered, just add
+            if (token && token.symbol && token.asset){ // already registered, just add
                 let pairs = quoteTokens.map((quote) => {
                     return {
                         baseTokenSymbol: token.symbol,
@@ -152,10 +157,10 @@ export function registerToken(asset: string): ThunkAction {
             }
 
             token = await api.checkToken(asset)
-            if (!token || !token.symbol) // not in the DAG
+            if (!token || !token.symbol || !token.asset) // not in the DAG
                 return { error: 'Asset not found' }
 
-            let pairs = await api.createPairs(asset)
+            let pairs = await api.createPairs(token.asset)
             if (pairs) await dispatch(actionCreators.addToken(token, pairs))
 
             return { token, pairs }
