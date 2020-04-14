@@ -3,6 +3,7 @@ import React from 'react';
 import TokenSearcherRenderer from './TokenSearcherRenderer';
 import { sortTable } from '../../utils/helpers';
 import { ContextMenuTarget, Menu, MenuItem } from '@blueprintjs/core'
+import { getQuoteToken, getBaseToken } from '../../utils/tokens';
 import history from '../../store/history';
 //TODO not sure exactly where to define this type.
 type Token = {
@@ -28,7 +29,8 @@ type Props = {
   updateCurrentPair: string => void,
   onCollapse: string => void,
   onExpand: string => void,
-  onResetDefaultLayout: string => void
+  onResetDefaultLayout: string => void,
+  autoSymbolRegistration: string => void
 };
 
 type State = {
@@ -53,7 +55,8 @@ class TokenSearcher extends React.PureComponent<Props, State> {
     selectedTabId: '',
     orderChanged: false,
     isOpen: true,
-    initPairs: false
+    initPairs: false,
+    wasRegistered: false
   };
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
@@ -65,16 +68,18 @@ class TokenSearcher extends React.PureComponent<Props, State> {
     const defaultPairs = tokenPairsByQuoteToken[currentQuoteToken];
     const selectedPair = defaultPairs.filter(pair => pair.pair === currentPair.pair)[0];
 
-
     const { token1, token2 } = nextProps.match.params;
     const pairsInURL = token1 && token2 ? [token1 + "/" + token2, token2 + "/" + token1] : null
-    if (isConnected) {
-      if (prevState.selectedPair && prevState.initPairs && pairsInURL) {
-        if (currentPair && pairsInURL[0] !== currentPair.pair) {
-          history.replace(`/trade/${currentPair.pair}`)
+
+    if (prevState.selectedPair) {
+      if (prevState.initPairs) {
+        if (pairsInURL) {
+          if (currentPair && pairsInURL[0] !== currentPair.pair) {
+            history.replace(`/trade/${currentPair.pair}`)
+          }
         }
-      } else if (prevState.selectedPair && !prevState.initPairs && pairsInURL) {
-        if ("pairsList" in nextProps && nextProps.pairsList.length > 0) {
+      } else if ("pairsList" in nextProps && nextProps.pairsList.length > 0) {
+        if (pairsInURL) {
           if (currentPair && pairsInURL[0] !== currentPair.pair) {
             const urlPair = pairsList.find(pair => pair.pair === pairsInURL[0]);
             if (urlPair) {
@@ -86,24 +91,39 @@ class TokenSearcher extends React.PureComponent<Props, State> {
                 nextProps.updateCurrentPair(reverseUrlPair.pair);
                 return { initPairs: true, selectedPair: reverseUrlPair }
               } else {
-                if (currentPair) {
-                  history.replace(`/trade/${currentPair.pair}`)
-                  return { initPairs: true }
+                const { quoteTokenSymbols } = nextProps;
+                if (isConnected) {
+                  if (!prevState.wasRegistered) {
+                    if (quoteTokenSymbols.find((token) => token === token1)) {
+                      if (!quoteTokenSymbols.find((token) => token === token2)) {
+                        nextProps.autoSymbolRegistration(token2)
+                        return { wasRegistered: true }
+                      } else {
+                        history.replace(`/trade/${currentPair.pair}`)
+                      }
+                    } else if (quoteTokenSymbols.find((token) => token === token2)) {
+                      if (!quoteTokenSymbols.find((token) => token === token1)) {
+                        nextProps.autoSymbolRegistration(token1)
+                        return { wasRegistered: true }
+                      } else {
+                        history.replace(`/trade/${currentPair.pair}`)
+                      }
+                    } else {
+                      history.replace(`/trade/${currentPair.pair}`)
+                    }
+                  }
                 }
               }
             }
+          } else {
+            return { initPairs: true, selectedPair }
           }
-        }
-      } else if (prevState.selectedPair && !prevState.initPairs && !pairsInURL) {
-        if (currentPair) {
+        } else {
           history.replace(`/trade/${currentPair.pair}`)
-          return { initPairs: true }
         }
       }
-    }
-
-
-    if (!prevState.selectedPair) {
+      return null
+    } else {
       const initPairs = currentPair && pairsInURL && pairsInURL[0] === currentPair.pair
       return {
         quoteTokens: quoteTokens,
@@ -111,8 +131,6 @@ class TokenSearcher extends React.PureComponent<Props, State> {
         selectedPair: selectedPair, // selectedPair: defaultPairs[0],
         initPairs
       };
-    } else {
-      return null;
     }
   }
 

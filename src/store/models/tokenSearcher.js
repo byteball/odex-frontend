@@ -13,9 +13,10 @@ import {
 } from '../domains'
 
 import * as actionCreators from '../actions/tokenSearcher'
-
+import { addToken } from '../actions/walletInfo'
 import { getQuoteToken, getBaseToken } from '../../utils/tokens'
 
+import history from '../history';
 
 export default function tokenSearcherSelector(state: State) {
   let domain = getTokenPairsDomain(state)
@@ -99,5 +100,28 @@ export const updateCurrentPair = (newPairSymbol: string): ThunkAction => {
     } catch (e) {
       console.log(e)
     }
+  }
+}
+
+export const autoSymbolRegistration = (symbol: string): ThunkAction => async (dispatch, getState, { api }) => {
+  try {
+    let store = getState()
+    const { currentPair } = store.tokenPairs;
+    let token;
+    try {
+      token = await api.checkToken(symbol)
+    } catch (e) {
+      console.log(e)
+    }
+
+    if (token && token.symbol && token.asset && !token.listed) {
+      let pairs = await api.createPairs(token.asset)
+      if (pairs) await dispatch(addToken(token, pairs))
+    } else {
+      history.replace(`/trade/${currentPair}`)
+    }
+  } catch (e) {
+    console.log(e)
+    return { error: e.message }
   }
 }
