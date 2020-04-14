@@ -78,13 +78,13 @@ class TokenSearcher extends React.PureComponent<Props, State> {
             history.replace(`/trade/${currentPair.pair}`)
           }
         }
-      } else if ("pairsList" in nextProps && nextProps.pairsList.length > 0) {
+      } else if (isConnected && "pairsList" in nextProps && nextProps.pairsList.length > 0) {
         if (pairsInURL) {
           if (currentPair && pairsInURL[0] !== currentPair.pair) {
             const urlPair = pairsList.find(pair => pair.pair === pairsInURL[0]);
             if (urlPair) {
               nextProps.updateCurrentPair(urlPair.pair);
-              return { initPairs: true, selectedPair: urlPair }
+              return { initPairs: true , selectedPair: urlPair }
             } else {
               const reverseUrlPair = pairsList.find(pair => pair.pair === pairsInURL[1]);
               if (reverseUrlPair) {
@@ -92,7 +92,6 @@ class TokenSearcher extends React.PureComponent<Props, State> {
                 return { initPairs: true, selectedPair: reverseUrlPair }
               } else {
                 const { quoteTokenSymbols } = nextProps;
-                if (isConnected) {
                   if (!prevState.wasRegistered) {
                     if (quoteTokenSymbols.includes(token1)) {
                       if (!quoteTokenSymbols.includes(token2)) {
@@ -112,7 +111,6 @@ class TokenSearcher extends React.PureComponent<Props, State> {
                       history.replace(`/trade/${currentPair.pair}`)
                     }
                   }
-                }
               }
             }
           } else {
