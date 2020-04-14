@@ -30,7 +30,7 @@ type Props = {
   onCollapse: string => void,
   onExpand: string => void,
   onResetDefaultLayout: string => void,
-  autoSymbolRegistration: string => void
+  autoRegisterSymbol: string => void
 };
 
 type State = {
@@ -94,16 +94,16 @@ class TokenSearcher extends React.PureComponent<Props, State> {
                 const { quoteTokenSymbols } = nextProps;
                 if (isConnected) {
                   if (!prevState.wasRegistered) {
-                    if (quoteTokenSymbols.find((token) => token === token1)) {
-                      if (!quoteTokenSymbols.find((token) => token === token2)) {
-                        nextProps.autoSymbolRegistration(token2)
+                    if (quoteTokenSymbols.includes(token1)) {
+                      if (!quoteTokenSymbols.includes(token2)) {
+                        nextProps.autoRegisterSymbol(token2)
                         return { wasRegistered: true }
                       } else {
                         history.replace(`/trade/${currentPair.pair}`)
                       }
-                    } else if (quoteTokenSymbols.find((token) => token === token2)) {
-                      if (!quoteTokenSymbols.find((token) => token === token1)) {
-                        nextProps.autoSymbolRegistration(token1)
+                    } else if (quoteTokenSymbols.includes(token2)) {
+                      if (!quoteTokenSymbols.includes(token1)) {
+                        nextProps.autoRegisterSymbol(token1)
                         return { wasRegistered: true }
                       } else {
                         history.replace(`/trade/${currentPair.pair}`)

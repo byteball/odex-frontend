@@ -103,7 +103,7 @@ export const updateCurrentPair = (newPairSymbol: string): ThunkAction => {
   }
 }
 
-export const autoSymbolRegistration = (symbol: string): ThunkAction => async (dispatch, getState, { api }) => {
+export const autoRegisterSymbol = (symbol: string): ThunkAction => async (dispatch, getState, { api }) => {
   try {
     let store = getState()
     const { currentPair } = store.tokenPairs;
