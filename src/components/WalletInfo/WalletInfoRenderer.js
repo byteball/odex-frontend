@@ -243,7 +243,7 @@ const AddTokenPanel = (props: *) => {
             minimal
             onClick={handleDetectToken}
           />
-          <Box pl={2} pt={2}>
+          <Box pl={2} style={{display: "flex", alignItems: "center"}}>
             <Help position={Position.LEFT}>
               This button will detect whether the entered asset exists.
             </Help>
