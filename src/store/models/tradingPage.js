@@ -79,7 +79,7 @@ export const queryTradingPageData = (): ThunkAction => {
       socket.subscribeTrades(currentPair)
       socket.subscribeOrderBook(currentPair)
       socket.subscribeChart(currentPair, state.ohlcv.currentTimeSpan.label, state.ohlcv.currentDuration.label)
-      dispatch(actionCreators.updateTradingPageData(parsedTokenPairData.slice(0,57), parsedOrders))
+      dispatch(actionCreators.updateTradingPageData(parsedTokenPairData, parsedOrders))
     } catch (e) {
       console.log(e)
     }
