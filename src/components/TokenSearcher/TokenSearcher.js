@@ -3,6 +3,7 @@ import React from 'react';
 import TokenSearcherRenderer from './TokenSearcherRenderer';
 import { sortTable } from '../../utils/helpers';
 import { ContextMenuTarget, Menu, MenuItem } from '@blueprintjs/core'
+import { getQuoteToken, getBaseToken } from '../../utils/tokens';
 import history from '../../store/history';
 //TODO not sure exactly where to define this type.
 type Token = {
@@ -28,7 +29,8 @@ type Props = {
   updateCurrentPair: string => void,
   onCollapse: string => void,
   onExpand: string => void,
-  onResetDefaultLayout: string => void
+  onResetDefaultLayout: string => void,
+  autoRegisterSymbol: string => void
 };
 
 type State = {
@@ -41,6 +43,8 @@ type State = {
   orderChanged: boolean,
   isOpen: boolean,
   initPairs: boolean,
+  wasRegistered: boolean,
+  gotData: boolean
 };
 
 class TokenSearcher extends React.PureComponent<Props, State> {
@@ -53,66 +57,85 @@ class TokenSearcher extends React.PureComponent<Props, State> {
     selectedTabId: '',
     orderChanged: false,
     isOpen: true,
-    initPairs: false
+    initPairs: false,
+    wasRegistered: false,
+    gotData: false
   };
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
     let { tokenPairsByQuoteToken, currentPair, pairsList, pairName, isConnected } = nextProps;
     const quoteTokens: Array<string> = Object.keys(tokenPairsByQuoteToken);
     const currentQuoteToken = currentPair.quoteTokenSymbol;
-
+    if (prevState.initPairs && !prevState.gotData && isConnected) {
+      nextProps.queryTradingPageData()
+      return {gotData: true}
+    }
     // const currentQuoteToken = quoteTokens[0];
     const defaultPairs = tokenPairsByQuoteToken[currentQuoteToken];
     const selectedPair = defaultPairs.filter(pair => pair.pair === currentPair.pair)[0];
 
-
     const { token1, token2 } = nextProps.match.params;
     const pairsInURL = token1 && token2 ? [token1 + "/" + token2, token2 + "/" + token1] : null
-    if (isConnected) {
-      if (prevState.selectedPair && prevState.initPairs && pairsInURL) {
-        if (currentPair && pairsInURL[0] !== currentPair.pair) {
+
+    if (prevState.selectedPair) {
+      if (prevState.initPairs) {
+        if (pairsInURL) {
+          if (currentPair && pairsInURL[0] !== currentPair.pair) {
+            history.replace(`/trade/${currentPair.pair}`)
+          }
+        } else {
           history.replace(`/trade/${currentPair.pair}`)
         }
-      } else if (prevState.selectedPair && !prevState.initPairs && pairsInURL) {
-        if ("pairsList" in nextProps && nextProps.pairsList.length > 0) {
+      } else if (isConnected && "pairsList" in nextProps && nextProps.pairsList.length > 0) {
+        if (pairsInURL) {
           if (currentPair && pairsInURL[0] !== currentPair.pair) {
             const urlPair = pairsList.find(pair => pair.pair === pairsInURL[0]);
             if (urlPair) {
               nextProps.updateCurrentPair(urlPair.pair);
-              return { initPairs: true, selectedPair: urlPair }
+              return { initPairs: true , selectedPair: urlPair }
             } else {
               const reverseUrlPair = pairsList.find(pair => pair.pair === pairsInURL[1]);
               if (reverseUrlPair) {
                 nextProps.updateCurrentPair(reverseUrlPair.pair);
                 return { initPairs: true, selectedPair: reverseUrlPair }
               } else {
-                if (currentPair) {
-                  history.replace(`/trade/${currentPair.pair}`)
-                  return { initPairs: true }
-                }
+                const { quoteTokenSymbols } = nextProps;
+                  if (!prevState.wasRegistered) {
+                    if (quoteTokenSymbols.includes(token1)) {
+                      if (!quoteTokenSymbols.includes(token2)) {
+                        nextProps.autoRegisterSymbol(token2)
+                        return { wasRegistered: true }
+                      } else {
+                        history.replace(`/trade/${currentPair.pair}`)
+                      }
+                    } else if (quoteTokenSymbols.includes(token2)) {
+                      if (!quoteTokenSymbols.includes(token1)) {
+                        nextProps.autoRegisterSymbol(token1)
+                        return { wasRegistered: true }
+                      } else {
+                        history.replace(`/trade/${currentPair.pair}`)
+                      }
+                    } else {
+                      history.replace(`/trade/${currentPair.pair}`)
+                    }
+                  }
               }
             }
+          } else {
+            return { initPairs: true, selectedPair }
           }
-        }
-      } else if (prevState.selectedPair && !prevState.initPairs && !pairsInURL) {
-        if (currentPair) {
+        } else {
           history.replace(`/trade/${currentPair.pair}`)
-          return { initPairs: true }
         }
       }
-    }
-
-
-    if (!prevState.selectedPair) {
-      const initPairs = currentPair && pairsInURL && pairsInURL[0] === currentPair.pair
+      return null
+    } else {
       return {
         quoteTokens: quoteTokens,
         selectedTabId: currentQuoteToken,
         selectedPair: selectedPair, // selectedPair: defaultPairs[0],
-        initPairs
+        initPairs: false
       };
-    } else {
-      return null;
     }
   }
 

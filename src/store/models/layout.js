@@ -17,6 +17,7 @@ export default function createSelector(state) {
   let GBYTEBalance = accountBalancesDomain.gbyteBalance()
   let accountLoading = !(GBYTEBalance)
   let location = state.router.location.pathname
+  let currentPair = state.tokenPairs.currentPair
 
   let referenceCurrencies = fiatCurrencies.map((currency, i) => {
     return {
@@ -35,7 +36,8 @@ export default function createSelector(state) {
     accountLoading,
     currentReferenceCurrency,
     referenceCurrencies,
-    location
+    location,
+    currentPair
   };
 }
 

@@ -38,6 +38,7 @@ type State = {
   items: Array<string>,
   collapsedItems: any,
   currentBreakpoint: string,
+  initData: boolean
 }
 
 const defaultSizes = {
@@ -132,7 +133,8 @@ class TradingPage extends React.PureComponent<Props, State> {
       'ordersTable': false,
       'orderBook': false,
       'tradesTable': false
-    }
+    },
+    initData: false
   }
 
   callouts = {
@@ -149,17 +151,19 @@ class TradingPage extends React.PureComponent<Props, State> {
   componentDidMount() {
     if (this.props.isConnected) {
       this.props.queryTradingPageData();
+      this.setState({initData: true})
     }
 
     // this.checkIfCalloutRequired()
   }
 
   componentDidUpdate(prevProps: Props) {
-    if (prevProps.isConnected || !this.props.isConnected) {
+    if (prevProps.isConnected || !this.props.isConnected || !this.props.isInitiated || this.state.initData) {
       return;
     }
 
     this.props.queryTradingPageData();
+    this.setState({initData: true})
   }
 
   checkIfCalloutRequired = () => {
@@ -305,6 +309,7 @@ class TradingPage extends React.PureComponent<Props, State> {
             onResetDefaultLayout={this.onResetDefaultLayout}
             match={this.props.match}
             isConnected={this.props.isConnected}
+            initData={this.state.initData}
           />
         </div>
       ),
