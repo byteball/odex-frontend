@@ -44,7 +44,7 @@ type State = {
   isOpen: boolean,
   initPairs: boolean,
   wasRegistered: boolean,
-  wasGetData: boolean
+  gotData: boolean
 };
 
 class TokenSearcher extends React.PureComponent<Props, State> {
@@ -59,16 +59,16 @@ class TokenSearcher extends React.PureComponent<Props, State> {
     isOpen: true,
     initPairs: false,
     wasRegistered: false,
-    wasGetData: false
+    gotData: false
   };
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
     let { tokenPairsByQuoteToken, currentPair, pairsList, pairName, isConnected } = nextProps;
     const quoteTokens: Array<string> = Object.keys(tokenPairsByQuoteToken);
     const currentQuoteToken = currentPair.quoteTokenSymbol;
-    if (prevState.initPairs && !prevState.wasGetData && isConnected) {
+    if (prevState.initPairs && !prevState.gotData && isConnected) {
       nextProps.queryTradingPageData()
-      return {wasGetData: true}
+      return {gotData: true}
     }
     // const currentQuoteToken = quoteTokens[0];
     const defaultPairs = tokenPairsByQuoteToken[currentQuoteToken];
