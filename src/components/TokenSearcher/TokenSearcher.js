@@ -43,6 +43,8 @@ type State = {
   orderChanged: boolean,
   isOpen: boolean,
   initPairs: boolean,
+  wasRegistered: boolean,
+  wasGetData: boolean
 };
 
 class TokenSearcher extends React.PureComponent<Props, State> {
@@ -56,14 +58,18 @@ class TokenSearcher extends React.PureComponent<Props, State> {
     orderChanged: false,
     isOpen: true,
     initPairs: false,
-    wasRegistered: false
+    wasRegistered: false,
+    wasGetData: false
   };
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
     let { tokenPairsByQuoteToken, currentPair, pairsList, pairName, isConnected } = nextProps;
     const quoteTokens: Array<string> = Object.keys(tokenPairsByQuoteToken);
     const currentQuoteToken = currentPair.quoteTokenSymbol;
-
+    if (prevState.initPairs && !prevState.wasGetData && isConnected) {
+      nextProps.queryTradingPageData()
+      return {wasGetData: true}
+    }
     // const currentQuoteToken = quoteTokens[0];
     const defaultPairs = tokenPairsByQuoteToken[currentQuoteToken];
     const selectedPair = defaultPairs.filter(pair => pair.pair === currentPair.pair)[0];
@@ -77,6 +83,8 @@ class TokenSearcher extends React.PureComponent<Props, State> {
           if (currentPair && pairsInURL[0] !== currentPair.pair) {
             history.replace(`/trade/${currentPair.pair}`)
           }
+        } else {
+          history.replace(`/trade/${currentPair.pair}`)
         }
       } else if (isConnected && "pairsList" in nextProps && nextProps.pairsList.length > 0) {
         if (pairsInURL) {
@@ -122,12 +130,11 @@ class TokenSearcher extends React.PureComponent<Props, State> {
       }
       return null
     } else {
-      const initPairs = currentPair && pairsInURL && pairsInURL[0] === currentPair.pair
       return {
         quoteTokens: quoteTokens,
         selectedTabId: currentQuoteToken,
         selectedPair: selectedPair, // selectedPair: defaultPairs[0],
-        initPairs
+        initPairs: false
       };
     }
   }

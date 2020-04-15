@@ -49,7 +49,8 @@ export type Props = {
   updateReferenceCurrency: void => string,
   currentReferenceCurrency: string,
   queryAppData: void => void,
-  location: Location
+  location: Location,
+  currentPair: string
 }
 
 type State = {}
@@ -69,7 +70,8 @@ class Layout extends React.PureComponent<Props, State> {
       referenceCurrencies,
       currentReferenceCurrency,
       updateReferenceCurrency,
-      location
+      location,
+      currentPair
     } = this.props
 
     const showReferenceCurrency = authenticated
@@ -100,7 +102,7 @@ class Layout extends React.PureComponent<Props, State> {
                 </NavbarHeading>
                 {authenticated && <NavbarLink to="/wallet">Wallet</NavbarLink>}    
                 {authenticated && <NavbarLink to="/markets">Markets</NavbarLink>}
-                <NavbarLink to="/trade">Exchange</NavbarLink>
+                <NavbarLink to={`/trade/${currentPair ? currentPair: ""}`}>Exchange</NavbarLink>
                 {false && <NavbarLink to="/settings" hideOnMobile>Settings</NavbarLink>}
                 <NavbarLink to="/faq">FAQ</NavbarLink>
                 <NavbarDivider hideOnMobile />
