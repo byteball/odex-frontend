@@ -1,4 +1,5 @@
 //@flow
+import { DEFAULT_NETWORK_ID } from '../../config/environment'
 import { quoteTokens } from '../../config/quotes'
 import { tokens } from '../../config/tokens'
 import { generateTokenPairs, getPairSymbol, getBaseToken } from '../../utils/tokens'
@@ -10,7 +11,7 @@ const defaultInitialState = {
   byPair: defaultTokenPairs,
   data: {},
   favorites: [],
-  currentPair: 'GBYTE/USDC',
+  currentPair: (DEFAULT_NETWORK_ID === 'testnet') ? 'GBYTE/USDC' : 'GBYTE/USD_20200701',
   sortedPairs: [],
 }
 

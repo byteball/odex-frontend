@@ -21,10 +21,10 @@ const quoteTokensBySymbolsTable = {
       asset: assets['livenet']['GBYTE'],
       decimals: 9,
     },
-    USDC: {
-      symbol: 'USDC',
-      asset: assets['livenet']['USDC'],
-      decimals: 6,
+    USD_20200701: {
+      symbol: 'USD_20200701',
+      asset: assets['livenet']['USD_20200701'],
+      decimals: 2,
     },
   },
 };

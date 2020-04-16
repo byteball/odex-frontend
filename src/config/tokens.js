@@ -3,7 +3,7 @@ import assets from './assets.json';
 
 const networkIDs = ['testnet', 'livenet']
 
-export const defaultTokenDecimals = {
+const defaultTokenDecimals = {
   GBYTE: 9,
   AE: 18,
   BAT: 18,
@@ -27,9 +27,10 @@ export const defaultTokenDecimals = {
   AION: 18,
   LOOM: 18,
   USDC: 6,
+  USD_20200701: 2,
 }
 
-export const defaultTokens = [
+const defaultTokens = [
   "GBYTE",
   "AE",
   "BAT",
@@ -48,6 +49,7 @@ export const defaultTokens = [
   "WTC",
   "ZRX",
   "USDC",
+  "USD_20200701",
 ]
 
 let tokensBySymbolTable = {}
@@ -65,6 +67,6 @@ for (let networkID of networkIDs) {
   }
 }
 
-export const tokensBySymbol = tokensBySymbolTable[DEFAULT_NETWORK_ID];
-export const tokenSymbols = Object.keys(tokensBySymbol);
+const tokensBySymbol = tokensBySymbolTable[DEFAULT_NETWORK_ID];
+//export const tokenSymbols = Object.keys(tokensBySymbol);
 export const tokens = Object.values(tokensBySymbol);

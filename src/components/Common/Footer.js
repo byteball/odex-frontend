@@ -65,11 +65,11 @@ const Footer = () => (
             <HeadListItem>Dapps</HeadListItem>
             <NormalListItem>
               <LinkText
-                  href="" 
+                  href="https://ostable.org" 
                   target="_blank"
                   rel="noopener"
                 >
-                  Stablecoin
+                  Stablecoins
               </LinkText>
             </NormalListItem>
             <NormalListItem>
