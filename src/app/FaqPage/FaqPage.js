@@ -164,7 +164,7 @@ class FaqPage extends React.PureComponent {
             match={match}
           >
             ODEX is a hybrid decentralized exchange. We maintain the orderbook and match orders with each other. Trades are then settled on the Obyte chain.
-            This model allows up to provide a good user experience along with the benefits of centralized exchanges.
+            This model allows us to provide a good user experience along with the benefits of centralized exchanges.
           </FaqItem>
           <Box p={2} />
           <FaqItem

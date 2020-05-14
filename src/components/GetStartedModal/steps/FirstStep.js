@@ -144,7 +144,7 @@ const SecuritySectionRenderer = (props: Props) => {
           <Header>Stay secure</Header>
             <p>• Verify that you are on https://odex.ooo everytime you log in.</p>
             <p>• We recommend to use Obyte Wallet for the most secure trading experience.</p>
-            <p>• We cannot recover your funds or freeze your account if you visit a phising ite or lose your private key.</p>
+            <p>• We cannot recover your funds or freeze your account if you visit a phishing site or lose your private key.</p>
             <p>• All transactions on the DAG are irreversible. We cannot undo a transaction you've just sent. </p>
             <p>• Never disclose your wallet seed, private keys, backups, or other authentication elements of your Obyte wallet to anyone.</p>
             <p>• Be diligent to keep your Obyte wallet safe.</p>

@@ -119,7 +119,7 @@ export default function ordersDomain(state: OrdersState) {
     history: () => {
       let orders = Object.values(state.byHash)
       let history = (orders: Orders).filter(
-        order => ['CANCELLED', 'FILLED', 'PARTIAL_FILLED'].indexOf(order.status) === -1
+        order => ['CANCELLED', 'AUTO_CANCELLED', 'FILLED', 'PARTIAL_FILLED'].indexOf(order.status) === -1
       )
       return history
     },
