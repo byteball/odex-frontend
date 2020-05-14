@@ -9,11 +9,10 @@ import ReactGA from "react-ga";
 import history from "./store/history";
 
 ReactGA.initialize(GA_ID);
+
 const pathname = history.location.pathname.split("/");
 
-if (pathname.length >= 2) {
-  ReactGA.pageview(pathname[1]);
-}
+ReactGA.pageview(pathname[1]);
 
 const { store } = configureStore();
 // registerServiceWorker();

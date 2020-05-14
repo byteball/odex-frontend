@@ -550,7 +550,7 @@ const ButtonRenderer = (props: *) => {
   const buyGA = (symbol) => {
     ReactGA.event({
       category: 'ODEX',
-      action: 'Create order (BUY)',
+      action: 'Buy',
       label: baseTokenSymbol + '/' + quoteTokenSymbol
     });
   }
@@ -558,7 +558,7 @@ const ButtonRenderer = (props: *) => {
   const sellGA = (symbol) => {
     ReactGA.event({
       category: 'ODEX',
-      action: 'Create order (SELL)',
+      action: 'Sell',
       label: baseTokenSymbol + '/' + quoteTokenSymbol
     });
   }
