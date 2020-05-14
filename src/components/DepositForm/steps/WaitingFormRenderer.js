@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Button, Callout, ControlGroup, Spinner, InputGroup } from '@blueprintjs/core';
+import ReactGA from 'react-ga';
 import { ModalBody, ModalFooter } from '../../Common'
 import TokenSuggest from '../../TokenSuggest';
 import { PROTOCOL } from '../../../config/urls'
@@ -14,6 +15,14 @@ state = {
 handleAmountInputChange = (e: SyntheticInputEvent<>) => {
   this.setState({ amount: e.target.value });
 };
+
+depositGA = (symbol) => {
+  ReactGA.event({
+    category: 'ODEX',
+    action: 'Deposit',
+    label: symbol
+  });
+}
 
 render() {
   const {
@@ -45,7 +54,7 @@ render() {
             onChange={this.handleAmountInputChange}
           />
         </AmountBox>
-        <a href={PROTOCOL+exchangeAddress + "?asset=" + encodeURIComponent(token.asset) + "&amount=" + amountInSmallestUnits + "&from_address=" + address}>Deposit {this.state.amount} {token.symbol}</a>
+        <a onClick={()=>this.depositGA(token.symbol)} href={PROTOCOL+exchangeAddress + "?asset=" + encodeURIComponent(token.asset) + "&amount=" + amountInSmallestUnits + "&from_address=" + address}>Deposit {this.state.amount} {token.symbol}</a>
         <CurrentBalanceBox>
           (Your current balance is {balance} {token.symbol})
         </CurrentBalanceBox>

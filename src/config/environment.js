@@ -19,6 +19,8 @@ if (window.env) {
 export const MATCHER_FEE = 0.001;
 export const MAX_PRICE_PRECISION = 8;
 
+export const GA_ID = process.env.REACT_APP_GA_ID;
+
 export {
   ENGINE_HTTP_URL,
   ENGINE_WS_URL,

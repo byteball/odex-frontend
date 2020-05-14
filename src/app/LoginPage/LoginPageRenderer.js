@@ -2,6 +2,7 @@ import React from 'react'
 import { defineMessages, FormattedMessage } from 'react-intl'
 import styled  from 'styled-components'
 import { Spring } from 'react-spring'
+import ReactGA from 'react-ga'
 import QRCode from 'qrcode.react'
 import { CHATBOT_URL } from '../../config/urls'
 
@@ -72,6 +73,17 @@ const LoginMethodsView = (props: Props) => {
 
   const link = CHATBOT_URL + sessionId
 
+  const loginWithAppAndGA = () => {
+
+    loginWithApp();
+
+    ReactGA.event({
+      category: 'ODEX',
+      action: 'Login',
+    });
+
+  }
+
   return (
     <FlexRow p={5} pb={6} justifyContent="space-between">
       <Box />
@@ -84,7 +96,7 @@ const LoginMethodsView = (props: Props) => {
                 <Flex flexDirection="column" width="100%">
                   <Flex flexDirection="column" alignItems="center" py={1}>
                     Click this link or scan the QR code to open your Obyte app and confirm login:<br/><br/>
-                    <LargeText><a onClick={loginWithApp} href={link}>Log in with Obyte app</a><br/></LargeText>
+                    <LargeText><a onClick={loginWithAppAndGA} href={link}>Log in with Obyte app</a><br/></LargeText>
                     <QRCode value={link} level="L" fgColor="#293742" bgColor="#FFFFFF" includeMargin={true} /><br/>
                     <SmallText muted>If you don't have Obyte wallet yet, <a href="https://obyte.org/#download" target="_blank">download it</a>.</SmallText>
                     {/*

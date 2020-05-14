@@ -2,6 +2,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Button, ControlGroup, InputGroup, Label, Callout } from '@blueprintjs/core';
+import ReactGA from 'react-ga'
 import TokenSelect from '../TokenSelect';
 import { ModalBody } from '../Common'
 import { PROTOCOL } from '../../config/urls'
@@ -29,6 +30,14 @@ const TransferTokensFormRenderer = (props: Props) => {
     base64data
   } = props;
 
+  const withdrawGA = (symbol) => {
+    ReactGA.event({
+      category: 'ODEX',
+      action: 'Withdraw',
+      label: symbol
+    });
+  }
+
   return (
     <ModalBody>
       <Label helpertext="(in token decimals)" text="Amount to withdraw">
@@ -46,7 +55,7 @@ const TransferTokensFormRenderer = (props: Props) => {
       </Label>
       <br />
       <WithdrawLinkBox>
-        <a href={PROTOCOL + exchangeAddress + "?amount=10000&base64data=" + encodeURIComponent(base64data) + "&from_address=" + address}>Withdraw {amount} {token.symbol}</a>
+        <a onClick={()=>{withdrawGA(token.symbol)}} href={PROTOCOL + exchangeAddress + "?amount=10000&base64data=" + encodeURIComponent(base64data) + "&from_address=" + address}>Withdraw {amount} {token.symbol}</a>
       </WithdrawLinkBox>
       {/*<Button text="Withdraw" intent="primary" large type="submit" fill onClick={handleSubmit} />*/}
     </ModalBody>
