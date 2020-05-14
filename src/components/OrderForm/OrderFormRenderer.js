@@ -1,6 +1,7 @@
 // @flow
 import React from 'react'
 import styled from 'styled-components'
+import ReactGA from 'react-ga'
 import { MATCHER_FEE, MAX_PRICE_PRECISION } from '../../config/environment';
 import { CHATBOT_URL } from '../../config/urls'
 
@@ -546,6 +547,21 @@ const ButtonRenderer = (props: *) => {
     buttonType
   } = props
 
+  const buyGA = (symbol) => {
+    ReactGA.event({
+      category: 'ODEX',
+      action: 'Create order (BUY)',
+      label: baseTokenSymbol + '/' + quoteTokenSymbol
+    });
+  }
+
+  const sellGA = (symbol) => {
+    ReactGA.event({
+      category: 'ODEX',
+      action: 'Create order (SELL)',
+      label: baseTokenSymbol + '/' + quoteTokenSymbol
+    });
+  }
   
   return {
     "BUY": (
@@ -554,6 +570,7 @@ const ButtonRenderer = (props: *) => {
           text={side + " " + amount + " " + baseTokenSymbol}
           name="order"
           href={link}
+          onClick={buyGA}
           disabled={disabled} 
           fill
       />
@@ -564,6 +581,7 @@ const ButtonRenderer = (props: *) => {
         text={side + " " + amount + " " + baseTokenSymbol}
         name="order"
         href={link}
+        onClick={sellGA}
         disabled={disabled} 
         fill 
       />

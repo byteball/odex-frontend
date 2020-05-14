@@ -3,8 +3,17 @@ import ReactDOM from 'react-dom';
 import configureStore from './store/configureStore';
 import { AppContainer } from 'react-hot-loader'
 import App from './app';
+import { GA_ID } from './config/environment';
 import { Provider } from 'react-redux';
+import ReactGA from "react-ga";
+import history from "./store/history";
 
+ReactGA.initialize(GA_ID);
+const pathname = history.location.pathname.split("/");
+
+if (pathname.length >= 2) {
+  ReactGA.pageview(pathname[1]);
+}
 
 const { store } = configureStore();
 // registerServiceWorker();
