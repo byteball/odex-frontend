@@ -52,6 +52,7 @@
     "global": "^4.3.2",
     "jest-localstorage-mock": "^2.4.0",
     "mixpanel-browser": "^2.31.0",
+    "obyte": "^0.1.8",
     "polished": "^1.9.3",
     "qrcode.react": "^1.0.0",
     "rc-steps": "^3.5.0",
