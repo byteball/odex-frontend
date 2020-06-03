@@ -7,11 +7,14 @@ import RecentTxTable from '../../components/RecentTxTable'
 import Help from '../../components/Help'
 
 import { Card, Position, Button, Tag, Tabs, Tab, InputGroup, Icon } from '@blueprintjs/core';
-import { Flex, FlexRow, FlexItem, Box, Colors, Text,TextDiv, TextBox, BlueGlowingButton } from '../Common'
+import { Flex, FlexRow, FlexItem, Box, Colors, Text, TextDiv, TextBox, BlueGlowingButton, ModalBody } from '../Common'
 import { Fonts } from '../Common/Variables'
 import { Spring } from 'react-spring'
+import Modal from '../Modal';
 
 import type { Tx } from '../../types/transactions'
+import { PROTOCOL } from '../../config/urls';
+const { isValidAddress } = require('obyte/lib/utils');
 
 type Props = {
   isModalOpen: boolean,
@@ -23,6 +26,9 @@ type Props = {
   tokenSymbol: string,
   tokenExplorerUrl: string,
   accountExplorerUrl: string,
+  address: string,
+  authorizations: Array,
+  handleChangeAddress: SyntheticInputEvent<Object> => void,
   tokenIsAdded: ?boolean,
   tokenIsListed: ?boolean,
   tokenIsRegistered: ?boolean,
@@ -34,8 +40,12 @@ type Props = {
   handleRegisterToken: SyntheticEvent<> => Promise<void>,
   addTokenPending: boolean,
   registerTokenPending: boolean,
-  recentTransactions: Array<Tx>
-}
+  recentTransactions: Array<Tx>,
+  exchangeAddress: string,
+  showRevokeModal: boolean,
+  revokeAddress: string,
+  handleToggleRevokeModal: (?string) => void,
+};
 
 const WalletInfoRenderer = (props: Props) => {
   const {
@@ -59,7 +69,15 @@ const WalletInfoRenderer = (props: Props) => {
     handleRegisterToken,
     addTokenPending,
     registerTokenPending,
-    recentTransactions
+    recentTransactions,
+    address,
+    authorizations,
+    handleChangeAddress,
+    showLink,
+    exchangeAddress,
+    showRevokeModal,
+    revokeAddress,
+    handleToggleRevokeModal,
   } = props;
 
   return (
@@ -78,6 +96,13 @@ const WalletInfoRenderer = (props: Props) => {
           onClick={() => handleChangeTab("Add Token")}
           active={selectedTab === "Add Token"}
           intent={selectedTab === "Add Token" ? 'primary' : ''}
+        />
+        <Button
+          text="Authorizations"
+          minimal
+          onClick={() => handleChangeTab('Authorizations')}
+          active={selectedTab === 'Authorizations'}
+          intent={selectedTab === 'Authorizations' ? 'primary' : ''}
         />
         {/* {<Button
           text="Premium Listing"
@@ -121,6 +146,25 @@ const WalletInfoRenderer = (props: Props) => {
             />
           }
         />
+        <Tab
+          id="Authorizations"
+          panel={
+            <AuthorizationsPanel
+              address={address}
+              authorizations={authorizations}
+              handleChangeAddress={handleChangeAddress}
+              accountAddress={accountAddress}
+              exchangeAddress={exchangeAddress}
+              handleToggleRevokeModal={handleToggleRevokeModal}
+            />
+          }
+        />
+        <RevokeAddressModal
+          exchangeAddress={exchangeAddress}
+          showRevokeModal={showRevokeModal}
+          revokeAddress={revokeAddress}
+          handleToggleRevokeModal={handleToggleRevokeModal}
+        />
         {/* {<Tab
           id="Premium Listing"
           panel={
@@ -143,7 +187,6 @@ const WalletInfoRenderer = (props: Props) => {
       </WalletInfoCard>
   );
 };
-
 
 const PortfolioPanel = (props: *) => {
   const {
@@ -316,7 +359,6 @@ const PremiumListingPanel = (props: *) => {
     </Box>
   )
 }
-
 const WalletInfoCard = styled(Card)`
   height: 92vh;
   overflow-y: auto;
@@ -346,5 +388,117 @@ const ButtonRow = styled.span`
     margin-left: 5px;
   }
 `
+
+const GRANTTEXT = styled.div`
+  word-break: break-word;
+`;
+
+const AuthorizationsPanel = (props: *) => {
+  const { address, authorizations, handleChangeAddress, exchangeAddress, handleToggleRevokeModal, accountAddress } = props;
+  let data = {
+    grant: 1,
+    address,
+  };
+  let base64data = btoa(JSON.stringify(data));
+  const link = PROTOCOL + exchangeAddress + '?amount=10000&base64data=' + encodeURIComponent(base64data);
+
+  const isValid = isValidAddress(address) && ![accountAddress, ...authorizations].includes(address)
+  const message = !isValidAddress(address) ? 'Please input a valid address' 
+    : address === accountAddress ? `You can't authorize your wallet address`: `You can't authorize the address that you authorized in the past`
+
+  return (
+    <Spring from={{ opacity: 0 }} to={{ opacity: 1 }}>
+      {props => (
+        <Box style={props}>
+          <h3 minimal large>
+            Authorized Addresses
+          </h3>
+
+          {authorizations.length === 0 && <Text muted>You don't have any authorized addresses</Text>}
+
+          {authorizations.map(element => {
+
+            return (
+              <FlexRow py={2} key={element} alignItems="center">
+                <FlexItem flex="1">
+                  <GRANTTEXT>{element}</GRANTTEXT>
+                </FlexItem>
+                <Button icon="cross" intent="danger" minimal onClick={() => handleToggleRevokeModal(element)} />
+              </FlexRow>
+            );
+          })}
+          <h3 minimal large>
+            Add Authorizations
+          </h3>
+          <Flex py={2}>
+            <FlexItem flex="1">
+              <InputGroup
+                name="address"
+                placeholder="Address"
+                intent={!isValid ? 'danger' : ''}
+                onChange={handleChangeAddress}
+                value={address}
+                autoFocus
+                fill
+              />
+            </FlexItem>
+            <Button
+              intent="primary"
+              text="Authorize"
+              disabled={!isValid}
+              onClick={() => {
+                window.open(link);
+              }}
+            />
+          </Flex>
+          {!isValid && address !== '' && <Text muted intent="danger">{message}</Text>}
+        </Box>
+      )}
+    </Spring>
+  );
+};
+
+const RevokeAuthorizationBox = styled.div`
+  margin-top: 20px;
+  width: 100%;
+  text-align: center;
+`;
+
+const RevokeAddressModal = (props: *) => {
+  const { showRevokeModal, revokeAddress, exchangeAddress, handleToggleRevokeModal } = props;
+  const revokeBase64Data = btoa(
+    JSON.stringify({
+      revoke: true,
+      address: revokeAddress,
+    })
+  );
+
+  const link = PROTOCOL + exchangeAddress + '?amount=10000&base64data=' + encodeURIComponent(revokeBase64Data);
+
+  return (
+    <Modal
+      title="Revoke Authorization"
+      width="400px"
+      icon="info-sign"
+      isOpen={showRevokeModal}
+      onClose={handleToggleRevokeModal}
+    >
+      <ModalBody>
+        <Text muted>Do you really want to revoke authorization?</Text>
+
+        <RevokeAuthorizationBox>
+          <a
+            onClick={() => {
+              handleToggleRevokeModal();
+            }}
+            href={link}
+          >
+            Revoke
+          </a>
+        </RevokeAuthorizationBox>
+      </ModalBody>
+    </Modal>
+  );
+};
 
 export default WalletInfoRenderer;

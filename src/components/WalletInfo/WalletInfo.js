@@ -6,6 +6,7 @@ import { EXPLORER_URL } from '../../config/urls'
 
 import type { Token, TokenPairs } from '../../types/tokens'
 import type { Tx } from '../../types/transactions'
+import { getAaStateVars } from '../../store/services/api'
 
 type Props = {
   accountAddress: string,
@@ -15,7 +16,8 @@ type Props = {
   detectToken: string => { decimals: number, symbol: string, isRegistered: boolean },
   addToken: string => { error: string, token: Token, pairs: TokenPairs },
   registerToken: string => { error?: string, token?: Token, pairs?: TokenPairs },
-  recentTransactions: Array<Tx>
+  recentTransactions: Array<Tx>,
+  exchangeAddress: string,
 }
 
 type State = {
@@ -28,6 +30,10 @@ type State = {
   tokenIsRegistered: ?boolean,
   addTokenPending: boolean,
   registerTokenPending: boolean,
+  address: string,
+  authorizations: Array,
+  showRevokeModal: boolean,
+  revokeAddress: string,
 }
 
 export default class WalletInfo extends React.PureComponent<Props, State> {
@@ -41,7 +47,32 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
     tokenIsRegistered: null,
     addTokenPending: false,
     registerTokenPending: false,
+    address: '',
+    authorizations: [],
+    showRevokeModal: false,
+    revokeAddress: '',
   };
+
+  componentDidMount() {
+    const { exchangeAddress, accountAddress } = this.props
+    getAaStateVars(exchangeAddress)
+      .then(res => {
+        const authorizations = Object.keys(res)
+          .filter(key => key.indexOf(`grant_${accountAddress}`) >= 0 && res[key] === '1')
+          .map(key => String(key).split('_to_')[1])
+        this.setState({
+          authorizations
+        })
+      })
+      .catch(err => {})
+  }
+
+  handleToggleRevokeModal = (revokeAddress = '') => {
+    this.setState({
+      showRevokeModal: !this.state.showRevokeModal,
+      revokeAddress,
+    })
+  }
 
   handleModalClose = () => {
     this.setState({ isModalOpen: !this.state.isModalOpen })
@@ -53,6 +84,10 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
 
   handleChangeAsset = ({ target }: *) => {
     this.setState({ asset: target.value })
+  }
+
+  handleChangeAddress = ({ target }: *) => {
+    this.setState({ address: target.value, showLink: false });
   }
 
   handleDetectToken = async () => {
@@ -109,12 +144,13 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
 
   render() {
     const {
-      props: {
-        accountAddress,
-        gbyteBalance,
-        userTokens,
-        listedTokens,
-        recentTransactions
+      props: { 
+        accountAddress, 
+        gbyteBalance, 
+        userTokens, 
+        listedTokens, 
+        recentTransactions, 
+        exchangeAddress 
       },
       state: { 
         isModalOpen,
@@ -125,13 +161,20 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
         tokenIsRegistered,
         addTokenPending,
         registerTokenPending,
+        address,
+        authorizations,
+        showLink,
+        showRevokeModal,
+        revokeAddress,
       },
       handleModalClose,
       handleChangeTab,
       handleChangeAsset,
       handleDetectToken,
       handleRegisterToken,
-      handleAddToken
+      handleAddToken,
+      handleChangeAddress,
+      handleToggleRevokeModal,
     } = this;
 
     let tokenExplorerUrl = `${EXPLORER_URL}/#${asset}`
@@ -152,7 +195,11 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
         tokenExplorerUrl={tokenExplorerUrl}
         tokenIsAdded={tokenIsAdded}
         tokenIsListed={tokenIsListed}
+        address={address}
+        showLink={showLink}
+        authorizations={authorizations}
         tokenIsRegistered={tokenIsRegistered}
+        exchangeAddress={exchangeAddress}
         handleModalClose={handleModalClose}
         handleChangeTab={handleChangeTab}
         handleChangeAsset={handleChangeAsset}
@@ -162,6 +209,10 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
         registerTokenPending={registerTokenPending}
         addTokenPending={addTokenPending}
         recentTransactions={recentTransactions}
+        handleChangeAddress={handleChangeAddress}
+        showRevokeModal={showRevokeModal}
+        revokeAddress={revokeAddress}
+        handleToggleRevokeModal={handleToggleRevokeModal}
       />
     );
   }
