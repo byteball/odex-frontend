@@ -18,7 +18,7 @@ type Props = {
   registerToken: string => { error?: string, token?: Token, pairs?: TokenPairs },
   recentTransactions: Array<Tx>,
   exchangeAddress: string,
-};
+}
 
 type State = {
   isModalOpen: boolean,
@@ -34,7 +34,7 @@ type State = {
   authorizations: Array,
   showRevokeModal: boolean,
   revokeAddress: string,
-};
+}
 
 export default class WalletInfo extends React.PureComponent<Props, State> {
   state = { 
@@ -51,7 +51,7 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
     authorizations: [],
     showRevokeModal: false,
     revokeAddress: '',
-  }
+  };
 
   componentDidMount() {
     const { exchangeAddress, accountAddress } = this.props
@@ -79,7 +79,7 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
 
   handleModalClose = () => {
     this.setState({ isModalOpen: !this.state.isModalOpen })
-  }
+  };
 
   handleChangeTab = (tab: string) => {
     this.setState({ selectedTab: tab })
@@ -148,7 +148,6 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
   render() {
     const {
       props: { 
-        
         accountAddress, 
         gbyteBalance, 
         userTokens, 
@@ -156,7 +155,7 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
         recentTransactions, 
         exchangeAddress 
       },
-      state: {
+      state: { 
         isModalOpen,
         selectedTab,
         asset,
