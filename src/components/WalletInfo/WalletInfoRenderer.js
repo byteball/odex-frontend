@@ -394,13 +394,17 @@ const GRANTTEXT = styled.div`
 `;
 
 const AuthorizationsPanel = (props: *) => {
-  const { address, authorizations, handleChangeAddress, exchangeAddress, handleToggleRevokeModal } = props;
+  const { address, authorizations, handleChangeAddress, exchangeAddress, handleToggleRevokeModal, accountAddress } = props;
   let data = {
     grant: 1,
     address,
   };
   let base64data = btoa(JSON.stringify(data));
   const link = PROTOCOL + exchangeAddress + '?amount=10000&base64data=' + encodeURIComponent(base64data);
+
+  const isValid = isValidAddress(address) && ![accountAddress, ...authorizations].includes(address)
+  const message = !isValidAddress(address) ? 'Please input a valid address' 
+    : address === accountAddress ? `You can't authorize your wallet address`: `You can't authorize the address that you authorized in the past`
 
   return (
     <Spring from={{ opacity: 0 }} to={{ opacity: 1 }}>
@@ -413,14 +417,13 @@ const AuthorizationsPanel = (props: *) => {
           {authorizations.length === 0 && <Text muted>You don't have any authorized addresses</Text>}
 
           {authorizations.map(element => {
-            const revokeAddress = String(element).split('_to_')[1];
 
             return (
-              <FlexRow py={2} key={revokeAddress} alignItems="center">
+              <FlexRow py={2} key={element} alignItems="center">
                 <FlexItem flex="1">
-                  <GRANTTEXT>{revokeAddress}</GRANTTEXT>
+                  <GRANTTEXT>{element}</GRANTTEXT>
                 </FlexItem>
-                <Button icon="cross" intent="danger" minimal onClick={() => handleToggleRevokeModal(revokeAddress)} />
+                <Button icon="cross" intent="danger" minimal onClick={() => handleToggleRevokeModal(element)} />
               </FlexRow>
             );
           })}
@@ -432,7 +435,7 @@ const AuthorizationsPanel = (props: *) => {
               <InputGroup
                 name="address"
                 placeholder="Address"
-                intent={!isValidAddress(address) ? 'danger' : ''}
+                intent={!isValid ? 'danger' : ''}
                 onChange={handleChangeAddress}
                 value={address}
                 autoFocus
@@ -442,12 +445,13 @@ const AuthorizationsPanel = (props: *) => {
             <Button
               intent="primary"
               text="Authorize"
-              disabled={!isValidAddress(address)}
+              disabled={!isValid}
               onClick={() => {
                 window.open(link);
               }}
             />
           </Flex>
+          {!isValid && address !== '' && <Text muted intent="danger">{message}</Text>}
         </Box>
       )}
     </Spring>

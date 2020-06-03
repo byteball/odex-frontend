@@ -59,12 +59,9 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
       .then(res => {
         const authorizations = Object.keys(res)
           .filter(key => key.indexOf(`grant_${accountAddress}`) >= 0 && res[key] === '1')
-          .map(key => key)
-        const uniqueAuthorizations = authorizations.filter(
-          (element, index) => authorizations.indexOf(element) === index
-        )
+          .map(key => String(key).split('_to_')[1])
         this.setState({
-          authorizations: uniqueAuthorizations,
+          authorizations
         })
       })
       .catch(err => {})
