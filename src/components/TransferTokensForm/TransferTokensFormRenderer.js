@@ -2,10 +2,10 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Button, ControlGroup, InputGroup, Label, Callout } from '@blueprintjs/core';
-import ReactGA from 'react-ga';
+import ReactGA from 'react-ga'
 import TokenSelect from '../TokenSelect';
-import { ModalBody } from '../Common';
-import { PROTOCOL } from '../../config/urls';
+import { ModalBody } from '../Common'
+import { PROTOCOL } from '../../config/urls'
 
 type Props = {
   tokens: Array<Object>,
@@ -19,15 +19,24 @@ type Props = {
 };
 
 const TransferTokensFormRenderer = (props: Props) => {
-  const { tokens, token, amount, address, handleChange, handleTokenChange, exchangeAddress, base64data } = props;
+  const {
+    tokens,
+    token,
+    amount,
+    address,
+    handleChange,
+    handleTokenChange,
+    exchangeAddress,
+    base64data
+  } = props;
 
-  const withdrawGA = symbol => {
+  const withdrawGA = (symbol) => {
     ReactGA.event({
       category: 'ODEX',
       action: 'Withdraw',
-      label: symbol,
+      label: symbol
     });
-  };
+  }
 
   return (
     <ModalBody>
@@ -46,26 +55,14 @@ const TransferTokensFormRenderer = (props: Props) => {
       </Label>
       <br />
       <WithdrawLinkBox>
-        <a
-          onClick={() => {
-            withdrawGA(token.symbol);
-          }}
-          href={
-            PROTOCOL +
-            exchangeAddress +
-            '?amount=10000&base64data=' +
-            encodeURIComponent(base64data) +
-            '&from_address=' +
-            address
-          }
-        >
-          Withdraw {amount} {token.symbol}
-        </a>
+        <a onClick={()=>{withdrawGA(token.symbol)}} href={PROTOCOL + exchangeAddress + "?amount=10000&base64data=" + encodeURIComponent(base64data) + "&from_address=" + address}>Withdraw {amount} {token.symbol}</a>
       </WithdrawLinkBox>
       {/*<Button text="Withdraw" intent="primary" large type="submit" fill onClick={handleSubmit} />*/}
     </ModalBody>
   );
 };
+
+
 
 const WithdrawLinkBox = styled.div`
   margin-top: 10px;
