@@ -26,25 +26,24 @@ type State = {
 class DepositForm extends React.PureComponent<Props, State> {
   state = {
     token: this.props.token || this.props.tokens[0],
-    inputToken: null,
-    showTokenSuggest: false,
+    amount: 0,
   };
 
   componentDidMount() {
-    const { token } = this.state;
     this.props.queryBalances();
   }
 
-  //TODO handle the case where the modal is closed but not unmounted which
-  //TODO causes the unsubscribtion to not happen
-  componentWillUnmount() {
-    //this.unsubscribe();
-  }
+  handleChange = (e: SyntheticInputEvent<>) => {
+    const { value, name } = e.target;
 
+    this.setState({ [name]: value }, () => {
+    });
+  };
 
+  handleTokenChange = (token: Object) => {
+    this.setState({ token: token }, () => {
 
-  handleChangeToken = (e: Object) => {
-    this.setState({ inputToken: e });
+    });
   };
 
   handleSubmitChangeToken = async (e: SyntheticEvent<>) => {
@@ -53,32 +52,26 @@ class DepositForm extends React.PureComponent<Props, State> {
     // this.subscribe(newToken);
   };
 
-
-
   toggleTokenSuggest = () => {
     this.setState({ showTokenSuggest: !this.state.showTokenSuggest });
   };
 
-
-
   render() {
-    const { step, balances, address, exchangeAddress, tokens } = this.props;
-    const { inputToken, showTokenSuggest, token } = this.state;
+    const { tokens, exchangeAddress, address, step,balances } = this.props;
+    const { token, amount } = this.state;
     const balance = balances[token.symbol] || null;
 
     return (
       <DepositFormRenderer
         step={step}
+        balance={balance}
+        handleChange={this.handleChange}
+        handleTokenChange={this.handleTokenChange}
         tokens={tokens}
         token={token}
-        inputToken={inputToken}
-        balance={balance}
+        amount={amount}
         address={address}
         exchangeAddress={exchangeAddress}
-        toggleTokenSuggest={this.toggleTokenSuggest}
-        showTokenSuggest={showTokenSuggest}
-        handleChangeToken={this.handleChangeToken}
-        handleSubmitChangeToken={this.handleSubmitChangeToken}
       />
     );
   }

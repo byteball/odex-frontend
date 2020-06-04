@@ -2,19 +2,15 @@
 import React from 'react';
 import WaitingFormRenderer from './steps/WaitingFormRenderer';
 
-import type { TxReceipt } from '../../types/common';
-
 type Props = {
   step: 'waiting' | 'convert' | 'confirm',
-  address: string,
-  exchangeAddress: string,
-  balance: ?number,
   tokens: Array<Object>,
   token: Object,
-  toggleTokenSuggest: void => void,
-  showTokenSuggest: boolean,
-  handleChangeToken: (SyntheticEvent<>) => void,
-  handleSubmitChangeToken: (SyntheticEvent<>) => Promise<void>,
+  amount: number,
+  address: string,
+  exchangeAddress: string,
+  handleChange: (SyntheticInputEvent<>) => void,
+  handleTokenChange: (SyntheticEvent<>) => void,
 };
 
 const DepositFormRenderer = (props: Props) => {

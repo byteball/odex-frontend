@@ -15,7 +15,7 @@ type Props = {
 
 const DepositModal = (props: Props) => {
   return (
-    <Modal title={"Deposit " + props.token.symbol}  isOpen={props.isOpen} onClose={props.handleClose}>
+    <Modal title="Deposit Tokens" width="400px" icon="info-sign" isOpen={props.isOpen} onClose={props.handleClose}>
       <DepositFormContainer tokenData={props.tokenData} token={props.token} />
     </Modal>
   );
