@@ -1,109 +1,70 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Button, Callout, ControlGroup, Spinner, InputGroup } from '@blueprintjs/core';
+import { ControlGroup, InputGroup, Label, Text } from '@blueprintjs/core';
 import ReactGA from 'react-ga';
-import { ModalBody, ModalFooter } from '../../Common'
-import TokenSuggest from '../../TokenSuggest';
+import { ModalBody } from '../../Common'
 import { PROTOCOL } from '../../../config/urls'
+import TokenSelect from '../../TokenSelect';
 
-class WaitingFormRenderer extends React.PureComponent<Props, State> {
-
-state = {
-  amount: '',
-};
-
-handleAmountInputChange = (e: SyntheticInputEvent<>) => {
-  this.setState({ amount: e.target.value });
-};
-
-depositGA = (symbol) => {
-  ReactGA.event({
-    category: 'ODEX',
-    action: 'Deposit',
-    label: symbol
-  });
-}
-
-render() {
+const WaitingFormRenderer = (props: Props) => {
   const {
     tokens,
     token,
+    amount,
     address,
+    handleChange,
+    handleTokenChange,
     exchangeAddress,
-    balance,
-    handleChangeToken,
-    handleSubmitChangeToken,
-    toggleTokenSuggest,
-    showTokenSuggest,
-  } = this.props;
+    balance
+  } = props;
+  const depositGA = (symbol) => {
+    ReactGA.event({
+      category: 'ODEX',
+      action: 'Deposit',
+      label: symbol
+    });
+  }
 
-  let amountInSmallestUnits = parseFloat(this.state.amount || 0) * Math.pow(10, token.decimals);
+  const amountInSmallestUnits = parseFloat(amount || 0) * Math.pow(10, token.decimals);
 
   return (
     <ModalBody>
-        Click the link below to send {token.symbol} to the Autonomous Agent of the exchange. The link will open your Obyte wallet. This form will update once your account balance is changed.
-      <WaitingFormBox>
-        {/*<Spinner intent="primary" large />*/}
-        {/*<Address>{address}</Address>*/}
-        <AmountBox>
+      <Text muted>Click the link below to send {token.symbol} to the Autonomous Agent of the exchange. The link will open your Obyte wallet. This form will update once your account balance is changed.</Text>
+      <br />
+      <Label helpertext="(in token decimals)" text="Amount to withdraw">
+        <ControlGroup fill vertical={false}>
           <InputGroup
+            //icon="filter"
             type="number"
             placeholder="Amount"
-            rightElement={<TokenNameBox>{token.symbol}</TokenNameBox>}
-            value={this.state.amount}
-            onChange={this.handleAmountInputChange}
+            name="amount"
+            value={amount}
+            onChange={handleChange}
           />
-        </AmountBox>
-        <a onClick={()=>this.depositGA(token.symbol)} href={PROTOCOL+exchangeAddress + "?asset=" + encodeURIComponent(token.asset) + "&amount=" + amountInSmallestUnits + "&from_address=" + address}>Deposit {this.state.amount} {token.symbol}</a>
-        <CurrentBalanceBox>
-          (Your current balance is {balance} {token.symbol})
-        </CurrentBalanceBox>
-      </WaitingFormBox>
-      <ModalFooter>
-        {showTokenSuggest ? (
-          <ControlGroup>
-            <Button onClick={toggleTokenSuggest} text="Cancel" minimal />
-            <TokenSuggest tokens={tokens} token={token} onChange={handleChangeToken} />
-            <Button intent="primary" text="Confirm" onClick={handleSubmitChangeToken} />
-          </ControlGroup>
-        ) : (
-          <ControlGroup>
-            <Button onClick={toggleTokenSuggest} text="Deposit another token" />
-          </ControlGroup>
-        )}
-      </ModalFooter>
+          <TokenSelect token={token} tokens={tokens} onChange={handleTokenChange} />
+        </ControlGroup>
+      </Label>
+      <br />
+      <DepositLinkBox>
+        <a onClick={() => depositGA(token.symbol)} href={PROTOCOL+exchangeAddress + "?asset=" + encodeURIComponent(token.asset) + "&amount=" + amountInSmallestUnits + "&from_address=" + address}>Deposit {amount} {token.symbol}</a>
+      </DepositLinkBox>
+      <CurrentBalanceBox>
+        (Your current balance is {balance} {token.symbol})
+      </CurrentBalanceBox>
     </ModalBody>
   );
 };
-}
 
-const WaitingFormBox = styled.div`
-  margin: auto;
-  width: 300px;
-  height: 300px;
-  display: flex;
-  flex-direction: column;
-  align-content: center;
-  justify-content: center;
-  align-items: center;
+const DepositLinkBox = styled.div`
+  margin-top: 10px;
+  margin-bottom: 20px;
+  width: 100%;
+  text-align: center;
 `;
 
 const CurrentBalanceBox = styled.div`
   padding-top: 4px;
-`;
-
-const Address = styled.div`
-  padding-top: 40px;
-  font-weight: bold;
-`;
-
-const AmountBox = styled.div`
-  padding-bottom: 20px;
-`;
-
-const TokenNameBox = styled.div`
-  padding-right: 5px;
-  padding-top: 6px;
+  text-align: center;
 `;
 
 export default WaitingFormRenderer;
