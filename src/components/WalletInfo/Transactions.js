@@ -35,6 +35,8 @@ const TransactionsTable = (props: Props) => {
         }
         const tokenInfo = tokenData.find(tEle => tEle.asset === asset);
 
+        if (asset === 'base' && amount <= 10000) return null;
+
         return (
           <TransactionRow key={unit}>
             <TransactionLink href={`${EXPLORER_URL}#${unit}`} target="_blank">
