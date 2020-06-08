@@ -4,8 +4,8 @@ import { formatNumber } from 'accounting-js';
 
 import { EXPLORER_URL } from '../../config/urls';
 import { Loading, Colors, CenteredMessage, SmallText, FlexRow, Box } from '../Common';
-import { getTimeBeforeString } from '../../helpers/utils';
 import type { TokenData } from '../../types/tokens';
+import { relativeDate } from '../../utils/helpers';
 
 type Props = {
   accountAddress: string,
@@ -23,35 +23,45 @@ const TransactionsTable = (props: Props) => {
   if (!transactions) return <Loading />;
   if (transactions.length === 0) return <NoTransactionsMessage>No recent transactions</NoTransactionsMessage>;
 
+  console.log(transactions)
+
   return (
     <div>
       {transactions.map(({ unit: { authors, messages, unit, timestamp } }) => {
-        const isDeposit = authors.map(ele => ele.address).indexOf(accountAddress) >= 0;
+        const isDeposit = authors.map(author => author.address).indexOf(accountAddress) >= 0;
         if (messages.length === 0) return null;
-        const { outputs, asset = 'base' } = messages[0].payload;
-        let amount = outputs.find(ele => ele.address === accountAddress).amount;
-        if (isDeposit) {
-          amount = outputs.find(ele => ele.address !== accountAddress).amount;
-        }
-        const tokenInfo = tokenData.find(tEle => tEle.asset === asset);
-
-        if (asset === 'base' && amount <= 10000) return null;
-
-        return (
-          <TransactionRow key={unit}>
-            <TransactionLink href={`${EXPLORER_URL}#${unit}`} target="_blank">
-              <InfoRow>
-                <span>
-                  {isDeposit ? 'Deposit' : 'Withdraw'}&nbsp;
-                  {amount / Math.pow(10, tokenInfo.decimals)}
-                  &nbsp;
-                  {tokenInfo.symbol}
-                </span>
-                <span>{getTimeBeforeString(timestamp)}</span>
-              </InfoRow>
-            </TransactionLink>
-          </TransactionRow>
-        );
+        const tRows = messages.map(({payload: {outputs, asset = 'base'}}) => {
+          let amount
+          if (outputs.length === 1) {
+            ({amount} = outputs[0]);
+          } else {
+            if (isDeposit) {
+              amount = outputs.find(output => output.address !== accountAddress).amount;
+            } else {
+              amount = outputs.find(output => output.address === accountAddress).amount;
+            }
+          }
+          const tokenInfo = tokenData.find(tokenElement => tokenElement.asset === asset);
+  
+          if (asset === 'base' && amount <= 10000) return null;
+  
+          return (
+            <TransactionRow key={unit}>
+              <TransactionLink href={`${EXPLORER_URL}#${unit}`} target="_blank">
+                <InfoRow>
+                  <span>
+                    {isDeposit ? 'Deposit' : 'Withdraw'}&nbsp;
+                    {amount / Math.pow(10, tokenInfo.decimals)}
+                    &nbsp;
+                    {tokenInfo.symbol}
+                  </span>
+                  <span>{relativeDate(timestamp * 1000)}</span>
+                </InfoRow>
+              </TransactionLink>
+            </TransactionRow>
+          );
+        })
+        return tRows;
       })}
     </div>
   );

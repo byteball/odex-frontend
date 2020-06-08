@@ -71,7 +71,6 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
 
     getHistory(accountAddress)
       .then(({ joints }) => {
-        console.log(joints);
         const transactions = joints
           .map(element => {
             const fMessages = element.unit.messages.filter(message => {
@@ -80,7 +79,7 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
                 app,
               } = message;
               if (app !== 'payment') return false;
-              return outputs.map(output => output.address).indexOf(exchangeAddress) >= 0;
+              return outputs.map(output => output.address)
             });
             return { ...element, unit: { ...element.unit, messages: fMessages } };
           })
