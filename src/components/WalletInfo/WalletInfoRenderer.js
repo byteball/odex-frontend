@@ -197,7 +197,7 @@ const WalletInfoRenderer = (props: Props) => {
 };
 
 const PortfolioPanel = (props: *) => {
-  const { 
+  const {
     accountAddress,
     accountExplorerUrl,
     transactions,
@@ -244,7 +244,7 @@ const PortfolioPanel = (props: *) => {
               tokenData={tokenData}
             />
           </Box>
-    </Box>
+        </Box>
   )
 }
 
