@@ -67,7 +67,7 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
           authorizations
         })
       })
-      .catch(err => {});
+      .catch(err => {})
 
     getHistory(accountAddress)
       .then(({ joints }) => {
@@ -127,13 +127,13 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
     const { decimals, symbol, isRegistered } = await detectToken(asset)
 
     if (!symbol) {
-      return this.setState({ assetStatus: 'invalid' })
+      return this.setState({ assetStatus: "invalid" })
     }
 
     return this.setState({ 
       tokenSymbol: symbol,
       tokenDecimals: decimals,
-      tokenIsRegistered: isRegistered,
+      tokenIsRegistered: isRegistered
     })
   }
 
@@ -171,7 +171,6 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
   render() {
     const {
       props: { 
-        
         accountAddress,
         gbyteBalance,
         userTokens,
@@ -180,7 +179,7 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
         exchangeAddress,
         tokenData
       },
-      state: {
+      state: { 
         isModalOpen,
         selectedTab,
         asset,
