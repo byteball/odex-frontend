@@ -10,7 +10,7 @@ export const getAaStateVars = address =>
       address,
     };
 
-    client.api.getAaStateVars(params, function (err, result) {
+    client.api.getAaStateVars(params, function(err, result) {
       if (err) {
         return reject(err);
       }

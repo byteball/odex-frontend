@@ -2,11 +2,11 @@
 import React from 'react';
 import WalletInfoRenderer from './WalletInfoRenderer';
 
-import { EXPLORER_URL } from '../../config/urls';
+import { EXPLORER_URL } from '../../config/urls'
 
-import type { TokenData } from '../../types/tokens';
+import type { TokenData, Token, TokenPairs } from '../../types/tokens'
 
-import { getAaStateVars, getHistory, getWitnesses } from '../../store/services/api';
+import { getAaStateVars, getHistory, getWitnesses } from '../../store/services/api'
 
 type Props = {
   accountAddress: string,
@@ -19,7 +19,7 @@ type Props = {
   recentTransactions: Array<Tx>,
   exchangeAddress: string,
   tokenData: Array<TokenData>,
-};
+}
 
 type State = {
   isModalOpen: boolean,
@@ -36,16 +36,16 @@ type State = {
   showRevokeModal: boolean,
   revokeAddress: string,
   transactions: Array,
-};
+}
 
 export default class WalletInfo extends React.PureComponent<Props, State> {
-  state = {
+  state = { 
     isModalOpen: false,
-    selectedTab: 'Portfolio',
-    asset: '',
-    assetStatus: '',
+    selectedTab: "Portfolio",
+    asset: "",
+    assetStatus: "",
     tokenDecimals: 0,
-    tokenSymbol: '',
+    tokenSymbol: "",
     tokenIsRegistered: null,
     addTokenPending: false,
     registerTokenPending: false,
@@ -57,15 +57,15 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
   };
 
   componentDidMount() {
-    const { exchangeAddress, accountAddress } = this.props;
+    const { exchangeAddress, accountAddress } = this.props
     getAaStateVars(exchangeAddress)
       .then(res => {
         const authorizations = Object.keys(res)
           .filter(key => key.indexOf(`grant_${accountAddress}`) >= 0 && res[key] === '1')
-          .map(key => String(key).split('_to_')[1]);
+          .map(key => String(key).split('_to_')[1])
         this.setState({
-          authorizations,
-        });
+          authorizations
+        })
       })
       .catch(err => {});
 
@@ -97,80 +97,89 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
     this.setState({
       showRevokeModal: !this.state.showRevokeModal,
       revokeAddress,
-    });
-  };
+    })
+  }
 
   handleModalClose = () => {
-    this.setState({ isModalOpen: !this.state.isModalOpen });
+    this.setState({ isModalOpen: !this.state.isModalOpen })
   };
 
   handleChangeTab = (tab: string) => {
-    this.setState({ selectedTab: tab });
-  };
+    this.setState({ selectedTab: tab })
+  }
 
   handleChangeAsset = ({ target }: *) => {
-    this.setState({ asset: target.value });
-  };
+    this.setState({ asset: target.value })
+  }
 
   handleChangeAddress = ({ target }: *) => {
     this.setState({ address: target.value, showLink: false });
-  };
+  }
 
   handleDetectToken = async () => {
-    const { asset } = this.state;
-    const { detectToken } = this.props;
+    const { asset } = this.state
+    const { detectToken } = this.props 
 
     if (asset.length !== 44 && asset !== asset.toUpperCase()) {
-      return this.setState({ assetStatus: 'invalid' });
+      return this.setState({ assetStatus: "invalid" })
     }
 
-    const { decimals, symbol, isRegistered } = await detectToken(asset);
+    const { decimals, symbol, isRegistered } = await detectToken(asset)
 
     if (!symbol) {
-      return this.setState({ assetStatus: 'invalid' });
+      return this.setState({ assetStatus: 'invalid' })
     }
 
-    return this.setState({
+    return this.setState({ 
       tokenSymbol: symbol,
       tokenDecimals: decimals,
       tokenIsRegistered: isRegistered,
-    });
-  };
+    })
+  }
 
   handleAddToken = async () => {
-    const { asset } = this.state;
-    const { addToken } = this.props;
+    const { asset } = this.state
+    const { addToken } = this.props
 
-    this.setState({ addTokenPending: true });
-    const { error, token, pairs } = await addToken(asset);
-    this.setState({ addTokenPending: false });
+    this.setState({ addTokenPending: true })
+    const { error, token, pairs } = await addToken(asset)
+    this.setState({ addTokenPending: false })
 
     if (error) {
-      console.log(error);
+      console.log(error)
     } else {
-      console.log(token);
-      console.log(pairs);
+      console.log(token)
+      console.log(pairs)
     }
-  };
+  }
 
   handleRegisterToken = async () => {
-    const { asset } = this.state;
-    const { registerToken } = this.props;
+    const { asset } = this.state
+    const { registerToken } = this.props
 
-    this.setState({ registerTokenPending: true });
-    const { error } = await registerToken(asset);
-    this.setState({ registerTokenPending: false });
+    this.setState({ registerTokenPending: true })
+    const { error } = await registerToken(asset)
+    this.setState({ registerTokenPending: false })
 
     if (error) {
-      console.log(error);
+      console.log(error)
     } else {
-      return this.setState({ tokenIsRegistered: true });
+      return this.setState({ tokenIsRegistered: true })
     }
-  };
+  }
 
   render() {
     const {
-      props: { accountAddress, gbyteBalance, userTokens, listedTokens, recentTransactions, exchangeAddress, tokenData },
+      props: { 
+        
+        accountAddress,
+        gbyteBalance,
+        userTokens,
+        listedTokens,
+        recentTransactions,
+        exchangeAddress,
+        tokenData
+      },
       state: {
         isModalOpen,
         selectedTab,
@@ -197,10 +206,10 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
       handleToggleRevokeModal,
     } = this;
 
-    let tokenExplorerUrl = `${EXPLORER_URL}/#${asset}`;
-    let accountExplorerUrl = `${EXPLORER_URL}/#${accountAddress}`;
-    let tokenIsAdded = userTokens.indexOf(asset) !== -1;
-    let tokenIsListed = listedTokens.indexOf(asset) !== -1;
+    let tokenExplorerUrl = `${EXPLORER_URL}/#${asset}`
+    let accountExplorerUrl = `${EXPLORER_URL}/#${accountAddress}`
+    let tokenIsAdded = userTokens.indexOf(asset) !== -1
+    let tokenIsListed = listedTokens.indexOf(asset) !== -1
 
     return (
       <WalletInfoRenderer

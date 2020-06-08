@@ -26,11 +26,11 @@ const TransactionsTable = (props: Props) => {
   return (
     <div>
       {transactions.map(({ unit: { authors, messages, unit, timestamp } }) => {
-        const isDeposit = authors.map(ele => ele.address).indexOf(accountAddress) < 0;
+        const isDeposit = authors.map(ele => ele.address).indexOf(accountAddress) >= 0;
         if (messages.length === 0) return null;
         const { outputs, asset = 'base' } = messages[0].payload;
         let amount = outputs.find(ele => ele.address === accountAddress).amount;
-        if (!isDeposit) {
+        if (isDeposit) {
           amount = outputs.find(ele => ele.address !== accountAddress).amount;
         }
         const tokenInfo = tokenData.find(tEle => tEle.asset === asset);
@@ -40,7 +40,7 @@ const TransactionsTable = (props: Props) => {
             <TransactionLink href={`${EXPLORER_URL}#${unit}`} target="_blank">
               <InfoRow>
                 <span>
-                  {!isDeposit ? 'Deposit' : 'Withdraw'}&nbsp;
+                  {isDeposit ? 'Deposit' : 'Withdraw'}&nbsp;
                   {amount / Math.pow(10, tokenInfo.decimals)}
                   &nbsp;
                   {tokenInfo.symbol}
