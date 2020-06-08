@@ -42,7 +42,7 @@ const WalletPageRenderer = (props: Props) => {
     <WalletPageBox>
       <RowWrapper>
         <WalletInfoBox>
-          <WalletInfo/>
+          <WalletInfo tokenData={tokenData} />
         </WalletInfoBox>
         <WalletPageContentBox>
           {balancesLoading ? (
@@ -87,7 +87,6 @@ const WalletInfoBox = styled.div`
   @media ${Devices.tablet} {
     display: none;
   }
-
 `
 
 const WalletPageContentBox = styled(Card)`

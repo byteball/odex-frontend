@@ -21,4 +21,4 @@ export const arrayWithoutElement = (arr, element) => {
 
 export const addElementToArray = (arr, element) => {
   return arr.indexOf(element) === -1 ? [...arr, element] : arr;
-};
+}; 

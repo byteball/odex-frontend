@@ -4,9 +4,9 @@ import WalletInfoRenderer from './WalletInfoRenderer';
 
 import { EXPLORER_URL } from '../../config/urls'
 
-import type { Token, TokenPairs } from '../../types/tokens'
-import type { Tx } from '../../types/transactions'
-import { getAaStateVars } from '../../store/services/api'
+import type { TokenData, Token, TokenPairs } from '../../types/tokens'
+
+import { getAaStateVars, getHistory, getWitnesses } from '../../store/services/api'
 
 type Props = {
   accountAddress: string,
@@ -18,6 +18,7 @@ type Props = {
   registerToken: string => { error?: string, token?: Token, pairs?: TokenPairs },
   recentTransactions: Array<Tx>,
   exchangeAddress: string,
+  tokenData: Array<TokenData>,
 }
 
 type State = {
@@ -34,6 +35,7 @@ type State = {
   authorizations: Array,
   showRevokeModal: boolean,
   revokeAddress: string,
+  transactions: Array,
 }
 
 export default class WalletInfo extends React.PureComponent<Props, State> {
@@ -51,6 +53,7 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
     authorizations: [],
     showRevokeModal: false,
     revokeAddress: '',
+    transactions: null,
   };
 
   componentDidMount() {
@@ -65,6 +68,28 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
         })
       })
       .catch(err => {})
+
+    getHistory(accountAddress)
+      .then(({ joints }) => {
+        const transactions = joints
+          .map(element => {
+            const fMessages = element.unit.messages.filter(message => {
+              const {
+                payload: { outputs },
+                app,
+              } = message;
+              if (app !== 'payment') return false;
+              return outputs.map(output => output.address)
+            });
+            return { ...element, unit: { ...element.unit, messages: fMessages } };
+          })
+          .filter(element => element.unit.messages.length > 0);
+
+        this.setState({
+          transactions,
+        });
+      })
+      .catch(err => console.error('-err-', err));
   }
 
   handleToggleRevokeModal = (revokeAddress = '') => {
@@ -145,12 +170,13 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
   render() {
     const {
       props: { 
-        accountAddress, 
-        gbyteBalance, 
-        userTokens, 
-        listedTokens, 
-        recentTransactions, 
-        exchangeAddress 
+        accountAddress,
+        gbyteBalance,
+        userTokens,
+        listedTokens,
+        recentTransactions,
+        exchangeAddress,
+        tokenData
       },
       state: { 
         isModalOpen,
@@ -166,6 +192,7 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
         showLink,
         showRevokeModal,
         revokeAddress,
+        transactions,
       },
       handleModalClose,
       handleChangeTab,
@@ -213,6 +240,8 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
         showRevokeModal={showRevokeModal}
         revokeAddress={revokeAddress}
         handleToggleRevokeModal={handleToggleRevokeModal}
+        transactions={transactions}
+        tokenData={tokenData}
       />
     );
   }

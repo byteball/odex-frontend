@@ -12,8 +12,12 @@ import { Fonts } from '../Common/Variables'
 import { Spring } from 'react-spring'
 import Modal from '../Modal';
 
+import type { TokenData } from '../../types/tokens';
 import type { Tx } from '../../types/transactions'
+
 import { PROTOCOL } from '../../config/urls';
+import TransactionsTable from './Transactions';
+
 const { isValidAddress } = require('obyte/lib/utils');
 
 type Props = {
@@ -45,6 +49,8 @@ type Props = {
   showRevokeModal: boolean,
   revokeAddress: string,
   handleToggleRevokeModal: (?string) => void,
+  transactions: Array,
+  tokenData: Array<TokenData>,
 };
 
 const WalletInfoRenderer = (props: Props) => {
@@ -69,15 +75,15 @@ const WalletInfoRenderer = (props: Props) => {
     handleRegisterToken,
     addTokenPending,
     registerTokenPending,
-    recentTransactions,
     address,
     authorizations,
     handleChangeAddress,
-    showLink,
+    transactions,
     exchangeAddress,
     showRevokeModal,
     revokeAddress,
     handleToggleRevokeModal,
+    tokenData,
   } = props;
 
   return (
@@ -122,7 +128,9 @@ const WalletInfoRenderer = (props: Props) => {
               accountAddress={accountAddress}
               accountExplorerUrl={accountExplorerUrl}
               balance={balance}
-              transactions={recentTransactions}
+              transactions={transactions}
+              exchangeAddress={exchangeAddress}
+              tokenData={tokenData}
             />
           }
         />
@@ -192,7 +200,8 @@ const PortfolioPanel = (props: *) => {
   const {
     accountAddress,
     accountExplorerUrl,
-    transactions
+    transactions,
+    tokenData
   } = props
 
   return (
@@ -229,8 +238,10 @@ const PortfolioPanel = (props: *) => {
         </TokenBalanceChartBox>
         <h3 minimal large>Recent Transactions</h3>
           <Box my={2}>
-            <RecentTxTable
+            <TransactionsTable 
               transactions={transactions}
+              accountAddress={accountAddress}
+              tokenData={tokenData}
             />
           </Box>
         </Box>

@@ -17,3 +17,31 @@ export const getAaStateVars = address =>
       resolve(result);
     });
   });
+
+export const getWitnesses = () =>
+  new Promise((resolve, reject) => {
+    client.api.getWitnesses(function (err, witnesses) {
+      if (err) {
+        return reject(err);
+      }
+      resolve(witnesses);
+    });
+  });
+
+export const getHistory = address =>
+  new Promise((resolve, reject) => {
+    getWitnesses()
+      .then(witnesses => {
+        const params = {
+          witnesses,
+          addresses: [address],
+        };
+        client.api.getHistory(params, function (err, result) {
+          if (err) {
+            return reject(err);
+          }
+          resolve(result);
+        });
+      })
+      .catch(err => reject(err));
+  });
