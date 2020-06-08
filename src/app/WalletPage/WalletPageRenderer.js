@@ -1,17 +1,17 @@
 // @flow
-import React from 'react'
-import styled from 'styled-components'
-import { Card } from '@blueprintjs/core'
-import CenteredSpinner from '../../components/Common/CenteredSpinner'
-import { OdexLogo } from '../../components/Common'
-import TokenTable from '../../components/TokenTable'
-import WalletInfo from '../../components/WalletInfo'
-import GetStartedModal from '../../components/GetStartedModal'
+import React from 'react';
+import styled from 'styled-components';
+import { Card } from '@blueprintjs/core';
+import CenteredSpinner from '../../components/Common/CenteredSpinner';
+import { OdexLogo } from '../../components/Common';
+import TokenTable from '../../components/TokenTable';
+import WalletInfo from '../../components/WalletInfo';
+import GetStartedModal from '../../components/GetStartedModal';
 
-import type { TokenData } from '../../types/tokens'
-import type { Tx } from '../../types/transactions'
+import type { TokenData } from '../../types/tokens';
+import type { Tx } from '../../types/transactions';
 
-import { Devices } from '../../components/Common/Variables'
+import { Devices } from '../../components/Common/Variables';
 
 type Props = {
   tokenData: Array<TokenData>,
@@ -23,7 +23,7 @@ type Props = {
   closeHelpModal: boolean => void,
   balancesLoading: boolean,
   referenceCurrency: string,
-}
+};
 
 const WalletPageRenderer = (props: Props) => {
   const {
@@ -36,13 +36,13 @@ const WalletPageRenderer = (props: Props) => {
     closeHelpModal,
     balancesLoading,
     referenceCurrency,
-  } = props
+  } = props;
 
   return (
     <WalletPageBox>
       <RowWrapper>
         <WalletInfoBox>
-          <WalletInfo/>
+          <WalletInfo tokenData={tokenData} />
         </WalletInfoBox>
         <WalletPageContentBox>
           {balancesLoading ? (
@@ -64,16 +64,15 @@ const WalletPageRenderer = (props: Props) => {
       </RowWrapper>
       <GetStartedModal isOpen={isHelpModalOpen} closeHelpModal={closeHelpModal} />
     </WalletPageBox>
-  )
-}
-
+  );
+};
 
 const WalletPageBox = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: 1em;
   margin-bottom: 1em;
-`
+`;
 
 const WalletInfoBox = styled.div`
   width: 30%;
@@ -87,8 +86,7 @@ const WalletInfoBox = styled.div`
   @media ${Devices.tablet} {
     display: none;
   }
-
-`
+`;
 
 const WalletPageContentBox = styled(Card)`
   height: 92vh;
@@ -99,15 +97,15 @@ const WalletPageContentBox = styled(Card)`
   @media ${Devices.tablet} {
     width: 100%;
   }
-`
+`;
 
 const RowWrapper = styled.div`
   display: flex;
   flex-direction: row;
-`
+`;
 const DepositTableBox = styled.div`
   height: 100%;
   width: 100%;
-`
+`;
 
-export default WalletPageRenderer
+export default WalletPageRenderer;
