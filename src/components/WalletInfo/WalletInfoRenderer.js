@@ -201,7 +201,8 @@ const PortfolioPanel = (props: *) => {
     accountAddress,
     accountExplorerUrl,
     transactions,
-    tokenData
+    tokenData,
+    exchangeAddress
   } = props
 
   return (
@@ -242,6 +243,7 @@ const PortfolioPanel = (props: *) => {
               transactions={transactions}
               accountAddress={accountAddress}
               tokenData={tokenData}
+              exchangeAddress={exchangeAddress}
             />
           </Box>
         </Box>
