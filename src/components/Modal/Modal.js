@@ -21,7 +21,7 @@ const Modal = (props: Props): Node => {
       isOpen={props.isOpen}
       onClose={props.onClose}
       style={{ width }}
-      className="bp3-dark"
+      className="bp3-dark app-dialog"
       canOutsideClickClose={false}
     >
       <div>{props.children}</div>

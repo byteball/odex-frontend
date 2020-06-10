@@ -365,6 +365,10 @@ const ButtonRow = styled.span`
   @media ${Devices.tablet} {
     justify-content: stretch;
   }
+
+  @media ${Devices.mobileL} {
+    flex-wrap: wrap;
+  }
 `
 
 const QuoteSelectionButton = styled(Button)`

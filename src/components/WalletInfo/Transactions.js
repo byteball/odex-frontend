@@ -16,14 +16,9 @@ type Props = {
 
 const TransactionsTable = (props: Props) => {
   const { accountAddress, transactions, tokenData } = props;
-  const openExplorerLink = (txHash: string) => {
-    if (txHash !== '') window.open(`${EXPLORER_URL}#${txHash}`);
-  };
 
   if (!transactions) return <Loading />;
   if (transactions.length === 0) return <NoTransactionsMessage>No recent transactions</NoTransactionsMessage>;
-
-  console.log(transactions)
 
   return (
     <div>
@@ -41,9 +36,12 @@ const TransactionsTable = (props: Props) => {
               amount = outputs.find(output => output.address === accountAddress).amount;
             }
           }
+          
           const tokenInfo = tokenData.find(tokenElement => tokenElement.asset === asset);
-  
           if (asset === 'base' && amount <= 10000) return null;
+
+          const symbol = tokenInfo ? tokenInfo.symbol : String(asset).slice(0, 4)
+          const decimals = tokenInfo ? tokenInfo.decimals : 0
   
           return (
             <TransactionRow key={unit}>
@@ -51,10 +49,11 @@ const TransactionsTable = (props: Props) => {
                 <InfoRow>
                   <span>
                     {isDeposit ? 'Deposit' : 'Withdraw'}&nbsp;
-                    {amount / Math.pow(10, tokenInfo.decimals)}
+                    {amount / Math.pow(10, decimals)}
                     &nbsp;
-                    {tokenInfo.symbol}
+                    {symbol}
                   </span>
+                  &nbsp;
                   <span>{relativeDate(timestamp * 1000)}</span>
                 </InfoRow>
               </TransactionLink>
@@ -75,6 +74,9 @@ const InfoRow = styled.div`
   word-break: break-all;
   display: flex;
   justify-content: space-between;
+  span: first-child {
+    flex: 1;
+  }
 `;
 
 const NoTransactionsMessage = styled.p`
