@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { formatNumber } from 'accounting-js';
-
+import { Tooltip } from '@blueprintjs/core'
 import { EXPLORER_URL } from '../../config/urls';
 import { Loading, Colors, CenteredMessage, SmallText, FlexRow, Box } from '../Common';
 import type { TokenData } from '../../types/tokens';
@@ -15,17 +14,28 @@ type Props = {
 };
 
 const TransactionsTable = (props: Props) => {
-  const { accountAddress, transactions, tokenData } = props;
+  const { transactions, tokenData, exchangeAddress, accountAddress } = props;
 
   if (!transactions) return <Loading />;
   if (transactions.length === 0) return <NoTransactionsMessage>No recent transactions</NoTransactionsMessage>;
 
   return (
     <div>
-      {transactions.map(({ unit: { authors, messages, unit, timestamp } }) => {
-        const isDeposit = authors.map(author => author.address).indexOf(accountAddress) >= 0;
+      {transactions.map(({ unit: { authors, messages, unit, timestamp } }, tIndex) => {
+        const authorAddresses = authors.map(author => author.address);
+        const isDeposit = authorAddresses.indexOf(accountAddress) >= 0;
+        if (!isDeposit && authorAddresses.indexOf(exchangeAddress) < 0) {
+          // not deposit/withdraw
+          return null;
+        }
+        const destAddress = isDeposit ? exchangeAddress : accountAddress
         if (messages.length === 0) return null;
         const tRows = messages.map(({payload: {outputs, asset = 'base'}}) => {
+          if (outputs.map(output => output.address).indexOf(destAddress) < 0) {
+            // not deposit/withdraw
+            return null
+          }
+          
           let amount
           if (outputs.length === 1) {
             ({amount} = outputs[0]);
@@ -39,7 +49,6 @@ const TransactionsTable = (props: Props) => {
           
           const tokenInfo = tokenData.find(tokenElement => tokenElement.asset === asset);
           if (asset === 'base' && amount <= 10000) return null;
-
           const symbol = tokenInfo ? tokenInfo.symbol : String(asset).slice(0, 4)
           const decimals = tokenInfo ? tokenInfo.decimals : 0
   
@@ -54,7 +63,9 @@ const TransactionsTable = (props: Props) => {
                     {symbol}
                   </span>
                   &nbsp;
-                  <span>{relativeDate(timestamp * 1000)}</span>
+                  <Tooltip position="top" content={new Date(timestamp * 1000).toLocaleString()}>
+                    <span>{relativeDate(timestamp * 1000)}</span>
+                  </Tooltip>
                 </InfoRow>
               </TransactionLink>
             </TransactionRow>
