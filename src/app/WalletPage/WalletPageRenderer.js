@@ -83,9 +83,14 @@ const WalletInfoBox = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-
   @media ${Devices.tablet} {
-    display: none;
+    margin-bottom: 8px;
+    width: auto;
+  }
+
+  @media ${Devices.mobileL} {
+    margin-bottom: 8px;
+    width: auto;
   }
 `
 
@@ -96,13 +101,21 @@ const WalletPageContentBox = styled(Card)`
   margin-left: 0.5em;
 
   @media ${Devices.tablet} {
-    width: 100%;
+    width: auto;
   }
 `
 
 const RowWrapper = styled.div`
   display: flex;
   flex-direction: row;
+
+  @media ${Devices.tablet} {
+    flex-direction: column;
+  }
+
+  @media ${Devices.mobileL} {
+    flex-direction: column;
+  }
 `
 const DepositTableBox = styled.div`
   height: 100%;

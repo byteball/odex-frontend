@@ -6,7 +6,7 @@ const CryptoIconPair = ({ baseToken, quoteToken, size }) => {
     size = size || 28
 
     return (
-        <Container size={size}>
+        <Container style={{minHeight: size}} size={size}>
             <QuoteIconContainer size={size}>
                 <ColoredCryptoIcon name={quoteToken} size={size} />
             </QuoteIconContainer>

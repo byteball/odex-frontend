@@ -97,7 +97,7 @@ const StatisticsBoardRenderer = (props: Props) => {
             />
             <StatsPanelBox alignItems="center">
                 <LeftPanelBox m={5}>
-                    <FlexRow justifyContent="space-around">
+                    <FlexRow justifyContent="space-around" flexWrap="wrap">
                         <FlexColumn alignItems="center">
                             <InfoHeader muted large>Most Traded Token </InfoHeader>
                             <Box p={2}>
@@ -111,7 +111,7 @@ const StatisticsBoardRenderer = (props: Props) => {
                             </Box>
                         </FlexColumn>
                     </FlexRow>
-                    <FlexRow mt={5} justifyContent="space-around" >
+                    <FlexRow mt={5} justifyContent="space-around" flexWrap="wrap">
                         <FlexColumn>
                             <FlexColumn alignItems="center">
                                 <InfoHeader muted large>Total 24H Volume </InfoHeader>
@@ -243,7 +243,6 @@ export const LeftPanelBox = styled(FlexColumn)`
     height: 100%;
     min-height: 500px;
     // justify-content: center;
-    
     
     @media ${Devices.tablet} {
         width: 100%;
