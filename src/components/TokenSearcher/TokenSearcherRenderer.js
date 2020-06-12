@@ -126,40 +126,19 @@ const TokenSearchRenderer = (props: Props) => {
               baseTokenAvailableBalance={baseTokenAvailableBalance}
               quoteTokenAvailableBalance={quoteTokenAvailableBalance}
             />
-            <Tabs selectedTabId={selectedTabId} onChange={changeTab}>
-              <Tab
-                id="star"
-                title={<Icon icon="star" />}
-                panel={
-                  <Panel
-                    tokenPairs={filteredPairs.favorites}
-                    filterName={filterName}
-                    sortOrder={sortOrder}
-                    searchFilter={searchFilter}
-                    selectedTabId={selectedTabId}
-                    selectedPair={selectedPair}
-                    changeSelectedToken={changeSelectedToken}
-                    updateFavorite={updateFavorite}
-                    onChangeSearchFilter={onChangeSearchFilter}
-                    onChangeFilterName={onChangeFilterName}
-                    onChangeSortOrder={onChangeSortOrder}
-                  />
-                }
-              />
-              {quoteTokens.map((quote, index) => (
+            <TabsWrapper>
+              <Tabs selectedTabId={selectedTabId} onChange={changeTab}>
                 <Tab
-                  id={quote}
-                  key={index}
-                  title={quote}
+                  id="star"
+                  title={<Icon icon="star" />}
                   panel={
                     <Panel
-                      tokenPairs={filteredPairs[quote]}
+                      tokenPairs={filteredPairs.favorites}
                       filterName={filterName}
                       sortOrder={sortOrder}
                       searchFilter={searchFilter}
                       selectedTabId={selectedTabId}
                       selectedPair={selectedPair}
-                      filteredPairs={filteredPairs}
                       changeSelectedToken={changeSelectedToken}
                       updateFavorite={updateFavorite}
                       onChangeSearchFilter={onChangeSearchFilter}
@@ -168,8 +147,31 @@ const TokenSearchRenderer = (props: Props) => {
                     />
                   }
                 />
-              ))}
-            </Tabs>
+                {quoteTokens.map((quote, index) => (
+                  <Tab
+                    id={quote}
+                    key={index}
+                    title={quote}
+                    panel={
+                      <Panel
+                        tokenPairs={filteredPairs[quote]}
+                        filterName={filterName}
+                        sortOrder={sortOrder}
+                        searchFilter={searchFilter}
+                        selectedTabId={selectedTabId}
+                        selectedPair={selectedPair}
+                        filteredPairs={filteredPairs}
+                        changeSelectedToken={changeSelectedToken}
+                        updateFavorite={updateFavorite}
+                        onChangeSearchFilter={onChangeSearchFilter}
+                        onChangeFilterName={onChangeFilterName}
+                        onChangeSortOrder={onChangeSortOrder}
+                      />
+                    }
+                  />
+                ))}
+              </Tabs>
+            </TabsWrapper>
           </Collapse>
         </div>
       )}
@@ -395,6 +397,8 @@ const TokenSearchPanelBox = styled.div`
 const SelectedPairCard = styled(Card)`
   margin: 15px 0px;
   padding: 5px 15px;
+  overflow-x: auto;
+  width: 100%;
 `
 
 const ListBox = styled.ul.attrs({ className: 'list' })`
@@ -417,7 +421,7 @@ const Item = styled.li`
 `;
 
 const TokenPair = styled.div`
-  padding-left: 25px;
+  padding-left: 15px;
 
   h2 {
     margin: 0;
@@ -443,4 +447,15 @@ const TokenSearcherToolBar = styled(Box)`
   display: flex;
   justify-content: space-between;
   height: 30px;
+`
+
+const TabsWrapper = styled.div`
+  .bp3-tab-list {
+    width: 100%;
+    overflow-x: auto;
+    &::-webkit-scrollbar {
+      height: 5px;
+    }
+  }
+
 `
