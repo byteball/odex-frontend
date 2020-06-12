@@ -29,6 +29,7 @@ import { relativeDate } from '../../utils/helpers'
 import { Order } from '../../types/orders'
 
 import type { Node } from 'react'
+import { Devices } from '../Common/Variables'
 
 type Props = {
   loading: boolean,
@@ -187,6 +188,7 @@ const OrdersTablePanel = (props: *) => {
                   cancelOrder={cancelOrder}
                   address={address}
                   width={width}
+                  labels={['PAIR', 'AMOUNT', 'PRICE', 'STATUS', 'SIDE', 'TIME']}
                 />
               )
             }
@@ -197,45 +199,61 @@ const OrdersTablePanel = (props: *) => {
 }
 
 const OrderRow = (props: *) => {
-  const { order, cancelOrder, address, width } = props
+  const { order, cancelOrder, address, width, labels } = props
 
   return (
     <Row>
       <Cell className="pair" muted>
+        <HeaderCell className="mobile-label">
+          {labels[0]}:
+        </HeaderCell>
         <SmallText muted>
           {order.pair}
         </SmallText>
       </Cell>
       <Cell className="amount" muted>
+       <HeaderCell className="mobile-label">
+          {labels[1]}:
+        </HeaderCell>
         <SmallText muted>
           {formatNumber(order.filled, { precision: 3 })}/{formatNumber(order.amount, { precision: 3 })}
         </SmallText>
       </Cell>
-      <Hideable hiddenIf={width < breakpoints.L}>
       <Cell className="price" muted>
+        <HeaderCell className="mobile-label">
+          {labels[2]}:
+        </HeaderCell>
         <SmallText muted>
           {formatNumber(order.price, { precision: 5 })} ({order.type})
         </SmallText>
       </Cell>
-      </Hideable>
         <Cell className="status" muted>
+          <HeaderCell className="mobile-label">
+            {labels[3]}:
+          </HeaderCell>
           <StatusTag status={order.status} />
         </Cell>
       <Cell className="side" side={order.side} muted>
+        <HeaderCell className="mobile-label">
+          {labels[4]}:
+        </HeaderCell>
         <SmallText color={order.side === 'BUY' ? Colors.BUY : Colors.SELL}>{order.side}</SmallText>
       </Cell>
-      <Hideable hiddenIf={width < breakpoints.L}>
-        <Cell className="time" muted>
-          <SmallText muted>{relativeDate(order.time)}</SmallText>
-        </Cell>
-      </Hideable>
-      <Cell className="cancel" muted>
-        {order.cancelleable && (
+      <Cell className="time" muted>
+        <HeaderCell className="mobile-label">
+          {labels[5]}:
+        </HeaderCell>
+        <SmallText muted>{relativeDate(order.time)}</SmallText>
+      </Cell>
+      
+      {order.cancelleable && (
+        <Cell className="cancel" muted>
           <AnchorButton intent="danger" minimal href={CHATBOT_URL + "cancel-" + order.hash + "-" + address}>
             <Icon icon="cross" intent="danger" />&nbsp;&nbsp;Cancel
           </AnchorButton>
-        )}
-      </Cell>
+        </Cell>
+      )}
+      
     </Row>
   )
 }
@@ -293,6 +311,9 @@ const ListHeaderWrapper = styled.ul`
   margin-bottom: 10px;
   padding-left: 0px !important;
   margin-left: 0px !important;
+  @media (max-width: ${breakpoints.M}px) {
+    display: none;
+  }
 `
 
 const ListBodyWrapper = styled.ul`
@@ -327,6 +348,18 @@ const Row = styled.li.attrs({ className: 'row' })`
   box-shadow: inset 0px 1px 0 0 rgba(16, 22, 26, 0.15);
   padding-left: 0px !important;
   margin-left: 0px !important;
+  .mobile-label {
+    display: none;
+  }
+  @media (max-width: ${breakpoints.M}px) {
+    flex-direction: column;
+    padding-bottom: 25px;
+    .mobile-label {
+      display: block;
+      width: auto;
+      margin-right: 10px;
+    }
+  }
 `
 
 

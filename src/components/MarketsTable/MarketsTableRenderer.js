@@ -76,37 +76,43 @@ class MarketsTableRenderer extends React.PureComponent<Props> {
       return (
         <Row key={key} onClick={() => redirectToTradingPage(pair)} style={style}>
           <Cell>
+            <SmallText muted className="mobile-label">Market:&nbsp;</SmallText>
             <FlexRow alignItems="center">
-              <Box pb={4} mr={2}>
+              <Box pb={1} pt={1} mr={2}>
                 <CryptoIconPair size={32} baseToken={baseTokenSymbol} quoteToken={quoteTokenSymbol} />
               </Box>
               <SmallText muted>{pair}</SmallText>
             </FlexRow>
           </Cell>
           <Cell type="price">
+            <SmallText muted className="mobile-label">Price:&nbsp;</SmallText>
             <SmallText muted>
               {formatNumber(lastPrice, { precision: 2 })} {quoteTokenSymbol}
             </SmallText>
           </Cell>
           <Cell type="referencePrice">
+            <SmallText muted className="mobile-label">Price ({currentReferenceCurrency}):&nbsp;</SmallText>
             <SmallText muted>
               {formatNumber(lastPrice, { precision: 2 })} {currentReferenceCurrency}
             </SmallText>
           </Cell>
           <Cell type="volume">
+            <SmallText muted className="mobile-label">Volume:&nbsp;</SmallText>
             <SmallText muted>
               {formatNumber(volume, { precision: 2 })}
             </SmallText>
           </Cell>
           <Cell type="orderVolume">
+            <SmallText muted className="mobile-label">Order Volume:&nbsp;</SmallText>
             <SmallText muted>
               {orderVolume ? formatNumber(orderVolume, { precision: 2 }) : 'N.A'}
             </SmallText>
           </Cell>
           <Cell type="change">
+            <SmallText muted className="mobile-label">Change 24H:&nbsp;</SmallText>
             <ChangeCell change={change}>{change ? `${formatNumber(change, { precision: 2 })}%` : 'N.A'}</ChangeCell>
           </Cell>
-          <Cell>
+          <Cell type="trade">
             <FlexRow justifyContent="flex-end" p={1}>
               <BlueGlowingButton
                 intent="primary"
@@ -217,6 +223,11 @@ class MarketsTableRenderer extends React.PureComponent<Props> {
   }
 };
 
+const breakpoints = {
+  S: 400,
+  M: 600, 
+  L: 800
+}
 
 const ChangeCell = styled(SmallText).attrs({ className: 'change' })`
   color: ${props => (props.change > 0 ? Colors.GREEN5 : Colors.RED4)} !important;
@@ -268,6 +279,9 @@ const TableHeader = styled.div`
   display: flex;
   margin-top: 10px;
   margin-bottom: 20px;
+  @media (max-width: ${breakpoints.M}px) {
+    display: none;
+  }
 `;
 
 const TableHeaderCell = styled(Box)`
@@ -320,20 +334,17 @@ const Cell = styled.div`
       };
   }
 
-  @media ${Devices.mobileM} {
-    width: 50%;
-    display: ${props => (props.type === "volume")
-      ? "none"
-      : props.type === "orderVolume"
-        ? "none"
-        : props.type === "change"
-          ? "none"
-          : props.type === "price"
-            ? "none"
-            : props.type === "referencePrice"
-              ? "none"
-              : "flex"
-      };
+  @media (max-width: ${breakpoints.M}px) {
+    flex-direction: row;
+    width: 100%;
+    align-items: center;
+    justify-content: end;
+    ${props => props.type === 'trade' ? `
+      position: absolute;
+      width: auto;
+      right: 15px;
+      bottom: 22px;
+    ` : ''}
   }
 `;
 
@@ -352,6 +363,26 @@ const Row = styled.div`
       1px 18px 24px rgba(16, 22, 26, 0.2);
     box-shadow: inset 0 0 0 1px rgb(49, 64, 76), -1px 5px 4px rgba(16, 22, 26, 0.1), 1px 7px 24px rgba(16, 22, 26, 0.2);
     z-index: 1;
+  }
+
+  .mobile-label {
+    display: none;
+  }
+
+  @media (max-width: ${breakpoints.M}px) {
+    flex-direction: column;
+    padding-bottom: 25px;
+    height: auto !important;
+    position: relative !important;
+    top: 0 !important;
+    padding-top: 5px;
+    padding-left: 5px;
+
+    .mobile-label {
+      display: block;
+      width: auto;
+      margin-right: 10px;
+    }
   }
 `;
 
