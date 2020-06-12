@@ -180,6 +180,7 @@ const OrderFormRenderer = (props: Props) => {
           />
         </ButtonRow>
       </OrderFormHeader>
+      <ContentWrapper>
       <Collapse isOpen={isOpen}>
         <Tabs selectedTabId={selectedTabId}>
           <Tab
@@ -262,6 +263,7 @@ const OrderFormRenderer = (props: Props) => {
           />
         </Tabs>
       </Collapse>
+      </ContentWrapper>
     </Wrapper>
   )
 }
@@ -736,5 +738,10 @@ const MaxAmount = styled.div`
   justify-content: flex-end;
   padding-bottom: 5px;
   `
+
+const ContentWrapper = styled.div`
+  overflow-y: auto;
+  height: 88%;
+`
 
 export default OrderFormRenderer
