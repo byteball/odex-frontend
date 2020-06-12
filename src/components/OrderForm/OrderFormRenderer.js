@@ -741,7 +741,6 @@ const MaxAmount = styled.div`
 
 const ContentWrapper = styled.div`
   overflow-y: auto;
-  overflow-x: hidden;
   height: 88%;
 `
 
