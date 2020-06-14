@@ -83,7 +83,18 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
             });
             return { ...element, unit: { ...element.unit, messages: fMessages } };
           })
-          .filter(element => element.unit.messages.length > 0);
+          .filter(transaction => transaction.unit.messages.length > 0)
+          .sort(({unit: {timestamp: timestamp1}}, {unit: {timestamp: timestamp2}}) => {
+            if (timestamp1 > timestamp2) {
+              return -1;
+            }
+            if (timestamp1 > timestamp2) {
+              return 1;
+            }
+            return 0;
+          });
+
+        console.log(transactions)
 
         this.setState({
           transactions,
