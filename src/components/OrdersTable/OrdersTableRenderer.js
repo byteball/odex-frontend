@@ -167,14 +167,10 @@ const OrdersTablePanel = (props: *) => {
             <ListHeader>
               <HeaderCell className="pair">PAIR</HeaderCell>
               <HeaderCell className="amount">AMOUNT</HeaderCell>
-              <Hideable hiddenIf={width<breakpoints.L}>
-                <HeaderCell className="price">PRICE</HeaderCell>
-              </Hideable>
+              <HeaderCell className="price">PRICE</HeaderCell>
               <HeaderCell className="status">STATUS</HeaderCell>
               <HeaderCell className="side">SIDE</HeaderCell>
-              <Hideable hiddenIf={width<breakpoints.L}>
-                <HeaderCell className="time">TIME</HeaderCell>
-              </Hideable>
+              <HeaderCell className="time">TIME</HeaderCell>
               <HeaderCell className="cancel" />
             </ListHeader>
           </ListHeaderWrapper>
@@ -246,13 +242,15 @@ const OrderRow = (props: *) => {
         <SmallText muted>{relativeDate(order.time)}</SmallText>
       </Cell>
       
-      {order.cancelleable && (
-        <Cell className="cancel" muted>
+      
+      <Cell className="cancel" muted>
+        {order.cancelleable && (
           <AnchorButton intent="danger" minimal href={CHATBOT_URL + "cancel-" + order.hash + "-" + address}>
             <Icon icon="cross" intent="danger" />&nbsp;&nbsp;Cancel
           </AnchorButton>
-        </Cell>
-      )}
+        )}
+      </Cell>
+      
       
     </Row>
   )
@@ -380,6 +378,9 @@ const Cell = styled.span.attrs({ className: props => props.className })`
   height: 40px !important;
   width: 100%;
   // width: ${props => (props.className === 'cancel' ? '100px' : '20%')};
+  &.cancel {
+    height: auto !important;
+  }
 `
 
 const HeaderCell = styled.span.attrs({ className: props => props.className })`
