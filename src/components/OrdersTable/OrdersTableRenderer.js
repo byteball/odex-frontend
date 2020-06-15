@@ -219,40 +219,44 @@ const OrderRow = (props: *) => {
           {formatNumber(order.filled, { precision: 3 })}/{formatNumber(order.amount, { precision: 3 })}
         </SmallText>
       </Cell>
-      <Cell className="price" muted>
-        <HeaderCell className="mobile-label">
-          {labels[2]}:
-        </HeaderCell>
-        <SmallText muted>
-          {formatNumber(order.price, { precision: 5 })} ({order.type})
-        </SmallText>
-      </Cell>
-        <Cell className="status" muted>
+      <Hideable hiddenIf={width<breakpoints.L}>
+        <Cell className="price" muted>
           <HeaderCell className="mobile-label">
-            {labels[3]}:
+            {labels[2]}:
           </HeaderCell>
-          <StatusTag status={order.status} />
+          <SmallText muted>
+            {formatNumber(order.price, { precision: 5 })} ({order.type})
+          </SmallText>
         </Cell>
+      </Hideable>
+      <Cell className="status" muted>
+        <HeaderCell className="mobile-label">
+          {labels[3]}:
+        </HeaderCell>
+        <StatusTag status={order.status} />
+      </Cell>
       <Cell className="side" side={order.side} muted>
         <HeaderCell className="mobile-label">
           {labels[4]}:
         </HeaderCell>
         <SmallText color={order.side === 'BUY' ? Colors.BUY : Colors.SELL}>{order.side}</SmallText>
       </Cell>
-      <Cell className="time" muted>
-        <HeaderCell className="mobile-label">
-          {labels[5]}:
-        </HeaderCell>
-        <SmallText muted>{relativeDate(order.time)}</SmallText>
-      </Cell>
-      
-      {order.cancelleable && (
-        <Cell className="cancel" muted>
+      <Hideable hiddenIf={width<breakpoints.L}>
+        <Cell className="time" muted>
+          <HeaderCell className="mobile-label">
+            {labels[5]}:
+          </HeaderCell>
+          <SmallText muted>{relativeDate(order.time)}</SmallText>
+        </Cell>
+      </Hideable>
+      <Cell className="cancel" muted>
+        {order.cancelleable && (
           <AnchorButton intent="danger" minimal href={CHATBOT_URL + "cancel-" + order.hash + "-" + address}>
             <Icon icon="cross" intent="danger" />&nbsp;&nbsp;Cancel
           </AnchorButton>
-        </Cell>
-      )}
+        )}
+      </Cell>
+      
       
     </Row>
   )
@@ -380,6 +384,9 @@ const Cell = styled.span.attrs({ className: props => props.className })`
   height: 40px !important;
   width: 100%;
   // width: ${props => (props.className === 'cancel' ? '100px' : '20%')};
+  &.cancel {
+    height: auto !important;
+  }
 `
 
 const HeaderCell = styled.span.attrs({ className: props => props.className })`
