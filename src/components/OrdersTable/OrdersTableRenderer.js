@@ -167,10 +167,14 @@ const OrdersTablePanel = (props: *) => {
             <ListHeader>
               <HeaderCell className="pair">PAIR</HeaderCell>
               <HeaderCell className="amount">AMOUNT</HeaderCell>
-              <HeaderCell className="price">PRICE</HeaderCell>
+              <Hideable hiddenIf={width<breakpoints.L}>
+                <HeaderCell className="price">PRICE</HeaderCell>
+              </Hideable>
               <HeaderCell className="status">STATUS</HeaderCell>
               <HeaderCell className="side">SIDE</HeaderCell>
-              <HeaderCell className="time">TIME</HeaderCell>
+              <Hideable hiddenIf={width<breakpoints.L}>
+                <HeaderCell className="time">TIME</HeaderCell>
+              </Hideable>
               <HeaderCell className="cancel" />
             </ListHeader>
           </ListHeaderWrapper>
@@ -215,34 +219,36 @@ const OrderRow = (props: *) => {
           {formatNumber(order.filled, { precision: 3 })}/{formatNumber(order.amount, { precision: 3 })}
         </SmallText>
       </Cell>
-      <Cell className="price" muted>
-        <HeaderCell className="mobile-label">
-          {labels[2]}:
-        </HeaderCell>
-        <SmallText muted>
-          {formatNumber(order.price, { precision: 5 })} ({order.type})
-        </SmallText>
-      </Cell>
-        <Cell className="status" muted>
+      <Hideable hiddenIf={width<breakpoints.L}>
+        <Cell className="price" muted>
           <HeaderCell className="mobile-label">
-            {labels[3]}:
+            {labels[2]}:
           </HeaderCell>
-          <StatusTag status={order.status} />
+          <SmallText muted>
+            {formatNumber(order.price, { precision: 5 })} ({order.type})
+          </SmallText>
         </Cell>
+      </Hideable>
+      <Cell className="status" muted>
+        <HeaderCell className="mobile-label">
+          {labels[3]}:
+        </HeaderCell>
+        <StatusTag status={order.status} />
+      </Cell>
       <Cell className="side" side={order.side} muted>
         <HeaderCell className="mobile-label">
           {labels[4]}:
         </HeaderCell>
         <SmallText color={order.side === 'BUY' ? Colors.BUY : Colors.SELL}>{order.side}</SmallText>
       </Cell>
-      <Cell className="time" muted>
-        <HeaderCell className="mobile-label">
-          {labels[5]}:
-        </HeaderCell>
-        <SmallText muted>{relativeDate(order.time)}</SmallText>
-      </Cell>
-      
-      
+      <Hideable hiddenIf={width<breakpoints.L}>
+        <Cell className="time" muted>
+          <HeaderCell className="mobile-label">
+            {labels[5]}:
+          </HeaderCell>
+          <SmallText muted>{relativeDate(order.time)}</SmallText>
+        </Cell>
+      </Hideable>
       <Cell className="cancel" muted>
         {order.cancelleable && (
           <AnchorButton intent="danger" minimal href={CHATBOT_URL + "cancel-" + order.hash + "-" + address}>
