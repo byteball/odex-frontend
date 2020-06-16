@@ -58,6 +58,10 @@ const Stepper = (props: Props) => {
 };
 
 // 🚀📈 💶💵💴🔥🌊🛸🍪🧞🧙🐲
-const ModalContent = styled(FlexRow)``;
+const ModalContent = styled(FlexRow)`
+  @media (max-width: 700px) {
+    flex-direction: column;
+  }
+`;
 
 export default GetStartedModalRenderer;

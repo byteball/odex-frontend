@@ -85,6 +85,9 @@ const Box = styled.div`
   text-align: center;
   padding-left: 10%;
   padding-right: 10%;
+  h2 {
+    line-height: 24px;
+  }
 `
 
 const ButtonBox = styled.div`
@@ -94,11 +97,12 @@ const ButtonBox = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
+  text-align: center;
 `
 
 const ButtonGroupBox = styled.div`
-  padding-left: 25%;
-  padding-right: 25%;
+  margin: auto;
+  max-width: 240px;
   display: flex;
   flex-direction: column;
   align-content: center;

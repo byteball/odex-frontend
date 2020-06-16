@@ -27,6 +27,7 @@ const FirstStep = (props: Props) => {
     <React.Fragment>
       <SideMenu ml={3} mt={3}>
         <Button
+          className="side-button"
           my={1}
           text="Get Started"
           onClick={() => handleChangeTab('default')}
@@ -34,6 +35,7 @@ const FirstStep = (props: Props) => {
           intent={currentTab === 'default' ? 'primary' : 'none'}
         />
         <Button
+          className="side-button"
           my={1}
           text="Basics"
           onClick={() => handleChangeTab('basics')}
@@ -41,6 +43,7 @@ const FirstStep = (props: Props) => {
           intent={currentTab === 'basics' ? 'primary' : 'none'}
         />
         <Button
+          className="side-button"
           my={1}
           text="Security"
           onClick={() => handleChangeTab('security')}
@@ -57,6 +60,7 @@ const FirstStep = (props: Props) => {
         /> */}
         
         <Button
+          className="side-button"
           my={1}
           text="Community/News"
           onClick={() => handleChangeTab('news')}
@@ -118,7 +122,7 @@ const GetStartedSectionRenderer = (props: Props) => {
           <Checkbox checked={showHelpModalChecked} onClick={toggleShowHelpModalCheckBox}>
             Do not show again
           </Checkbox>
-          <div>
+          <div className="skip-started-group">
             <Button onClick={goToThirdStep}>Skip</Button>
             <Button onClick={goToSecondStep} intent='primary'>
               I understand. Let's get started!
@@ -284,7 +288,19 @@ const StartTradingContentRenderer = (props: Props) => {
 
 
 
-const SideMenu = styled(FlexColumn)``;
+const SideMenu = styled(FlexColumn)`
+  @media (max-width: 700px) {
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 16px;
+    margin: 0;
+    padding-bottom: 0;
+    justify-content: space-around;
+    .side-button {
+      width: 48%;
+    }
+  }
+`;
 
 const ModalContent = styled(FlexRow)``;
 
@@ -298,6 +314,12 @@ const FooterBox = styled.div`
   padding-top: 80px;
   display: flex;
   justify-content: space-between;
+  @media (max-width: 700px) {
+    flex-direction: column;
+    .skip-started-group {
+      text-align: right;
+    }
+  }
 `
 
 export default FirstStep
