@@ -32,7 +32,7 @@ class GetStartedModal extends React.PureComponent<Props, State> {
     currentTab: "default"
   }
 
-  componentDidUnmount = () => {
+  componentWillUnmount = () => {
     this.handleClose()
   }
 

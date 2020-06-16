@@ -147,9 +147,7 @@ class MarketsTableRenderer extends React.PureComponent<Props> {
     } = this.props;
 
     return (
-      <Spring from={{ opacity: 0, marginLeft: -200 }} to={{ opacity: 1, marginLeft: 0 }} >
-      {props =>
-      <TableSection style={props}>
+      <TableSection>
         <TableToolBar mt={3} mb={4}>
           <TableSearchBar>
             <InputGroup
@@ -217,8 +215,6 @@ class MarketsTableRenderer extends React.PureComponent<Props> {
               </TableBody>
           </Table>
       </TableSection>
-      }
-      </Spring>
     );
   }
 };
@@ -321,6 +317,12 @@ const Cell = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
+
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
   
   @media ${Devices.tablet} {
     width: 25%;

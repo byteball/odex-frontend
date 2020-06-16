@@ -94,8 +94,6 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
             return 0;
           });
 
-        console.log(transactions)
-
         this.setState({
           transactions,
         });
