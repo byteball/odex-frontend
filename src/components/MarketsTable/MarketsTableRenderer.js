@@ -205,7 +205,7 @@ class MarketsTableRenderer extends React.PureComponent<Props> {
                     width={width}
                     height={height}
                     rowCount={pairs.length}
-                    rowHeight={60}
+                    rowHeight={width < breakpoints.M ? 120 : 60}
                     rowRenderer={this.rowRenderer}
                     noRowsRenderer={this.noRowsRenderer}
                     overscanRowCount={0}
@@ -234,7 +234,7 @@ const Table = styled.div.attrs({
 })`
   width: 100%;
   overflow: hidden;
-
+  flex: 1;
 `;
 
 const TableToolBar = styled(FlexRowSpaceBetween)`
@@ -267,7 +267,7 @@ const TableSection = styled.div`
 `;
 
 const TableBody = styled.div`
-  height: 80vh;
+  height: 100%;
 `;
 
 const TableHeader = styled.div`
@@ -345,7 +345,7 @@ const Cell = styled.div`
       position: absolute;
       width: auto;
       right: 15px;
-      bottom: 22px;
+      bottom: 40px;
     ` : ''}
   }
 `;
@@ -374,9 +374,6 @@ const Row = styled.div`
   @media (max-width: ${breakpoints.M}px) {
     flex-direction: column;
     padding-bottom: 25px;
-    height: auto !important;
-    position: relative !important;
-    top: 0 !important;
     padding-top: 5px;
     padding-left: 5px;
 
