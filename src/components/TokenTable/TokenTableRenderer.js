@@ -338,7 +338,7 @@ const TableHeaderCell = styled.div`
 `;
 
 const TokenNameHeaderCell = styled(TableHeaderCell)`
-  min-witdh: 130px;
+  min-width: 130px;
 
   @media ${Devices.mobileM} {
     display: none;
@@ -382,6 +382,10 @@ const BalancesCell = styled(Cell)`
 
 const ActionsCell = styled(Cell)`
   width: 40%;
+  @media ${Devices.mobileM} {
+    width: 100%;
+    text-align: right;
+  }
 `
 
 const Row = styled.div`
@@ -398,6 +402,14 @@ const Row = styled.div`
       1px 18px 24px rgba(16, 22, 26, 0.2);
     box-shadow: inset 0 0 0 1px rgb(49, 64, 76), -1px 5px 4px rgba(16, 22, 26, 0.1), 1px 7px 24px rgba(16, 22, 26, 0.2);
     z-index: 1;
+  }
+  @media ${Devices.mobileM} {
+    flex-direction: column !important;
+    height: auto !important;
+    margin-bottom: 15px;
+    position: relative !important;
+    top: unset !important;
+    padding: 5px 0;
   }
 `;
 

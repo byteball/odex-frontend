@@ -392,6 +392,9 @@ const TokenBalanceChartBox = styled.div`
   align-content: middle;
   text-align: center;
   width: 100%;
+  svg {
+    overflow: visible;
+  }
 `
 
 const ButtonRow = styled.span`
