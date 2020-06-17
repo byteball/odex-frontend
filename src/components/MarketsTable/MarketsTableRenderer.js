@@ -56,9 +56,8 @@ type Props = {
 
 class MarketsTableRenderer extends React.PureComponent<Props> {
 
-    rowRenderer = ({ key, index, style }: *) => {
+    rowRenderer = (params: *) => {
       const {
-        pairs,
         redirectToTradingPage,
         currentReferenceCurrency,
       } = this.props;
@@ -71,10 +70,10 @@ class MarketsTableRenderer extends React.PureComponent<Props> {
         change, 
         volume, 
         orderVolume,
-      } = pairs[index]
+      } = params
   
       return (
-        <Row key={key} onClick={() => redirectToTradingPage(pair)} style={style}>
+        <Row key={pair} onClick={() => redirectToTradingPage(pair)}>
           <Cell>
             <SmallText muted className="mobile-label">Market:&nbsp;</SmallText>
             <FlexRow alignItems="center">
@@ -197,22 +196,14 @@ class MarketsTableRenderer extends React.PureComponent<Props> {
               <TableHeaderCell type="change">Change 24H</TableHeaderCell>
               <TableHeaderCell></TableHeaderCell>
             </TableHeader>
-            <Table>
+          <Table>
             <TableBody>
-              <AutoSizer>
-                {({ width, height }) => (
-                  <List
-                    width={width}
-                    height={height}
-                    rowCount={pairs.length}
-                    rowHeight={60}
-                    rowRenderer={this.rowRenderer}
-                    noRowsRenderer={this.noRowsRenderer}
-                    overscanRowCount={0}
-                  />
-                )}
-              </AutoSizer>
-              </TableBody>
+              {
+                pairs.length === 0 ?
+                this.noRowsRenderer() :
+                pairs.map(pair => this.rowRenderer(pair))
+              }
+            </TableBody>
           </Table>
       </TableSection>
     );
@@ -233,8 +224,7 @@ const Table = styled.div.attrs({
   className: '',
 })`
   width: 100%;
-  overflow: hidden;
-
+  overflow-y: auto;
 `;
 
 const TableToolBar = styled(FlexRowSpaceBetween)`
