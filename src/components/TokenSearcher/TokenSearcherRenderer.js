@@ -403,6 +403,14 @@ const SelectedPairCard = styled(Card)`
 
 const ListBox = styled.ul.attrs({ className: 'list' })`
   height: 100%;
+  .row {
+    span {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: block;
+    }
+  }
 `;
 
 const List = styled.ul`
