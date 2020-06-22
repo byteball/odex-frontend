@@ -122,9 +122,9 @@ class OHLCVChart extends React.Component {
 
     const xScaleProvider = discontinuousTimeScaleProvider.inputDateAccessor(d => d.date)
     const { data, xScale, xAccessor, displayXAccessor } = xScaleProvider(calculatedData)
-    const start = xAccessor(last(data))
-    const end = xAccessor(data[Math.max(0, data.length - noOfCandles)])
-    const xExtents = [end, start]
+    const end = xAccessor(last(data))
+    const start = xAccessor(data[Math.max(0, data.length - noOfCandles)])
+    const xExtents = [start, end]
     const height = chartHeight + indicatorHeight + 50
 
     var margin = { left: 70, right: 70, top: 20, bottom: 30 }
