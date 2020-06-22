@@ -2,8 +2,8 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { format } from 'd3-format'
 import { timeFormat } from 'd3-time-format'
-import { Chart, ChartCanvas } from 'react-stockcharts'
-import { ClickCallback } from "react-stockcharts/lib/interactive";
+import { Chart, ChartCanvas } from 'react-financial-charts'
+import { ClickCallback } from "react-financial-charts/lib/interactive";
 import { Menu, MenuItem, ContextMenuTarget } from '@blueprintjs/core'
 
 import {
@@ -14,14 +14,15 @@ import {
   MACDSeries,
   ScatterSeries,
   RSISeries,
-  CircleMarker,
   StraightLine
-} from 'react-stockcharts/lib/series'
+} from 'react-financial-charts/lib/series'
+
+import { CircleMarker } from 'react-stockcharts/lib/series'
 
 import { 
   XAxis, 
   YAxis
-} from 'react-stockcharts/lib/axes'
+} from 'react-financial-charts/lib/axes'
 
 import {
   CrossHairCursor,
@@ -29,12 +30,12 @@ import {
   EdgeIndicator,
   MouseCoordinateX,
   MouseCoordinateY
-} from 'react-stockcharts/lib/coordinates'
+} from 'react-financial-charts/lib/coordinates'
 
-import { elderRay } from 'react-stockcharts/lib/indicator'
-import { discontinuousTimeScaleProvider } from 'react-stockcharts/lib/scale'
+import { elderRay } from 'react-financial-charts/lib/indicator'
+import { discontinuousTimeScaleProvider } from 'react-financial-charts/lib/scale'
 import { fitWidth } from 'react-stockcharts/lib/helper'
-import { last } from 'react-stockcharts/lib/utils'
+import { last } from 'react-financial-charts/lib/utils'
 
 import {
   MACDTooltip,
@@ -42,7 +43,7 @@ import {
   OHLCTooltip,
   RSITooltip,
   SingleValueTooltip
-} from 'react-stockcharts/lib/tooltip'
+} from 'react-financial-charts/lib/tooltip'
 
 
 import {
@@ -123,7 +124,7 @@ class OHLCVChart extends React.Component {
     const { data, xScale, xAccessor, displayXAccessor } = xScaleProvider(calculatedData)
     const start = xAccessor(last(data))
     const end = xAccessor(data[Math.max(0, data.length - noOfCandles)])
-    const xExtents = [start, end]
+    const xExtents = [end, start]
     const height = chartHeight + indicatorHeight + 50
 
     var margin = { left: 70, right: 70, top: 20, bottom: 30 }
@@ -178,9 +179,10 @@ class OHLCVChart extends React.Component {
                 showTicks={!macd.active && !rsi.active && !atr.active && !forceIndex.active}
                 {...axisAppearance}
                 outerTickSize={0}
+                tickLabelFill={theme.white}
               />
 
-              <YAxis axisAt="right" orient="right" ticks={10} {...yGrid} {...axisAppearance} outerTickSize={0} />
+              <YAxis axisAt="right" orient="right" ticks={10} {...yGrid} {...axisAppearance} outerTickSize={0} tickLabelFill={theme.white}/>
 
               <CandlestickSeries
                 opacity={0.6}
@@ -241,6 +243,7 @@ class OHLCVChart extends React.Component {
                     windowSize: ema12.options().windowSize
                   }
                 ]}
+                textFill={theme.white}
               />
             </Chart>
           )}
@@ -269,8 +272,9 @@ class OHLCVChart extends React.Component {
                 {...xGrid}
                 {...axisAppearance}
                 outerTickSize={0}
+                tickLabelFill={theme.white}
               />
-              <YAxis axisAt="right" orient="right" {...yGrid} ticks={10} {...axisAppearance} outerTickSize={0} />
+              <YAxis axisAt="right" orient="right" {...yGrid} ticks={10} {...axisAppearance} outerTickSize={0} tickLabelFill={theme.white} />
               <AreaSeries
                 yAccessor={d => d.close}
                 fill="url(#MyGradient)"
@@ -298,8 +302,9 @@ class OHLCVChart extends React.Component {
                 showTicks={!macd.active && !rsi.active && !atr.active && !forceIndex.active}
                 {...axisAppearance}
                 outerTickSize={0}
+                tickLabelFill={theme.white}
               />
-              <YAxis axisAt="right" orient="right" ticks={10} {...yGrid} {...axisAppearance} outerTickSize={0} />
+              <YAxis axisAt="right" orient="right" ticks={10} {...yGrid} {...axisAppearance} outerTickSize={0} tickLabelFill={theme.white} />
               <LineSeries yAccessor={d => d.close} strokeDasharray="Solid" />
               <ScatterSeries yAccessor={d => d.close} marker={CircleMarker} markerProps={{ r: 3 }} />
               <OHLCTooltip forChart={1} origin={[-40, 0]} volumeFormat={v => format(".4r")(v) + " " + baseSymbol} />
@@ -346,8 +351,9 @@ class OHLCVChart extends React.Component {
                 showTicks={!macd.active && !rsi.active && !atr.active && !forceIndex.active}
                 {...axisAppearance}
                 outerTickSize={0}
+                tickLabelFill={theme.white}
               />
-              <YAxis axisAt="right" orient="right" ticks={10} {...yGrid} {...axisAppearance} outerTickSize={0} />
+              <YAxis axisAt="right" orient="right" ticks={10} {...yGrid} {...axisAppearance} outerTickSize={0} tickLabelFill={theme.white} />
               <MouseCoordinateY at="right" orient="right" displayFormat={format('.1f')} />
 
               <CandlestickSeries
@@ -433,6 +439,7 @@ class OHLCVChart extends React.Component {
                     windowSize: ema50.options().windowSize
                   }
                 ]}
+                textFill={theme.white}
               />
             </Chart>
           )}
@@ -471,8 +478,9 @@ class OHLCVChart extends React.Component {
                 {...axisAppearance}
                 {...xGrid}
                 showTicks={!atr.active && !rsi.active}
+                tickLabelFill={theme.white}
               />
-              <YAxis axisAt="right" orient="right" ticks={2} {...yGrid} {...axisAppearance} />
+              <YAxis axisAt="right" orient="right" ticks={2} {...yGrid} {...axisAppearance} tickLabelFill={theme.white} />
 
               {!atr.active &&
                 !rsi.active && (
@@ -512,9 +520,10 @@ class OHLCVChart extends React.Component {
                 {...xGrid}
                 {...axisAppearance}
                 outerTickSize={0}
+                tickLabelFill={theme.white}
               />
 
-              <YAxis axisAt="right" orient="right" tickValues={[30, 50, 70]} {...yGrid} {...axisAppearance} />
+              <YAxis axisAt="right" orient="right" tickValues={[30, 50, 70]} {...yGrid} {...axisAppearance} tickLabelFill={theme.white} />
 
               {!atr.active &&
                 !forceIndex.active && (
@@ -547,8 +556,9 @@ class OHLCVChart extends React.Component {
                 {...axisAppearance}
                 outerTickSize={0}
                 showTicks={!forceIndex.active}
+                tickLabelFill={theme.white}
               />
-              <YAxis axisAt="right" orient="right" {...yGrid} {...axisAppearance} ticks={2} />
+              <YAxis axisAt="right" orient="right" {...yGrid} {...axisAppearance} ticks={2} tickLabelFill={theme.white} />
 
               {!forceIndex.active && (
                 <MouseCoordinateX
@@ -580,7 +590,7 @@ class OHLCVChart extends React.Component {
               origin={(w, h) => [0, h - 150]}
               padding={{ top: 30, right: 0, bottom: 10, left: 0 }}
             >
-              <XAxis axisAt="bottom" orient="bottom" {...xGrid} {...axisAppearance} outerTickSize={0} />
+              <XAxis axisAt="bottom" orient="bottom" {...xGrid} {...axisAppearance} outerTickSize={0} tickLabelFill={theme.white}/>
               <YAxis
                 axisAt="right"
                 orient="right"
@@ -588,6 +598,7 @@ class OHLCVChart extends React.Component {
                 ticks={4}
                 tickFormat={format('.2s')}
                 {...axisAppearance}
+                tickLabelFill={theme.white}
               />
               <MouseCoordinateX
                 at="bottom"
