@@ -11,7 +11,7 @@ import {
   stochasticOscillator,
   tma,
   wma,
-} from 'react-stockcharts/lib/indicator';
+} from 'react-financial-charts/lib/indicator';
 
 /******************
  *** INDICATORS ***

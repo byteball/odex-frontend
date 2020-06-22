@@ -1,4 +1,5 @@
-import { createVerticalLinearGradient, hexToRGBA } from 'react-stockcharts/lib/utils';
+import { createVerticalLinearGradient } from 'react-financial-charts/lib/utils';
+import { hexToRGBA } from 'react-stockcharts/lib/utils';
 import { Colors } from '../Common';
 // SAR Config
 export const accelerationFactor = 0.02;
