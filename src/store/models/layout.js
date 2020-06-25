@@ -8,10 +8,10 @@ import {
   getAccountBalancesDomain
  } from '../domains'
 
-import { fiatCurrencies, pricedTokens } from '../../config'
+import { fiatCurrencies, pricedTokens, displayModes } from '../../config'
 
 export default function createSelector(state) {
-  let { authenticated, address, referenceCurrency } = getAccountDomain(state)
+  let { authenticated, address, referenceCurrency, referenceDisplayMode } = getAccountDomain(state)
   let accountBalancesDomain = getAccountBalancesDomain(state)
 
   let GBYTEBalance = accountBalancesDomain.gbyteBalance()
@@ -26,8 +26,15 @@ export default function createSelector(state) {
       symbol: currency.symbol
     }
   })
-
   let currentReferenceCurrency = referenceCurrencies.filter(currency => currency.name === referenceCurrency.name)[0]
+
+  let referenceDisplayModes = displayModes.map((mode, i) => {
+    return {
+      rank: i,
+      ...mode
+    }
+  })
+  let currentDisplayMode = referenceDisplayModes.find(displayMode => displayMode.name === referenceDisplayMode.name)
 
   return {
     GBYTEBalance,
@@ -36,6 +43,8 @@ export default function createSelector(state) {
     accountLoading,
     currentReferenceCurrency,
     referenceCurrencies,
+    currentDisplayMode,
+    referenceDisplayModes,
     location,
     currentPair
   };

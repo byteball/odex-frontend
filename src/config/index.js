@@ -6,6 +6,11 @@ export const fiatCurrencies = [
     { name: 'JPY', symbol: '¥' }
 ]
 
+export const displayModes = [
+  { name: 'Price', symbol: '', type: 0, priceAlias: 'PRICE', amountAlias: 'AMOUNT' },
+  { name: 'Odds', symbol: '', type: 1, priceAlias: 'ODDS', amountAlias: 'STAKE' }
+]
+
 export const pricedTokens = [
   "GBYTE",
   "AE",

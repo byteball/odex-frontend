@@ -44,7 +44,8 @@ type Props = {
   expand: SyntheticEvent<> => void,
   currentPair: TokenPair,
   onContextMenu: void => Node,
-  onResetDefaultLayout: void => void
+  onResetDefaultLayout: void => void,
+  displayMode: Object
 };
 
 class VerticalOrderBook extends React.Component<Props> {
@@ -76,7 +77,8 @@ class VerticalOrderBook extends React.Component<Props> {
     toggleCollapse,
     expand,
     midMarketPrice,
-    spread
+    spread,
+    displayMode
   } = this.props;
 
   return (
@@ -118,6 +120,7 @@ class VerticalOrderBook extends React.Component<Props> {
             onSelect={onSelect} 
             midMarketPrice={midMarketPrice}
             spread={spread}
+            displayMode={displayMode}
           />
         </Collapse>
       </Wrapper>
@@ -134,7 +137,8 @@ export const OrderListRenderer = (props: *) => {
     asks, 
     onSelect,
     midMarketPrice,
-    spread
+    spread,
+    displayMode
   } = props;
 
   return (
@@ -146,8 +150,8 @@ export const OrderListRenderer = (props: *) => {
               <ListHeading>
                 <HeaderRow>
                   <HeaderCell>TOTAL</HeaderCell>
-                  <HeaderCell>AMOUNT</HeaderCell>
-                  <HeaderCell>PRICE</HeaderCell>
+                  <HeaderCell>{displayMode.amountAlias }</HeaderCell>
+                  <HeaderCell>{displayMode.priceAlias }</HeaderCell>
                 </HeaderRow>
               </ListHeading>
             </ListContainer>

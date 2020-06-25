@@ -66,6 +66,7 @@ type Props = {
   expand: SyntheticEvent<> => void,
   onContextMenu: void => Node,
   buttonType: "BUY" | "SELL" | "BUY_UNLOCK" | "SELL_UNLOCK" | "BUY_LOGIN" | "SELL_LOGIN" | "BUY_UNLOCK_PENDING" | "SELL_UNLOCK_PENDING",
+  displayType: Object,
 }
 
 
@@ -122,7 +123,8 @@ const OrderFormRenderer = (props: Props) => {
     handleSideChange,
     expand,
     onContextMenu,
-    buttonType
+    buttonType,
+    displayType
   } = props
 
   return (
@@ -130,14 +132,14 @@ const OrderFormRenderer = (props: Props) => {
       <OrderFormHeader>
         <ButtonRow>
           <Button
-            text="BUY"
+            text={!displayType.type ? "BUY" : "LAY" }
             minimal
             onClick={() => handleSideChange('BUY')}
             active={side === 'BUY'}
             intent="success"
           />
           <Button
-            text="SELL"
+            text={!displayType.type ? "SELL" : "BACK" }
             minimal
             onClick={() => handleSideChange('SELL')}
             active={side === 'SELL'}
@@ -211,6 +213,7 @@ const OrderFormRenderer = (props: Props) => {
                 bestBidMatcher={bestBidMatcher}
                 tokensBySymbol={tokensBySymbol}
                 buttonType={buttonType}
+                displayType={displayType}
               />
             }
           />
@@ -291,7 +294,8 @@ const LimitOrderPanel = props => {
     bestAskMatcher,
     bestBidMatcher,
     tokensBySymbol,
-    buttonType
+    buttonType,
+    displayType
   } = props
 
   let fAmount = parseFloat(amount);

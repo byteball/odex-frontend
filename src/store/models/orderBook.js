@@ -1,11 +1,13 @@
 // @flow
-import { getOrderBookDomain, getTokenPairsDomain } from '../domains';
+import { getOrderBookDomain, getTokenPairsDomain, getAccountDomain } from '../domains';
 import type { State } from '../../types';
 
 
 export default function orderBookSelector(state: State) {
   let { bids, asks } = getOrderBookDomain(state).getOrderBookData(2500);
   let rawPair = getTokenPairsDomain(state).getCurrentPair();
+  let { referenceDisplayMode } = getAccountDomain(state)
+
 
   let currentPairName = rawPair.pair
   let baseTokenSymbol = rawPair.baseTokenSymbol
@@ -24,6 +26,7 @@ export default function orderBookSelector(state: State) {
     asks,
     currentPair,
     midMarketPrice,
-    spread
+    spread,
+    referenceDisplayMode
   };
 }

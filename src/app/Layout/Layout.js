@@ -19,7 +19,7 @@ import {
   Devices
 } from '../../components/Common/Variables'
 
-import { ReferenceCurrencySelect } from '../../components/SelectMenu'
+import { ReferenceCurrencySelect, StandardSelect } from '../../components/SelectMenu'
 
 import {
   Alignment,
@@ -48,6 +48,9 @@ export type Props = {
   referenceCurrencies: Array<string>,
   updateReferenceCurrency: void => string,
   currentReferenceCurrency: string,
+  referenceDisplayModes: Array<Object>,
+  currentDisplayMode: Object,
+  updateReferenceDisplayMode: void => string,
   queryAppData: void => void,
   location: Location,
   currentPair: string
@@ -70,11 +73,15 @@ class Layout extends React.PureComponent<Props, State> {
       referenceCurrencies,
       currentReferenceCurrency,
       updateReferenceCurrency,
+      currentDisplayMode,
+      referenceDisplayModes,
+      updateReferenceDisplayMode,
       location,
       currentPair
     } = this.props
 
     const showReferenceCurrency = authenticated
+    const showDisplayMode = authenticated
     const showLoginButton = (location !== "/login")
 
     const menu = (
@@ -115,6 +122,17 @@ class Layout extends React.PureComponent<Props, State> {
                       type="text"
                     />
                   </ReferenceCurrencyBox>
+                }
+                {
+                  showDisplayMode &&
+                  <ReferenceDisplayModeBox>
+                    <StandardSelect
+                      items={referenceDisplayModes}
+                      item={currentDisplayMode}
+                      handleChange={(item) => updateReferenceDisplayMode(item)}
+                      type="text"
+                    />
+                  </ReferenceDisplayModeBox>
                 }                
               </NavbarGroup>
               <NavbarGroup align={Alignment.RIGHT}>
@@ -166,6 +184,14 @@ const NavbarHeaderBox = styled.div`
 `
 
 const ReferenceCurrencyBox = styled.div`
+  @media ${Devices.tablet} {
+    display: none;
+  }
+`
+
+const ReferenceDisplayModeBox = styled.div`
+  margin-left: 10px;
+
   @media ${Devices.tablet} {
     display: none;
   }

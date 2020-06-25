@@ -8,6 +8,12 @@ export type UpdateReferenceCurrencyAction = {
   payload: { referenceCurrency: string },
 };
 
+export type UpdateReferenceDisplayModeAction = {
+  type: 'walletPage/UPDATE_REFERENCE_TRADING_MODE',
+  payload: { referenceDisplayMode: string },
+};
+
 export type LayoutAction =
   | UpdateAppDataAction
   | UpdateReferenceCurrencyAction
+  | UpdateReferenceDisplayModeAction

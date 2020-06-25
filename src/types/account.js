@@ -7,6 +7,7 @@ export type AccountState = {
   +exchangeAddress: string,
   +operatorAddress: string,
   +referenceCurrency: ReferenceCurrency,
+  +referenceDisplayMode: ReferenceDisplayMode,
 };
 
 export type AccountParams = {
@@ -26,6 +27,14 @@ export type UpdateAccountAction = {
 export type ReferenceCurrency = {
   name: string,
   symbol: string,
+}
+
+export type ReferenceDisplayMode = {
+  name: string,
+  symbol: string,
+  type: number,
+  priceAlias: string,
+  amountAlias: string
 }
 
 export type AccountEvent = any => AccountState => AccountState;

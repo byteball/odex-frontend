@@ -24,6 +24,7 @@ type Props = {
   operatorAddress: string,
   exchangeAddress: string,
   selectedOrder: Object,
+  referenceDisplayMode: Object,
   onCollapse: string => void,
   onExpand: string => void,
   onResetDefaultLayout: void => void,
@@ -312,7 +313,8 @@ class OrderForm extends React.PureComponent<Props, State> {
         bestAskMatcher,
         bestBidMatcher,
         tokensBySymbol,
-        authenticated
+        authenticated,
+        referenceDisplayMode
       },
       onInputChange,
       handleChangeOrderType,
@@ -382,6 +384,7 @@ class OrderForm extends React.PureComponent<Props, State> {
         onContextMenu={renderContextMenu}
         authenticated={authenticated}
         buttonType={buttonType}
+        displayType={referenceDisplayMode}
       />
     )
   }
