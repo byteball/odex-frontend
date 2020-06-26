@@ -2,6 +2,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import ReactGA from 'react-ga'
+import { formatNumber } from 'accounting-js'
 import { MATCHER_FEE, MAX_PRICE_PRECISION } from '../../config/environment';
 import { CHATBOT_URL } from '../../config/urls'
 
@@ -66,7 +67,7 @@ type Props = {
   expand: SyntheticEvent<> => void,
   onContextMenu: void => Node,
   buttonType: "BUY" | "SELL" | "BUY_UNLOCK" | "SELL_UNLOCK" | "BUY_LOGIN" | "SELL_LOGIN" | "BUY_UNLOCK_PENDING" | "SELL_UNLOCK_PENDING",
-  displayType: Object,
+  displayMode: Object,
 }
 
 
@@ -124,7 +125,7 @@ const OrderFormRenderer = (props: Props) => {
     expand,
     onContextMenu,
     buttonType,
-    displayType
+    displayMode
   } = props
 
   return (
@@ -132,14 +133,14 @@ const OrderFormRenderer = (props: Props) => {
       <OrderFormHeader>
         <ButtonRow>
           <Button
-            text={!displayType.type ? "BUY" : "LAY" }
+            text={!displayMode.type ? "BUY" : "BACK" }
             minimal
             onClick={() => handleSideChange('BUY')}
             active={side === 'BUY'}
             intent="success"
           />
           <Button
-            text={!displayType.type ? "SELL" : "BACK" }
+            text={!displayMode.type ? "SELL" : "LAY" }
             minimal
             onClick={() => handleSideChange('SELL')}
             active={side === 'SELL'}
@@ -213,7 +214,7 @@ const OrderFormRenderer = (props: Props) => {
                 bestBidMatcher={bestBidMatcher}
                 tokensBySymbol={tokensBySymbol}
                 buttonType={buttonType}
-                displayType={displayType}
+                displayMode={displayMode}
               />
             }
           />
@@ -295,7 +296,7 @@ const LimitOrderPanel = props => {
     bestBidMatcher,
     tokensBySymbol,
     buttonType,
-    displayType
+    displayMode
   } = props
 
   let fAmount = parseFloat(amount);
@@ -351,14 +352,33 @@ const LimitOrderPanel = props => {
   return (
     <React.Fragment>
       <InputBox>
-        <InputLabel>
-          Price <MutedText>(in {quoteTokenSymbol})</MutedText>
-        </InputLabel>
-        <PriceInputGroup name="price" onChange={onInputChange} value={price} placeholder="Price" />
+        {
+          !displayMode.type ?
+            ( <InputLabel>
+              Price <MutedText>(in {quoteTokenSymbol})</MutedText>
+            </InputLabel> )
+            : ( <InputLabel>
+              Odds
+            </InputLabel> )
+        }
+        <PriceInputGroup 
+          name="price" 
+          onChange={onInputChange} 
+          value={price} 
+          placeholder="Price" 
+        />
       </InputBox>
       <InputBox>
         <InputLabel>
-          Amount <MutedText>({baseTokenSymbol})</MutedText>
+          {
+            !displayMode.type ?
+            ( <InputLabel>
+              Amount <MutedText>({baseTokenSymbol})</MutedText>
+            </InputLabel> )
+            : ( <InputLabel>
+              Stake <MutedText>(in {quoteTokenSymbol})</MutedText>
+            </InputLabel> )
+          }
         </InputLabel>
         <PriceInputGroup
           name="amount"
@@ -386,7 +406,7 @@ const LimitOrderPanel = props => {
         <ButtonRenderer
           side={side}
           link={link}
-          amount={amount}
+          amount={!displayMode.type ? amount : formatNumber(parseFloat(amount) * parseFloat(price), { precision: 3 })}
           baseTokenSymbol={baseTokenSymbol}
           quoteTokenSymbol={quoteTokenSymbol}
           handleSendOrder={handleSendOrder}

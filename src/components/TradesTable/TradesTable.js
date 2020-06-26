@@ -20,7 +20,8 @@ type Props = {
   currentPair: TokenPair,
   onCollapse: string => void,
   onExpand: string => void,
-  onResetDefaultLayout: void => void
+  onResetDefaultLayout: void => void,
+  referenceDisplayMode: Object
 };
 
 class TradesTable extends React.PureComponent<Props, State> {
@@ -68,7 +69,7 @@ class TradesTable extends React.PureComponent<Props, State> {
 
   render() {
     const {
-      props: { trades, userTrades, currentPair, authenticated },
+      props: { trades, userTrades, currentPair, authenticated, referenceDisplayMode },
       state: { selectedTabId, isOpen },
       changeTab,
       toggleCollapse,
@@ -90,6 +91,7 @@ class TradesTable extends React.PureComponent<Props, State> {
         expand={expand}
         onContextMenu={renderContextMenu}
         authenticated={authenticated}
+        displayMode={referenceDisplayMode}
       />
     );
   }

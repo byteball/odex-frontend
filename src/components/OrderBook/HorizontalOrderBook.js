@@ -37,7 +37,8 @@ type Props = {
   currentPair: TokenPair,
   toggleCollapse: SyntheticEvent<> => void,
   expand: SyntheticEvent<> => void,
-  onResetDefaultLayout: void => void
+  onResetDefaultLayout: void => void,
+  displayMode: Object
 };
 
 
@@ -69,6 +70,7 @@ class HorizontalOrderBook extends React.Component<Props> {
       onSelect,
       toggleCollapse,
       expand,
+      displayMode
     } = this.props
 
     return (
@@ -107,7 +109,8 @@ class HorizontalOrderBook extends React.Component<Props> {
             <OrderListRenderer
               bids={bids} 
               asks={asks} 
-              onSelect={onSelect} 
+              onSelect={onSelect}
+              displayMode={displayMode}
             />
           </Collapse>
         </Wrapper>
@@ -119,7 +122,7 @@ class HorizontalOrderBook extends React.Component<Props> {
 
 
 export const OrderListRenderer = (props: *) => {
-  const { bids, asks, onSelect } = props;
+  const { bids, asks, onSelect, displayMode } = props;
 
   return (
     <OrderListBox>
@@ -130,8 +133,8 @@ export const OrderListRenderer = (props: *) => {
             <ListHeading>
               <HeaderRow>
                 <HeaderCell>TOTAL</HeaderCell>
-                <HeaderCell>AMOUNT</HeaderCell>
-                <HeaderCell>PRICE</HeaderCell>
+                <HeaderCell>{ displayMode.amountAlias }</HeaderCell>
+                <HeaderCell>{ displayMode.priceAlias }</HeaderCell>
               </HeaderRow>
             </ListHeading>
           </ListContainer>
@@ -140,8 +143,8 @@ export const OrderListRenderer = (props: *) => {
           <ListContainer className="list-container left-list">
             <ListHeading>
               <HeaderRow>
-                <HeaderCell>PRICE</HeaderCell>
-                <HeaderCell>AMOUNT</HeaderCell>
+                <HeaderCell>{ displayMode.priceAlias }</HeaderCell>
+                <HeaderCell>{ displayMode.priceAlias }</HeaderCell>
                 <HeaderCell>TOTAL</HeaderCell>
               </HeaderRow>
             </ListHeading>
@@ -157,7 +160,7 @@ export const OrderListRenderer = (props: *) => {
                   transitionEnterTimeout={500}
                   transitionLeaveTimeout={500}
                 >
-                  {bids.map((order, index) => <BuyOrder key={order.price} order={order} onClick={() => onSelect(order)} />)}
+                  {bids.map((order, index) => <BuyOrder key={order.price} order={order} displayMode={displayMode} onClick={() => onSelect(order)} />)}
                 </ReactCSSTransitionGroup>
               </List>
             </ListContainer>
@@ -170,7 +173,7 @@ export const OrderListRenderer = (props: *) => {
                   transitionEnterTimeout={500}
                   transitionLeaveTimeout={500}
                 >
-                  {asks.map((order, index) => <SellOrder key={order.price} order={order} onClick={() => onSelect(order)} />)}
+                  {asks.map((order, index) => <SellOrder key={order.price} order={order} displayMode={displayMode} onClick={() => onSelect(order)} />)}
                 </ReactCSSTransitionGroup>
               </List>
             </ListContainer>
@@ -186,27 +189,27 @@ export type SingleOrderProps = {
 };
 
 const BuyOrder = (props: SingleOrderProps) => {
-  const { order, onClick } = props;
+  const { order, displayMode, onClick } = props;
 
   return (
     <Row onClick={onClick}>
       <BuyRowBackground amount={order.relativeTotal} />
-      <Cell>{formatNumber(order.total, { precision: 3 })}</Cell>
-      <Cell>{formatNumber(order.amount, { precision: 3 })}</Cell>
-      <Cell color={Colors.BUY}>{formatNumber(order.price, { precision: 5 })}</Cell>
+      <Cell>{formatNumber(!displayMode.type ? order.total: order.total * order.price, { precision: 3 })}</Cell>
+      <Cell>{formatNumber(!displayMode.type ? order.amount: order.amount * order.price, { precision: 3 })}</Cell>
+      <Cell color={Colors.BUY}>{formatNumber(!displayMode.type ? order.price : 1 / order.price, { precision: 5 })}</Cell>
     </Row>
   );
 };
 
 const SellOrder = (props: SingleOrderProps) => {
-  const { order, onClick } = props;
+  const { order, displayMode, onClick } = props;
 
   return (
     <Row onClick={onClick}>
       <SellRowBackGround amount={order.relativeTotal} />
-      <Cell color={Colors.SELL}>{formatNumber(order.price, { precision: 5 })}</Cell>
-      <Cell>{formatNumber(order.amount, { precision: 3 })}</Cell>
-      <Cell>{formatNumber(order.total, { precision: 3 })}</Cell>
+      <Cell color={Colors.SELL}>{formatNumber(!displayMode.type ? order.price : 1 / order.price, { precision: 5 })}</Cell>
+      <Cell>{formatNumber(!displayMode.type ? order.total: order.total * order.price, { precision: 3 })}</Cell>
+      <Cell>{formatNumber(!displayMode.type ? order.amount: order.amount * order.price, { precision: 3 })}</Cell>
     </Row>
   );
 };

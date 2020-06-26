@@ -40,7 +40,8 @@ type Props = {
   isOpen: boolean,
   expand: SyntheticEvent<> => void,
   onContextMenu: void => Node,
-  authenticated: boolean
+  authenticated: boolean,
+  displayMode: Object,
 };
 
 const TradesTableRenderer = (props: Props) => {
@@ -55,7 +56,8 @@ const TradesTableRenderer = (props: Props) => {
     openExplorerLink,
     expand,
     onContextMenu,
-    authenticated
+    authenticated,
+    displayMode
   } = props;
 
   return (
@@ -105,6 +107,7 @@ const TradesTableRenderer = (props: Props) => {
                         trades={trades} 
                         openExplorerLink={openExplorerLink}
                         width={width}
+                        displayMode={displayMode}
                       />
                     }
                   />
@@ -130,7 +133,7 @@ const TradesTableRenderer = (props: Props) => {
 };
 
 const MarketTradesPanel = (props: *) => {
-  let { trades, openExplorerLink, width } = props;
+  let { trades, openExplorerLink, width, displayMode } = props;
 
   if (!trades) return <Loading />
   trades = trades.filter(trade => ["SUCCESS", "COMMITTED"].includes(trade.status))
@@ -140,8 +143,8 @@ const MarketTradesPanel = (props: *) => {
       <React.Fragment>
         <ListHeader>
           <HeadingRow>
-            <HeaderCell>PRICE</HeaderCell>
-            <HeaderCell>AMOUNT</HeaderCell>
+            <HeaderCell>{ displayMode.priceAlias }</HeaderCell>
+            <HeaderCell>{ displayMode.amountAlias }</HeaderCell>
             <Hideable hiddenIf={width < 600}>
               <HeaderCell >STATUS</HeaderCell>
             </Hideable>
@@ -161,12 +164,12 @@ const MarketTradesPanel = (props: *) => {
                 <Cell color={trade.change === 'positive' ? Colors.BUY : Colors.SELL}>
                 <Icon icon={trade.change === 'positive' ? 'chevron-up' : 'chevron-down'} iconSize={14}/>
                 <SmallText color={trade.change === 'positive' ? Colors.BUY : Colors.SELL}>
-                  {formatNumber( trade.price, { precision: 5 })}
+                  {formatNumber(!displayMode.type ? trade.price : 1 / trade.price, { precision: 5 })}
                 </SmallText>
               </Cell>
               <Cell>
                 <SmallText muted>
-                  {formatNumber(trade.amount, { precision: 3 })}
+                  {formatNumber(!displayMode.type ? trade.amount : trade.amount * trade.price, { precision: 3 })}
                 </SmallText>
               </Cell>
               <Hideable hiddenIf={width < 600}>
