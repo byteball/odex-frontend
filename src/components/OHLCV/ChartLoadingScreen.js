@@ -22,6 +22,7 @@ type Props = {
   data: Array<Object>,
   noOfCandles: number,
   width: string,
+  displayMode: Object
 };
 
 export default class ChartLoadingScreen extends React.PureComponent<Props> {
@@ -39,6 +40,7 @@ export default class ChartLoadingScreen extends React.PureComponent<Props> {
       forceIndex,
       data,
       baseSymbol,
+      displayMode,
     } = this.props;
 
     if (!data) {
@@ -77,6 +79,7 @@ export default class ChartLoadingScreen extends React.PureComponent<Props> {
                     baseSymbol={baseSymbol}
                     noOfCandles={noOfCandles}
                     width={width}
+                    displayMode={displayMode}
                 />
                 )}
               </TypeChooser>

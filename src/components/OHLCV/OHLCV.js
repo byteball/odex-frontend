@@ -89,6 +89,7 @@ type Props = {
   onResetDefaultLayout: void => void,
   onFullScreen: void => void,
   fullScreen: boolean,
+  referenceDisplayMode: Object
 };
 
 type State = {
@@ -174,6 +175,7 @@ class OHLCV extends React.PureComponent<Props, State> {
         noOfCandles, 
         onFullScreen, 
         fullScreen,
+        referenceDisplayMode,
         onResetDefaultLayout
       },
       state: { 
@@ -227,6 +229,7 @@ class OHLCV extends React.PureComponent<Props, State> {
           data={ohlcvData}
           baseSymbol={baseSymbol}
           width="100%"
+          displayMode={referenceDisplayMode}
         />
       </Wrapper>
       )

@@ -1,5 +1,5 @@
 // @flow
-import { getTokenPairsDomain } from '../domains';
+import { getTokenPairsDomain, getAccountDomain } from '../domains';
 import OHLCVModel from '../domains/ohlcv'
 import * as actionCreators from '../actions/ohlcv'
 import { timeSpans } from '../../components/OHLCV/OHLCV'
@@ -57,6 +57,10 @@ export const getBaseSymbol = (state: State): string => {
   return currentPair.baseTokenSymbol
 }
 
+export const getReferenceDisplay = (state: State): Object => {
+  let { referenceDisplayMode } = getAccountDomain(state);
+  return referenceDisplayMode;
+}
 
 function byDuration(duration) {
   switch (duration) {

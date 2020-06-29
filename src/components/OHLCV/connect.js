@@ -1,6 +1,6 @@
 // @flow
 import { connect } from 'react-redux';
-import ohlcvModel, { updateDuration, updateTimeSpan, getBaseSymbol } from '../../store/models/ohlcv';
+import ohlcvModel, { updateDuration, updateTimeSpan, getBaseSymbol, getReferenceDisplay } from '../../store/models/ohlcv';
 
 import type { State } from '../../types';
 
@@ -10,6 +10,7 @@ type Props = {
 
 export const mapStateToProps = (state: State, ownProps: Props) => {
   return {
+    referenceDisplayMode: getReferenceDisplay(state),
     baseSymbol: getBaseSymbol(state),
     ...ohlcvModel(state).getState(),
     ...ownProps

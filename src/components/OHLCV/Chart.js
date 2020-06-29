@@ -94,6 +94,20 @@ function calculateData(inputData) {
   )
 }
 
+function convertData(inputData) {
+  return inputData.map((data) => {
+    let newData = {}
+    Object.keys(data).forEach(key => {
+      if(key === 'volume' || typeof data[key] !== 'number') {
+        newData[key] = data[key]
+        return;
+      } 
+      newData[key] = data[key] ? 1 / data[key] : 0;
+    });
+    return newData;
+  });
+}
+
 class OHLCVChart extends React.Component {
 
   render() {
@@ -113,9 +127,12 @@ class OHLCVChart extends React.Component {
       forceIndex,
       currentChart,
       noOfCandles,
+      displayMode,
     } = this.props
 
-    let calculatedData = calculateData(initialData)
+    const convertedData = convertData(initialData)
+
+    let calculatedData = calculateData(displayMode.type ? convertedData : initialData)
     if (calculatedData.length <= 1) {
       return null
     }
@@ -221,10 +238,11 @@ class OHLCVChart extends React.Component {
                 fill={d => (d.close >= d.open ? theme.GREEN3 : theme.RED2)}
                 stroke={d => (d.close >= d.open ? theme.GREEN3 : theme.RED2)}
                 textFill={theme.white}
+                lineStroke={theme.white}
                 {...edgeIndicatorAppearance}
               />
 
-              <OHLCTooltip origin={[-30, 0]} {...mouseEdgeAppearance} volumeFormat={v => format(".4r")(v) + " " + baseSymbol} />
+              <OHLCTooltip origin={[-30, 0]} {...mouseEdgeAppearance} volumeFormat={v => format(".4r")(v) + " " + baseSymbol} textFill={theme.white} />
 
               <MovingAverageTooltip
                 onClick={e => console.log()}
@@ -307,7 +325,7 @@ class OHLCVChart extends React.Component {
               <YAxis axisAt="right" orient="right" ticks={10} {...yGrid} {...axisAppearance} outerTickSize={0} tickLabelFill={theme.white} />
               <LineSeries yAccessor={d => d.close} strokeDasharray="Solid" />
               <ScatterSeries yAccessor={d => d.close} marker={CircleMarker} markerProps={{ r: 3 }} />
-              <OHLCTooltip forChart={1} origin={[-40, 0]} volumeFormat={v => format(".4r")(v) + " " + baseSymbol} />
+              <OHLCTooltip forChart={1} origin={[-40, 0]} volumeFormat={v => format(".4r")(v) + " " + baseSymbol} textFill={theme.white} />
             </Chart>
           )}
 
@@ -379,6 +397,7 @@ class OHLCVChart extends React.Component {
                 edgeAt="right"
                 yAccessor={ema20.accessor()}
                 fill={ema20.fill()}
+                lineStroke={theme.white}
                 {...edgeIndicatorAppearance}
               />
               <EdgeIndicator
@@ -387,6 +406,7 @@ class OHLCVChart extends React.Component {
                 edgeAt="right"
                 yAccessor={ema50.accessor()}
                 fill={ema50.fill()}
+                lineStroke={theme.white}
                 {...edgeIndicatorAppearance}
               />
               <EdgeIndicator
@@ -395,6 +415,7 @@ class OHLCVChart extends React.Component {
                 edgeAt="right"
                 yAccessor={d => d.close}
                 fill={d => (d.close > d.open ? theme.green : '#FF0000')}
+                lineStroke={theme.white}
                 {...edgeIndicatorAppearance}
               />
               <EdgeIndicator
@@ -403,6 +424,7 @@ class OHLCVChart extends React.Component {
                 edgeAt="left"
                 yAccessor={ema20.accessor()}
                 fill={ema20.fill()}
+                lineStroke={theme.white}
                 {...edgeIndicatorAppearance}
               />
               <EdgeIndicator
@@ -411,6 +433,7 @@ class OHLCVChart extends React.Component {
                 edgeAt="left"
                 yAccessor={ema50.accessor()}
                 fill={ema50.fill()}
+                lineStroke={theme.white}
                 {...edgeIndicatorAppearance}
               />
               <EdgeIndicator
@@ -419,10 +442,11 @@ class OHLCVChart extends React.Component {
                 edgeAt="left"
                 yAccessor={d => d.close}
                 fill={d => (d.close > d.open ? theme.green : '#FF0000')}
+                lineStroke={theme.white}
                 {...edgeIndicatorAppearance}
               />
 
-              <OHLCTooltip origin={[-40, 0]} volumeFormat={v => format(".4r")(v) + " " + baseSymbol} />
+              <OHLCTooltip origin={[-40, 0]} volumeFormat={v => format(".4r")(v) + " " + baseSymbol} textFill={theme.white } />
               <MovingAverageTooltip
                 origin={[-28, 15]}
                 options={[
@@ -619,7 +643,7 @@ class OHLCVChart extends React.Component {
               />
             </Chart>
           )}
-          <CrossHairCursor />
+          <CrossHairCursor stroke={theme.white} />
         </ChartCanvas>
       </div>
     )
