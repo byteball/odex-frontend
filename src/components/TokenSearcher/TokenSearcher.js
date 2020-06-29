@@ -1,10 +1,14 @@
 //@flow
 import React from 'react';
+import styled from 'styled-components';
 import TokenSearcherRenderer from './TokenSearcherRenderer';
 import { sortTable } from '../../utils/helpers';
 import { ContextMenuTarget, Menu, MenuItem } from '@blueprintjs/core'
 import { getQuoteToken, getBaseToken } from '../../utils/tokens';
 import history from '../../store/history';
+import DepositModal from '../../components/DepositModal';
+import TransferTokensModal from '../../components/TransferTokensModal';
+
 //TODO not sure exactly where to define this type.
 type Token = {
   pair: string,
@@ -25,6 +29,8 @@ type Props = {
   quoteTokenBalance: number,
   baseTokenAvailableBalance: number,
   quoteTokenAvailableBalance: number,
+  baseToken: Object,
+  tokenData: Array<Object>,
   updateFavorite: (string, boolean) => void,
   updateCurrentPair: string => void,
   onCollapse: string => void,
@@ -44,7 +50,9 @@ type State = {
   isOpen: boolean,
   initPairs: boolean,
   wasRegistered: boolean,
-  gotData: boolean
+  gotData: boolean,
+  isDepositModalOpen: boolean,
+  isSendModalOpen: boolean,
 };
 
 class TokenSearcher extends React.PureComponent<Props, State> {
@@ -59,7 +67,9 @@ class TokenSearcher extends React.PureComponent<Props, State> {
     isOpen: true,
     initPairs: false,
     wasRegistered: false,
-    gotData: false
+    gotData: false,
+    isDepositModalOpen: false,
+    isSendModalOpen: false,
   };
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
@@ -223,6 +233,33 @@ class TokenSearcher extends React.PureComponent<Props, State> {
     this.props.updateCurrentPair(token.pair);
   };
 
+  openDepositModal = (event: SyntheticEvent<>) => {
+    event.stopPropagation();
+    event.nativeEvent.stopImmediatePropagation();
+
+    this.setState({
+      isDepositModalOpen: true,
+    });
+  };
+
+  openSendModal = (event: SyntheticEvent<>) => {
+    event.preventDefault()
+    event.stopPropagation();
+    event.nativeEvent.stopImmediatePropagation();
+
+    this.setState({
+      isSendModalOpen: true,
+    });
+  };
+
+  closeDepositModal = () => {
+    this.setState({ isDepositModalOpen: false });
+  };
+
+  closeSendModal = () => {
+    this.setState({ isSendModalOpen: false });
+  };
+
   render() {
     const {
       state: {
@@ -232,7 +269,9 @@ class TokenSearcher extends React.PureComponent<Props, State> {
         sortOrder,
         filterName,
         quoteTokens,
-        isOpen
+        isOpen,
+        isDepositModalOpen,
+        isSendModalOpen
       },
       props: {
         updateFavorite,
@@ -240,6 +279,8 @@ class TokenSearcher extends React.PureComponent<Props, State> {
         quoteTokenBalance,
         baseTokenAvailableBalance,
         quoteTokenAvailableBalance,
+        baseToken,
+        tokenData
       },
       onChangeSearchFilter,
       onChangeFilterName,
@@ -257,33 +298,52 @@ class TokenSearcher extends React.PureComponent<Props, State> {
     let loading = typeof selectedPair === 'undefined';
 
     return (
-      <TokenSearcherRenderer
-        loading={loading}
-        quoteTokens={quoteTokens}
-        selectedTabId={selectedTabId}
-        searchFilter={searchFilter}
-        baseTokenBalance={baseTokenBalance}
-        quoteTokenBalance={quoteTokenBalance}
-        // silence-error: couldn't resolve selectedPair === undefined case
-        selectedPair={selectedPair}
-        sortOrder={sortOrder}
-        isOpen={isOpen}
-        filterName={filterName}
-        filteredPairs={filteredPairs}
-        updateFavorite={updateFavorite}
-        onChangeSearchFilter={onChangeSearchFilter}
-        onChangeFilterName={onChangeFilterName}
-        onChangeSortOrder={onChangeSortOrder}
-        changeTab={changeTab}
-        toggleCollapse={toggleCollapse}
-        changeSelectedToken={changeSelectedToken}
-        baseTokenAvailableBalance={baseTokenAvailableBalance}
-        quoteTokenAvailableBalance={quoteTokenAvailableBalance}
-        expand={expand}
-        onContextMenu={renderContextMenu}
-      />
+      <Wrapper>
+        <TokenSearcherRenderer
+          loading={loading}
+          quoteTokens={quoteTokens}
+          selectedTabId={selectedTabId}
+          searchFilter={searchFilter}
+          baseTokenBalance={baseTokenBalance}
+          quoteTokenBalance={quoteTokenBalance}
+          // silence-error: couldn't resolve selectedPair === undefined case
+          selectedPair={selectedPair}
+          sortOrder={sortOrder}
+          isOpen={isOpen}
+          filterName={filterName}
+          filteredPairs={filteredPairs}
+          updateFavorite={updateFavorite}
+          onChangeSearchFilter={onChangeSearchFilter}
+          onChangeFilterName={onChangeFilterName}
+          onChangeSortOrder={onChangeSortOrder}
+          changeTab={changeTab}
+          toggleCollapse={toggleCollapse}
+          changeSelectedToken={changeSelectedToken}
+          baseTokenAvailableBalance={baseTokenAvailableBalance}
+          quoteTokenAvailableBalance={quoteTokenAvailableBalance}
+          expand={expand}
+          onContextMenu={renderContextMenu}
+          openDepositModal={this.openDepositModal}
+          openSendModal={this.openSendModal}
+        />
+        <DepositModal
+            isOpen={isDepositModalOpen}
+            handleClose={this.closeDepositModal}
+            token={baseToken}
+            tokenData={tokenData}
+          />
+        <TransferTokensModal
+          isOpen={isSendModalOpen}
+          handleClose={this.closeSendModal}
+          token={baseToken}
+        />
+      </Wrapper>
     );
   }
 }
 
 export default ContextMenuTarget(TokenSearcher);
+
+const Wrapper = styled.div`
+  height: 100%;
+`;

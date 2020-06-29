@@ -45,6 +45,7 @@ const TransferTokensFormRenderer = (props: Props) => {
           <InputGroup
             //icon="filter"
             type="number"
+            min="0"
             placeholder="Amount"
             name="amount"
             value={amount}
@@ -54,9 +55,12 @@ const TransferTokensFormRenderer = (props: Props) => {
         </ControlGroup>
       </Label>
       <br />
-      <WithdrawLinkBox>
-        <a onClick={()=>{withdrawGA(token.symbol)}} href={PROTOCOL + exchangeAddress + "?amount=10000&base64data=" + encodeURIComponent(base64data) + "&from_address=" + address}>Withdraw {amount} {token.symbol}</a>
-      </WithdrawLinkBox>
+      {
+        amount > 0 &&
+        <WithdrawLinkBox>
+          <a onClick={()=>{withdrawGA(token.symbol)}} href={PROTOCOL + exchangeAddress + "?amount=10000&base64data=" + encodeURIComponent(base64data) + "&from_address=" + address}>Withdraw {amount} {token.symbol}</a>
+        </WithdrawLinkBox>
+      }
       {/*<Button text="Withdraw" intent="primary" large type="submit" fill onClick={handleSubmit} />*/}
     </ModalBody>
   );
