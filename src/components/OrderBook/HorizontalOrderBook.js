@@ -145,7 +145,7 @@ export const OrderListRenderer = (props: *) => {
             <ListHeading>
               <HeaderRow>
                 <HeaderCell>{ displayMode.priceAlias }</HeaderCell>
-                <HeaderCell>{ displayMode.priceAlias }</HeaderCell>
+                <HeaderCell>{ displayMode.amountAlias }</HeaderCell>
                 <HeaderCell>TOTAL</HeaderCell>
               </HeaderRow>
             </ListHeading>
@@ -209,8 +209,8 @@ const SellOrder = (props: SingleOrderProps) => {
     <Row onClick={onClick}>
       <SellRowBackGround amount={order.relativeTotal} />
       <Cell color={Colors.SELL}>{formatNumber(displayMode.name === 'Price' ? order.price : 1 / order.price, { precision: 5 })}</Cell>
-      <Cell>{formatNumber(displayMode.name === 'Price' ? order.total: order.total * order.price, { precision: 3 })}</Cell>
       <Cell>{formatNumber(displayMode.name === 'Price' ? order.amount: order.amount * order.price, { precision: 3 })}</Cell>
+      <Cell>{formatNumber(displayMode.name === 'Price' ? order.total: order.total * order.price, { precision: 3 })}</Cell>
     </Row>
   );
 };
