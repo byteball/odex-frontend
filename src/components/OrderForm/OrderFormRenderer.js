@@ -133,14 +133,14 @@ const OrderFormRenderer = (props: Props) => {
       <OrderFormHeader>
         <ButtonRow>
           <Button
-            text={!displayMode.type ? "BUY" : "BACK" }
+            text={displayMode.name === 'Price' ? "BUY" : "BACK" }
             minimal
             onClick={() => handleSideChange('BUY')}
             active={side === 'BUY'}
             intent="success"
           />
           <Button
-            text={!displayMode.type ? "SELL" : "LAY" }
+            text={displayMode.name === 'Price' ? "SELL" : "LAY" }
             minimal
             onClick={() => handleSideChange('SELL')}
             active={side === 'SELL'}
@@ -353,7 +353,7 @@ const LimitOrderPanel = props => {
     <React.Fragment>
       <InputBox>
         {
-          !displayMode.type ?
+          displayMode.name === 'Price' ?
             ( <InputLabel>
               Price <MutedText>(in {quoteTokenSymbol})</MutedText>
             </InputLabel> )
@@ -371,7 +371,7 @@ const LimitOrderPanel = props => {
       <InputBox>
         <InputLabel>
           {
-            !displayMode.type ?
+            displayMode.name === 'Price' ?
             ( <InputLabel>
               Amount <MutedText>({baseTokenSymbol})</MutedText>
             </InputLabel> )
@@ -406,7 +406,7 @@ const LimitOrderPanel = props => {
         <ButtonRenderer
           side={side}
           link={link}
-          amount={!displayMode.type ? amount : formatNumber(parseFloat(amount) * parseFloat(price), { precision: 3 })}
+          amount={displayMode.name === 'Price' ? amount : formatNumber(parseFloat(amount) * parseFloat(price), { precision: 3 })}
           baseTokenSymbol={baseTokenSymbol}
           quoteTokenSymbol={quoteTokenSymbol}
           handleSendOrder={handleSendOrder}

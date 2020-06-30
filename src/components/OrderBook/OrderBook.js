@@ -19,7 +19,7 @@ type Props = {
   currentPair: TokenPair,
   midMarketPrice: ?number,
   spread: ?number,
-  referenceDisplayMode: Object,
+  displayMode: Object,
   select: BidOrAsk => void,
   onCollapse: string => void,
   onExpand: string => void,
@@ -62,7 +62,7 @@ class OrderBook extends React.Component<Props, State> {
         spread,
         select,
         onResetDefaultLayout,
-        referenceDisplayMode
+        displayMode
       },
       state: { 
         selectedTabId, 
@@ -91,7 +91,7 @@ class OrderBook extends React.Component<Props, State> {
           toggleCollapse={toggleCollapse}
           expand={expand}
           onResetDefaultLayout={onResetDefaultLayout}
-          displayMode={referenceDisplayMode}
+          displayMode={displayMode}
         />,
       "horizontal": 
         <HorizontalOrderBook 
@@ -107,7 +107,7 @@ class OrderBook extends React.Component<Props, State> {
           toggleCollapse={toggleCollapse}
           expand={expand}
           onResetDefaultLayout={onResetDefaultLayout}
-          displayMode={referenceDisplayMode}
+          displayMode={displayMode}
         />
     }[direction]
   }

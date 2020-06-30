@@ -1,5 +1,5 @@
 // @flow
-import type { AccountState, AccountParams, ReferenceCurrency, ReferenceDisplayMode } from '../../types/account'
+import type { AccountState, AccountParams, ReferenceCurrency, DisplayMode } from '../../types/account'
 
 function dec2hex(dec) {
   return ('0' + dec.toString(16)).substr(-2)
@@ -20,7 +20,7 @@ const initialState = {
   exchangeAddress: '',
   operatorAddress: '',
   referenceCurrency: { name: 'USD', symbol: '$'},
-  referenceDisplayMode: { name: 'Price', symbol: '', type: 0, priceAlias: 'PRICE', amountAlias: 'AMOUNT' }
+  displayMode: { name: 'Price', priceAlias: 'PRICE', amountAlias: 'AMOUNT' }
 }
 
 export const initialized = () => {
@@ -94,10 +94,10 @@ export const referenceCurrencyUpdated = (referenceCurrency: ReferenceCurrency) =
   return event
 }
 
-export const referenceDisplayModeUpdated = (referenceDisplayMode: ReferenceDisplayMode) => {
+export const displayModeUpdated = (displayMode: DisplayMode) => {
   const event = (state: AccountState) => ({
     ...state,
-    referenceDisplayMode
+    displayMode
   })
 
   return event
@@ -114,6 +114,6 @@ export default function accountDomain(state: AccountState) {
     operatorAddress: state.operatorAddress,
     referenceCurrency: state.referenceCurrency,
     referenceCurrencyName: state.referenceCurrency.name,
-    referenceDisplayMode: state.referenceDisplayMode,
+    displayMode: state.displayMode,
   };
 }

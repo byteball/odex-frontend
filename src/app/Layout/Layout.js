@@ -48,9 +48,9 @@ export type Props = {
   referenceCurrencies: Array<string>,
   updateReferenceCurrency: void => string,
   currentReferenceCurrency: string,
-  referenceDisplayModes: Array<Object>,
+  displayModes: Array<Object>,
   currentDisplayMode: Object,
-  updateReferenceDisplayMode: void => string,
+  updateDisplayMode: void => string,
   queryAppData: void => void,
   location: Location,
   currentPair: string
@@ -74,8 +74,8 @@ class Layout extends React.PureComponent<Props, State> {
       currentReferenceCurrency,
       updateReferenceCurrency,
       currentDisplayMode,
-      referenceDisplayModes,
-      updateReferenceDisplayMode,
+      displayModes,
+      updateDisplayMode,
       location,
       currentPair
     } = this.props
@@ -125,14 +125,14 @@ class Layout extends React.PureComponent<Props, State> {
                 }
                 {
                   showDisplayMode &&
-                  <ReferenceDisplayModeBox>
+                  <DisplayModeBox>
                     <StandardSelect
-                      items={referenceDisplayModes}
+                      items={displayModes}
                       item={currentDisplayMode}
-                      handleChange={(item) => updateReferenceDisplayMode(item)}
+                      handleChange={(item) => updateDisplayMode(item)}
                       type="text"
                     />
-                  </ReferenceDisplayModeBox>
+                  </DisplayModeBox>
                 }                
               </NavbarGroup>
               <NavbarGroup align={Alignment.RIGHT}>
@@ -189,7 +189,7 @@ const ReferenceCurrencyBox = styled.div`
   }
 `
 
-const ReferenceDisplayModeBox = styled.div`
+const DisplayModeBox = styled.div`
   margin-left: 10px;
 
   @media ${Devices.tablet} {

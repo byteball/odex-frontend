@@ -11,7 +11,7 @@ import {
 import { fiatCurrencies, pricedTokens, displayModes } from '../../config'
 
 export default function createSelector(state) {
-  let { authenticated, address, referenceCurrency, referenceDisplayMode } = getAccountDomain(state)
+  let { authenticated, address, referenceCurrency, displayMode } = getAccountDomain(state)
   let accountBalancesDomain = getAccountBalancesDomain(state)
 
   let GBYTEBalance = accountBalancesDomain.gbyteBalance()
@@ -28,13 +28,13 @@ export default function createSelector(state) {
   })
   let currentReferenceCurrency = referenceCurrencies.filter(currency => currency.name === referenceCurrency.name)[0]
 
-  let referenceDisplayModes = displayModes.map((mode, i) => {
+  let modes = displayModes.map((mode, i) => {
     return {
       rank: i,
       ...mode
     }
   })
-  let currentDisplayMode = referenceDisplayModes.find(displayMode => displayMode.name === referenceDisplayMode.name)
+  let currentDisplayMode = modes.find(mode => mode.name === displayMode.name)
 
   return {
     GBYTEBalance,
@@ -44,7 +44,7 @@ export default function createSelector(state) {
     currentReferenceCurrency,
     referenceCurrencies,
     currentDisplayMode,
-    referenceDisplayModes,
+    displayModes: modes,
     location,
     currentPair
   };

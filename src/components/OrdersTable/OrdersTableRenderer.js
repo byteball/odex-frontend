@@ -223,7 +223,7 @@ const OrderRow = (props: *) => {
           {labels[1]}:
         </HeaderCell>
         <SmallText muted>
-          {formatNumber(!displayMode.type ? order.filled : order.filled * order.price, { precision: 3 })}/{formatNumber(!displayMode.type? order.amount : order.amount * order.price, { precision: 3 })}
+          {formatNumber(displayMode.name === 'Price' ? order.filled : order.filled * order.price, { precision: 3 })}/{formatNumber(displayMode.name === 'Price' ? order.amount : order.amount * order.price, { precision: 3 })}
         </SmallText>
       </Cell>
       <Hideable hiddenIf={width<breakpoints.L}>
@@ -232,7 +232,7 @@ const OrderRow = (props: *) => {
             {labels[2]}:
           </HeaderCell>
           <SmallText muted>
-            {formatNumber(!displayMode.type ? order.price : 1 / order.price, { precision: 5 })} ({order.type})
+            {formatNumber(displayMode.name === 'Price' ? order.price : 1 / order.price, { precision: 5 })} ({order.type})
           </SmallText>
         </Cell>
       </Hideable>

@@ -164,12 +164,12 @@ const MarketTradesPanel = (props: *) => {
                 <Cell color={trade.change === 'positive' ? Colors.BUY : Colors.SELL}>
                 <Icon icon={trade.change === 'positive' ? 'chevron-up' : 'chevron-down'} iconSize={14}/>
                 <SmallText color={trade.change === 'positive' ? Colors.BUY : Colors.SELL}>
-                  {formatNumber(!displayMode.type ? trade.price : 1 / trade.price, { precision: 5 })}
+                  {formatNumber(displayMode.name === 'Price' ? trade.price : 1 / trade.price, { precision: 5 })}
                 </SmallText>
               </Cell>
               <Cell>
                 <SmallText muted>
-                  {formatNumber(!displayMode.type ? trade.amount : trade.amount * trade.price, { precision: 3 })}
+                  {formatNumber(displayMode.name === 'Price' ? trade.amount : trade.amount * trade.price, { precision: 3 })}
                 </SmallText>
               </Cell>
               <Hideable hiddenIf={width < 600}>

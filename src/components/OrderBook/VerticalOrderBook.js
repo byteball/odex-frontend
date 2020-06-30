@@ -215,9 +215,9 @@ class BuyOrder extends React.Component<SingleOrderProps> {
     return (
       <Row onClick={onClick}>
         <BuyRowBackground amount={order.relativeTotal} />
-        <Cell>{formatNumber(!displayMode.type ? order.total: order.total * order.price, { precision: 3 })}</Cell>
-        <Cell>{formatNumber(!displayMode.type ? order.amount: order.amount * order.price, { precision: 3 })}</Cell>
-        <Cell color={Colors.BUY}>{formatNumber(!displayMode.type ? order.price : 1 / order.price, { precision: 5 })}</Cell>
+        <Cell>{formatNumber(displayMode.name === 'Price' ? order.total: order.total * order.price, { precision: 3 })}</Cell>
+        <Cell>{formatNumber(displayMode.name === 'Price' ? order.amount: order.amount * order.price, { precision: 3 })}</Cell>
+        <Cell color={Colors.BUY}>{formatNumber(displayMode.name === 'Price' ? order.price : 1 / order.price, { precision: 5 })}</Cell>
       </Row>
     );
   }
@@ -240,9 +240,9 @@ class SellOrder extends React.Component<SingleOrderProps> {
     return (
       <Row onClick={onClick}>
         <SellRowBackGround amount={order.relativeTotal} />
-        <Cell>{formatNumber(!displayMode.type ? order.total: order.total * order.price, { precision: 3 })}</Cell>
-        <Cell>{formatNumber(!displayMode.type ? order.amount: order.amount * order.price, { precision: 3 })}</Cell>
-        <Cell color={Colors.SELL}>{formatNumber(!displayMode.type ? order.price : 1 / order.price, { precision: 5 })}</Cell>
+        <Cell>{formatNumber(displayMode.name === 'Price' ? order.total: order.total * order.price, { precision: 3 })}</Cell>
+        <Cell>{formatNumber(displayMode.name === 'Price' ? order.amount: order.amount * order.price, { precision: 3 })}</Cell>
+        <Cell color={Colors.SELL}>{formatNumber(displayMode.name === 'Price' ? order.price : 1 / order.price, { precision: 5 })}</Cell>
       </Row>
     );
   }

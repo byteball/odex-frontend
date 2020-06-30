@@ -10,7 +10,7 @@ type Props = {
   orders: Array<Order>,
   authenticated: boolean,
   address: string,
-  referenceDisplayMode: Object,
+  displayMode: Object,
   cancelOrder: string => void,
   onCollapse: string => void,
   onExpand: string => void,
@@ -87,7 +87,7 @@ class OrdersTable extends React.PureComponent<Props, State> {
 
   render() {
     const {
-      props: { authenticated, address, orders, cancelOrder, referenceDisplayMode },
+      props: { authenticated, address, orders, cancelOrder, displayMode },
       state: { selectedTabId, isOpen },
       renderContextMenu
     } = this
@@ -104,7 +104,7 @@ class OrdersTable extends React.PureComponent<Props, State> {
         toggleCollapse={this.toggleCollapse}
         expand={this.expand}
         authenticated={authenticated}
-        displayMode={referenceDisplayMode}
+        displayMode={displayMode}
         address={address}
         cancelOrder={cancelOrder}
         // silence-error: currently too many flow errors, waiting for rest to be resolved

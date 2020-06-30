@@ -24,7 +24,7 @@ type Props = {
   operatorAddress: string,
   exchangeAddress: string,
   selectedOrder: Object,
-  referenceDisplayMode: Object,
+  displayMode: Object,
   onCollapse: string => void,
   onExpand: string => void,
   onResetDefaultLayout: void => void,
@@ -170,7 +170,7 @@ class OrderForm extends React.PureComponent<Props, State> {
   handlePriceChange = (value: string) => {
 
     let { amount } = this.state
-    let { referenceDisplayMode } = this.props;
+    let { displayMode } = this.props;
 
     let fValue = unformat(value);
     if (!fValue)
@@ -183,7 +183,7 @@ class OrderForm extends React.PureComponent<Props, State> {
     let fAlias = parseFloat(fValue.toPrecision(3));
     let alias = formatNumber(fAlias === 0 ? 0 : 1 / fAlias, { precision: 3 });
 
-    if(!referenceDisplayMode.type) {
+    if(displayMode.name === 'Price') {
       amount = unformat(amount)
       let total = amount * unformat(value)
 
@@ -226,12 +226,12 @@ class OrderForm extends React.PureComponent<Props, State> {
 
   handleAmountChange = (value: string) => {
     let { price, selectedTabId, stopPrice } = this.state
-    const { referenceDisplayMode } = this.props;
+    const { displayMode } = this.props;
 
     stopPrice = unformat(stopPrice)
     price = unformat(price)
 
-    if(!referenceDisplayMode.type) {
+    if(displayMode.name === 'Price') {
       let total = selectedTabId === 'stop' ? stopPrice * unformat(value) : price * unformat(value);
       this.setState({
         total: formatNumber(total, { precision: 3 }),
@@ -355,7 +355,7 @@ class OrderForm extends React.PureComponent<Props, State> {
         bestBidMatcher,
         tokensBySymbol,
         authenticated,
-        referenceDisplayMode
+        displayMode
       },
       onInputChange,
       handleChangeOrderType,
@@ -397,9 +397,9 @@ class OrderForm extends React.PureComponent<Props, State> {
         side={side}
         fraction={fraction}
         priceType={priceType}
-        price={!referenceDisplayMode.type ? price : odds}
+        price={displayMode.name === 'Price' ? price : odds}
         maxAmount={maxAmount}
-        amount={!referenceDisplayMode.type ? amount : stake}
+        amount={displayMode.name === 'Price' ? amount : stake}
         total={total}
         isOpen={isOpen}
         baseTokenSymbol={baseTokenSymbol}
@@ -425,7 +425,7 @@ class OrderForm extends React.PureComponent<Props, State> {
         onContextMenu={renderContextMenu}
         authenticated={authenticated}
         buttonType={buttonType}
-        displayMode={referenceDisplayMode}
+        displayMode={displayMode}
       />
     )
   }

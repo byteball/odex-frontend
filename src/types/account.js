@@ -7,7 +7,7 @@ export type AccountState = {
   +exchangeAddress: string,
   +operatorAddress: string,
   +referenceCurrency: ReferenceCurrency,
-  +referenceDisplayMode: ReferenceDisplayMode,
+  +displayMode: DisplayMode,
 };
 
 export type AccountParams = {
@@ -29,10 +29,8 @@ export type ReferenceCurrency = {
   symbol: string,
 }
 
-export type ReferenceDisplayMode = {
+export type DisplayMode = {
   name: string,
-  symbol: string,
-  type: number,
   priceAlias: string,
   amountAlias: string
 }

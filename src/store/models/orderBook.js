@@ -6,7 +6,7 @@ import type { State } from '../../types';
 export default function orderBookSelector(state: State) {
   let { bids, asks } = getOrderBookDomain(state).getOrderBookData(2500);
   let rawPair = getTokenPairsDomain(state).getCurrentPair();
-  let { referenceDisplayMode } = getAccountDomain(state)
+  let { displayMode } = getAccountDomain(state)
 
 
   let currentPairName = rawPair.pair
@@ -27,6 +27,6 @@ export default function orderBookSelector(state: State) {
     currentPair,
     midMarketPrice,
     spread,
-    referenceDisplayMode
+    displayMode
   };
 }

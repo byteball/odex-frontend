@@ -7,8 +7,8 @@ export const fiatCurrencies = [
 ]
 
 export const displayModes = [
-  { name: 'Price', symbol: '', type: 0, priceAlias: 'PRICE', amountAlias: 'AMOUNT' },
-  { name: 'Odds', symbol: '', type: 1, priceAlias: 'ODDS', amountAlias: 'STAKE' }
+  { name: 'Price', priceAlias: 'PRICE', amountAlias: 'AMOUNT' },
+  { name: 'Odds', priceAlias: 'ODDS', amountAlias: 'STAKE' }
 ]
 
 export const pricedTokens = [

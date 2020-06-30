@@ -231,8 +231,8 @@ export const account = createReducer(action => {
       return accountEvents.updated({ exchangeAddress: payload.exchangeAddress, operatorAddress: payload.operatorAddress })
     case layoutActionTypes.updateReferenceCurrency:
       return accountEvents.referenceCurrencyUpdated(payload.referenceCurrency)
-    case layoutActionTypes.updateReferenceDisplayMode:
-      return accountEvents.referenceDisplayModeUpdated(payload.referenceDisplayMode)
+    case layoutActionTypes.updateDisplayMode:
+      return accountEvents.displayModeUpdated(payload.displayMode)
     case logoutPageActionTypes.logout:
       return accountEvents.accountRemoved()
     default:

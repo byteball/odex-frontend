@@ -30,7 +30,7 @@ export default function getOrderFormSelector(state: State) {
     quoteTokenDecimals
   } = currentPair
 
-  let { authenticated, address, operatorAddress, exchangeAddress, referenceDisplayMode } = getAccountDomain(state)
+  let { authenticated, address, operatorAddress, exchangeAddress, displayMode } = getAccountDomain(state)
 
   let askPrice = orderBookDomain.getAskPrice()
   let bidPrice = orderBookDomain.getBidPrice()
@@ -65,7 +65,7 @@ export default function getOrderFormSelector(state: State) {
     exchangeAddress,
     tokensBySymbol,
     authenticated,
-    referenceDisplayMode
+    displayMode
   }
 }
 

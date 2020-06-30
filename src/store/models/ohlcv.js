@@ -57,9 +57,9 @@ export const getBaseSymbol = (state: State): string => {
   return currentPair.baseTokenSymbol
 }
 
-export const getReferenceDisplay = (state: State): Object => {
-  let { referenceDisplayMode } = getAccountDomain(state);
-  return referenceDisplayMode;
+export const getDisplayMode = (state: State): Object => {
+  let { displayMode } = getAccountDomain(state);
+  return displayMode;
 }
 
 function byDuration(duration) {

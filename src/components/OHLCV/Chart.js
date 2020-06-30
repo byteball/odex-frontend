@@ -94,7 +94,7 @@ function calculateData(inputData) {
   )
 }
 
-function convertData(inputData) {
+function ConvertDataForOdds(inputData) {
   return inputData.map((data) => {
     let newData = {}
     Object.keys(data).forEach(key => {
@@ -130,9 +130,9 @@ class OHLCVChart extends React.Component {
       displayMode,
     } = this.props
 
-    const convertedData = convertData(initialData)
+    const convertedData = ConvertDataForOdds(initialData)
 
-    let calculatedData = calculateData(displayMode.type ? convertedData : initialData)
+    let calculatedData = calculateData(displayMode.name === 'Odds' ? convertedData : initialData)
     if (calculatedData.length <= 1) {
       return null
     }

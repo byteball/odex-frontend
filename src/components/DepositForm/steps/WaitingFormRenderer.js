@@ -26,7 +26,6 @@ const WaitingFormRenderer = (props: Props) => {
   }
 
   const amountInSmallestUnits = parseFloat(amount || 0) * Math.pow(10, token.decimals);
-  const maxBalance = balance ? balance : 0;
 
   return (
     <ModalBody>
@@ -38,7 +37,6 @@ const WaitingFormRenderer = (props: Props) => {
             //icon="filter"
             type="number"
             min="0"
-            max={maxBalance}
             placeholder="Amount"
             name="amount"
             value={amount}
@@ -49,13 +47,13 @@ const WaitingFormRenderer = (props: Props) => {
       </Label>
       <br />
       {
-        amount > 0 && amount <= maxBalance &&
+        amount > 0 &&
         <DepositLinkBox>
           <a onClick={() => depositGA(token.symbol)} href={PROTOCOL+exchangeAddress + "?asset=" + encodeURIComponent(token.asset) + "&amount=" + amountInSmallestUnits + "&from_address=" + address}>Deposit {amount} {token.symbol}</a>
         </DepositLinkBox>
       }
       <CurrentBalanceBox>
-        (Your current balance is {maxBalance} {token.symbol})
+        (Your current balance is {balance ? balance : 0} {token.symbol})
       </CurrentBalanceBox>
     </ModalBody>
   );

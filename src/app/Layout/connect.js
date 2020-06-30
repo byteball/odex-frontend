@@ -1,7 +1,7 @@
 //@flow
 import { connect } from 'react-redux';
 import layoutSelector, { queryAppData } from '../../store/models/layout';
-import { updateReferenceCurrency, updateReferenceDisplayMode } from '../../store/actions/layout'
+import { updateReferenceCurrency, updateDisplayMode } from '../../store/actions/layout'
 
 import type { State } from '../../types'
 
@@ -17,7 +17,7 @@ export function mapStateToProps(state: State, props: Object) {
 
 const mapDispatchToProps = {
   updateReferenceCurrency,
-  updateReferenceDisplayMode,
+  updateDisplayMode,
   queryAppData,
 }
 
