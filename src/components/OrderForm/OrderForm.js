@@ -149,7 +149,7 @@ class OrderForm extends React.PureComponent<Props, State> {
         this.setState({
           fraction: fraction, 
           amount: formatNumber(0, { precision: 3 }),
-          stake: formatNumber(total, { precision: 3 }),
+          stake: formatNumber(0, { precision: 3 }),
           total: formatNumber(0, { precision: 3 })
         })
 
@@ -175,16 +175,16 @@ class OrderForm extends React.PureComponent<Props, State> {
 
     let fValue = unformat(value);
     if (!fValue)
-      return this.setState({price: '0', total: '0', stake: '0', odds: '0'})
+      return this.setState({price: value, odds: value, total: '0', stake: '0'})
     let rounded = fValue.toPrecision(8); // drop the excessive precision
     let fRounded = parseFloat(rounded);
     if (fRounded !== fValue)
       value = fRounded.toString();
     
-    let fAlias = parseFloat(fValue.toPrecision(3));
-    let alias = formatNumber(fAlias === 0 ? 0 : 1 / fAlias, { precision: 3 });
-
     if(displayMode.name === 'Price') {
+      let fOdds = parseFloat(fValue.toPrecision(3));
+      let odds = formatNumber(fOdds === 0 ? 0 : 1 / fOdds, { precision: 3 });
+
       amount = unformat(amount)
       let total = amount * unformat(value)
 
@@ -192,16 +192,19 @@ class OrderForm extends React.PureComponent<Props, State> {
         stake: formatNumber(total, { precision: 3 }),
         total: formatNumber(total, { precision: 3 }),
         price: value,
-        odds: alias
+        odds: odds
       })
     } else {
+      let fPrice = parseFloat(fValue.toPrecision(3));
+      let price = formatNumber(fPrice === 0 ? 0 : 1 / fPrice, { precision: 3 });
+
       amount = unformat(amount)
-      let total = amount * unformat(alias)
+      let total = amount * unformat(price)
 
       this.setState({
         stake: formatNumber(total, { precision: 3 }),
         total: formatNumber(total, { precision: 3 }),
-        price: alias,
+        price: price,
         odds: value
       })
     }

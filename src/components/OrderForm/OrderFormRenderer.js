@@ -366,7 +366,7 @@ const LimitOrderPanel = props => {
           name="price" 
           onChange={onInputChange} 
           value={price} 
-          placeholder="Price" 
+          placeholder={displayMode.priceAlias} 
         />
       </InputBox>
       <InputBox>
@@ -385,7 +385,7 @@ const LimitOrderPanel = props => {
           name="amount"
           onChange={onInputChange}
           value={amount}
-          placeholder="Amount"
+          placeholder={displayMode.amountAlias}
           intent={insufficientBalance ? 'danger' : null}
           rightElement={insufficientBalance ? <Total>Insufficient Balance</Total> : null}
         />
