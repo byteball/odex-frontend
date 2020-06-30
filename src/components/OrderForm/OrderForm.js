@@ -182,8 +182,7 @@ class OrderForm extends React.PureComponent<Props, State> {
       value = fRounded.toString();
     
     if(displayMode.name === 'Price') {
-      let fOdds = parseFloat(fValue.toPrecision(3));
-      let odds = formatNumber(fOdds === 0 ? 0 : 1 / fOdds, { precision: 3 });
+      let odds = formatNumber(fValue === 0 ? 0 : 1 / fValue, { precision: 3 });
 
       amount = unformat(amount)
       let total = amount * unformat(value)
@@ -195,8 +194,7 @@ class OrderForm extends React.PureComponent<Props, State> {
         odds: odds
       })
     } else {
-      let fPrice = parseFloat(fValue.toPrecision(3));
-      let price = formatNumber(fPrice === 0 ? 0 : 1 / fPrice, { precision: 3 });
+      let price = formatNumber(fValue === 0 ? 0 : 1 / fValue, { precision: 3 });
 
       amount = unformat(amount)
       let total = amount * unformat(price)
