@@ -1,10 +1,12 @@
 // @flow
-import type { UpdateAppDataAction, UpdateReferenceCurrencyAction } from '../../types/layout'
+import type { UpdateAppDataAction, UpdateReferenceCurrencyAction, UpdateDisplayModeAction } from '../../types/layout'
 import type { Tokens, TokenPairs } from '../../types/tokens'
+import type { DisplayMode } from '../../types/account'
 
 const actionTypes = {
     updateAppData: 'layout/UPDATE_APP_DATA',
-    updateReferenceCurrency: 'layout/UPDATE_REFERENCE_CURRENCY'
+    updateReferenceCurrency: 'layout/UPDATE_REFERENCE_CURRENCY',
+    updateDisplayMode: 'layout/UPDATE_DISPLAY_MODE'
 }
 
 export function updateAppData(tokens: Array<Tokens>, pairs: Array<TokenPairs>): UpdateAppDataAction {
@@ -18,6 +20,13 @@ export function updateReferenceCurrency(referenceCurrency: string): UpdateRefere
     return {
         type: actionTypes.updateReferenceCurrency,
         payload: { referenceCurrency },
+    }
+}
+
+export function updateDisplayMode(displayMode: DisplayMode): UpdateDisplayModeAction {
+    return {
+        type: actionTypes.updateDisplayMode,
+        payload: { displayMode }
     }
 }
 

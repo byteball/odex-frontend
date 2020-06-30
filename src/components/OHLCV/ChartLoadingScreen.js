@@ -8,6 +8,7 @@ import { TypeChooser } from 'react-stockcharts/lib/helper';
 import { AutoSizer } from 'react-virtualized'
 
 import type { Node } from 'react'
+import type { DisplayMode } from '../../types/account'
 
 type Props = {
   baseSymbol: string,
@@ -22,6 +23,7 @@ type Props = {
   data: Array<Object>,
   noOfCandles: number,
   width: string,
+  displayMode: DisplayMode
 };
 
 export default class ChartLoadingScreen extends React.PureComponent<Props> {
@@ -39,6 +41,7 @@ export default class ChartLoadingScreen extends React.PureComponent<Props> {
       forceIndex,
       data,
       baseSymbol,
+      displayMode,
     } = this.props;
 
     if (!data) {
@@ -77,6 +80,7 @@ export default class ChartLoadingScreen extends React.PureComponent<Props> {
                     baseSymbol={baseSymbol}
                     noOfCandles={noOfCandles}
                     width={width}
+                    displayMode={displayMode}
                 />
                 )}
               </TypeChooser>

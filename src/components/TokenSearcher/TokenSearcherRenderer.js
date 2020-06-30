@@ -9,7 +9,7 @@ import {
   Tabs, 
   Tab, 
   Button, 
-  Collapse  
+  Collapse,  
 } from '@blueprintjs/core'
 
 import {
@@ -26,7 +26,8 @@ import {
   ColoredCryptoIcon,
   SmallTextDiv,
   FlexRow,
-  InputGroup
+  InputGroup,
+  BlueGlowingButton
 } from '../Common'
 
 import {
@@ -70,7 +71,9 @@ type Props = {
   changeSelectedToken: Token => void,
   toggleCollapse: () => void,
   expand: () => void,
-  onContextMenu: () => Node
+  onContextMenu: () => Node,
+  openDepositModal: (SyntheticEvent<>) => void,
+  openSendModal: (SyntheticEvent<>) => void,
 }
 
 const TokenSearchRenderer = (props: Props) => {
@@ -96,7 +99,9 @@ const TokenSearchRenderer = (props: Props) => {
     baseTokenAvailableBalance,
     quoteTokenAvailableBalance,
     expand,
-    onContextMenu
+    onContextMenu,
+    openDepositModal,
+    openSendModal
   } = props
 
   return (
@@ -125,6 +130,8 @@ const TokenSearchRenderer = (props: Props) => {
               quoteTokenBalance={quoteTokenBalance}
               baseTokenAvailableBalance={baseTokenAvailableBalance}
               quoteTokenAvailableBalance={quoteTokenAvailableBalance}
+              openDepositModal={openDepositModal}
+              openSendModal={openSendModal}
             />
             <TabsWrapper>
               <Tabs selectedTabId={selectedTabId} onChange={changeTab}>
@@ -325,7 +332,9 @@ const SelectedPair = (props: *) => {
     baseTokenBalance,
     quoteTokenBalance,
     baseTokenAvailableBalance,
-    quoteTokenAvailableBalance
+    quoteTokenAvailableBalance,
+    openDepositModal,
+    openSendModal
   } = props
 
   const { 
@@ -374,6 +383,22 @@ const SelectedPair = (props: *) => {
           <SmallTextDiv>{low ? formatNumber(low, { precision: 2 }) + " " + quote : 'N.A'}</SmallTextDiv>
         </Item>
       </List>
+      <ActionBox>
+        <ButtonWrapper>
+          <BlueGlowingButton
+            intent="primary"
+            text="Deposit"
+            onClick={(event) => openDepositModal(event)}
+          />
+        </ButtonWrapper>
+        <ButtonWrapper>
+          <BlueGlowingButton
+            intent="primary"
+            text="Withdraw"
+            onClick={(event) => openSendModal(event)}
+          />
+        </ButtonWrapper>
+      </ActionBox>
     </SelectedPairCard>
   )
 }
@@ -466,4 +491,14 @@ const TabsWrapper = styled.div`
     }
   }
 
+`
+
+const ButtonWrapper = styled.span`  
+  margin-left: 10px !important;
+  margin-right: 10px !important;
+`;
+
+const ActionBox = styled.div`
+  display: flex;
+  justify-content: center;
 `

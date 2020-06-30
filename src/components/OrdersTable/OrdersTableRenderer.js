@@ -29,6 +29,7 @@ import { relativeDate } from '../../utils/helpers'
 import { Order } from '../../types/orders'
 
 import type { Node } from 'react'
+import type { DisplayMode } from '../../types/account'
 import { Devices } from '../Common/Variables'
 
 type Props = {
@@ -39,6 +40,7 @@ type Props = {
   toggleCollapse: void => void,
   cancelOrder: string => void,
   authenticated: boolean,
+  displayMode: DisplayMode,
   address: string,
   orders: {
     ALL: Array<Order>,
@@ -71,7 +73,8 @@ const OrdersTableRenderer = (props: Props) => {
     expand,
     onContextMenu,
     address,
-    authenticated
+    authenticated,
+    displayMode
   } = props
 
   return (
@@ -112,6 +115,7 @@ const OrdersTableRenderer = (props: Props) => {
                     width={width}
                     authenticated={authenticated}
                     address={address}
+                    displayMode={displayMode}
                   />} 
                 />
                 <Tab id="open" title="OPEN" panel={
@@ -122,6 +126,7 @@ const OrdersTableRenderer = (props: Props) => {
                     width={width} 
                     authenticated={authenticated}
                     address={address}
+                    displayMode={displayMode}
                   />} 
                 />
                 <Tab id="cancelled" title="CANCELLED" panel={
@@ -132,6 +137,7 @@ const OrdersTableRenderer = (props: Props) => {
                     width={width}
                     authenticated={authenticated}
                     address={address}
+                    displayMode={displayMode}
                   />
                   } 
                 />
@@ -143,6 +149,7 @@ const OrdersTableRenderer = (props: Props) => {
                     width={width}
                     authenticated={authenticated}
                     address={address}
+                    displayMode={displayMode}
                   />} 
                 />
               </Tabs>
@@ -155,20 +162,20 @@ const OrdersTableRenderer = (props: Props) => {
 }
 
 const OrdersTablePanel = (props: *) => {
-  const { loading, orders, cancelOrder, width, authenticated, address } = props
+  const { loading, orders, cancelOrder, width, authenticated, address, displayMode } = props
 
   if (loading) return <Loading />
   if (!authenticated) return <CenteredMessage message="Not logged in" />
   if (orders.length === 0) return <CenteredMessage message="No orders" />
-  
+
   return (
         <ListContainer>
           <ListHeaderWrapper>
             <ListHeader>
               <HeaderCell className="pair">PAIR</HeaderCell>
-              <HeaderCell className="amount">AMOUNT</HeaderCell>
+              <HeaderCell className="amount">{ displayMode.amountAlias }</HeaderCell>
               <Hideable hiddenIf={width<breakpoints.L}>
-                <HeaderCell className="price">PRICE</HeaderCell>
+                <HeaderCell className="price">{ displayMode.priceAlias }</HeaderCell>
               </Hideable>
               <HeaderCell className="status">STATUS</HeaderCell>
               <HeaderCell className="side">SIDE</HeaderCell>
@@ -189,6 +196,7 @@ const OrdersTablePanel = (props: *) => {
                   address={address}
                   width={width}
                   labels={['PAIR', 'AMOUNT', 'PRICE', 'STATUS', 'SIDE', 'TIME']}
+                  displayMode={displayMode}
                 />
               )
             }
@@ -199,7 +207,7 @@ const OrdersTablePanel = (props: *) => {
 }
 
 const OrderRow = (props: *) => {
-  const { order, cancelOrder, address, width, labels } = props
+  const { order, cancelOrder, address, width, labels, displayMode } = props
 
   return (
     <Row>
@@ -216,7 +224,7 @@ const OrderRow = (props: *) => {
           {labels[1]}:
         </HeaderCell>
         <SmallText muted>
-          {formatNumber(order.filled, { precision: 3 })}/{formatNumber(order.amount, { precision: 3 })}
+          {formatNumber(displayMode.name === 'Price' ? order.filled : order.filled * order.price, { precision: 3 })}/{formatNumber(displayMode.name === 'Price' ? order.amount : order.amount * order.price, { precision: 3 })}
         </SmallText>
       </Cell>
       <Hideable hiddenIf={width<breakpoints.L}>
@@ -225,7 +233,7 @@ const OrderRow = (props: *) => {
             {labels[2]}:
           </HeaderCell>
           <SmallText muted>
-            {formatNumber(order.price, { precision: 5 })} ({order.type})
+            {formatNumber(displayMode.name === 'Price' ? order.price : 1 / order.price, { precision: 5 })} ({order.type})
           </SmallText>
         </Cell>
       </Hideable>

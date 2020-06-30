@@ -36,6 +36,7 @@ const WaitingFormRenderer = (props: Props) => {
           <InputGroup
             //icon="filter"
             type="number"
+            min="0"
             placeholder="Amount"
             name="amount"
             value={amount}
@@ -45,11 +46,14 @@ const WaitingFormRenderer = (props: Props) => {
         </ControlGroup>
       </Label>
       <br />
-      <DepositLinkBox>
-        <a onClick={() => depositGA(token.symbol)} href={PROTOCOL+exchangeAddress + "?asset=" + encodeURIComponent(token.asset) + "&amount=" + amountInSmallestUnits + "&from_address=" + address}>Deposit {amount} {token.symbol}</a>
-      </DepositLinkBox>
+      {
+        amount > 0 &&
+        <DepositLinkBox>
+          <a onClick={() => depositGA(token.symbol)} href={PROTOCOL+exchangeAddress + "?asset=" + encodeURIComponent(token.asset) + "&amount=" + amountInSmallestUnits + "&from_address=" + address}>Deposit {amount} {token.symbol}</a>
+        </DepositLinkBox>
+      }
       <CurrentBalanceBox>
-        (Your current balance is {balance} {token.symbol})
+        (Your current balance is {balance ? balance : 0} {token.symbol})
       </CurrentBalanceBox>
     </ModalBody>
   );

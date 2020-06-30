@@ -8,7 +8,7 @@ export default function tradesTableSelector(state: State) {
   let tokenPairsDomain = getTokenPairsDomain(state)
   let tradesDomain = getTradesDomain(state)
   
-  let { address, authenticated } = accountDomain
+  let { address, authenticated, displayMode } = accountDomain
 
   let trades = tradesDomain.marketTrades(50)
   let userTrades = tradesDomain.userTrades(address)
@@ -23,6 +23,7 @@ export default function tradesTableSelector(state: State) {
     authenticated,
     trades,
     userTrades,
-    currentPair
+    currentPair,
+    displayMode
   };
 }

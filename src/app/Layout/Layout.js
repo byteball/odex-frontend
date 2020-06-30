@@ -19,7 +19,7 @@ import {
   Devices
 } from '../../components/Common/Variables'
 
-import { ReferenceCurrencySelect } from '../../components/SelectMenu'
+import { ReferenceCurrencySelect, StandardSelect } from '../../components/SelectMenu'
 
 import {
   Alignment,
@@ -38,6 +38,8 @@ import type {
   Location
 } from '../../types/common'
 
+import type { DisplayMode } from '../../types/account'
+
 export type Props = {
   children?: Node,
   authenticated: boolean,
@@ -48,6 +50,9 @@ export type Props = {
   referenceCurrencies: Array<string>,
   updateReferenceCurrency: void => string,
   currentReferenceCurrency: string,
+  displayModes: Array<DisplayMode>,
+  currentDisplayMode: DisplayMode,
+  updateDisplayMode: void => string,
   queryAppData: void => void,
   location: Location,
   currentPair: string
@@ -70,11 +75,15 @@ class Layout extends React.PureComponent<Props, State> {
       referenceCurrencies,
       currentReferenceCurrency,
       updateReferenceCurrency,
+      currentDisplayMode,
+      displayModes,
+      updateDisplayMode,
       location,
       currentPair
     } = this.props
 
     const showReferenceCurrency = authenticated
+    const showDisplayMode = authenticated
     const showLoginButton = (location !== "/login")
 
     const menu = (
@@ -115,6 +124,17 @@ class Layout extends React.PureComponent<Props, State> {
                       type="text"
                     />
                   </ReferenceCurrencyBox>
+                }
+                {
+                  showDisplayMode &&
+                  <DisplayModeBox>
+                    <StandardSelect
+                      items={displayModes}
+                      item={currentDisplayMode}
+                      handleChange={(item) => updateDisplayMode(item)}
+                      type="text"
+                    />
+                  </DisplayModeBox>
                 }                
               </NavbarGroup>
               <NavbarGroup align={Alignment.RIGHT}>
@@ -166,6 +186,14 @@ const NavbarHeaderBox = styled.div`
 `
 
 const ReferenceCurrencyBox = styled.div`
+  @media ${Devices.tablet} {
+    display: none;
+  }
+`
+
+const DisplayModeBox = styled.div`
+  margin-left: 10px;
+
   @media ${Devices.tablet} {
     display: none;
   }

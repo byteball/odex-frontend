@@ -2,6 +2,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import ReactGA from 'react-ga'
+import { formatNumber } from 'accounting-js'
 import { MATCHER_FEE, MAX_PRICE_PRECISION } from '../../config/environment';
 import { CHATBOT_URL } from '../../config/urls'
 
@@ -32,6 +33,7 @@ import {
 import Help from '../../components/Help'
 
 import type { Node } from 'react'
+import type { DisplayMode } from '../../types/account'
 
 
 type Props = {
@@ -66,6 +68,7 @@ type Props = {
   expand: SyntheticEvent<> => void,
   onContextMenu: void => Node,
   buttonType: "BUY" | "SELL" | "BUY_UNLOCK" | "SELL_UNLOCK" | "BUY_LOGIN" | "SELL_LOGIN" | "BUY_UNLOCK_PENDING" | "SELL_UNLOCK_PENDING",
+  displayMode: DisplayMode,
 }
 
 
@@ -122,7 +125,8 @@ const OrderFormRenderer = (props: Props) => {
     handleSideChange,
     expand,
     onContextMenu,
-    buttonType
+    buttonType,
+    displayMode
   } = props
 
   return (
@@ -130,14 +134,14 @@ const OrderFormRenderer = (props: Props) => {
       <OrderFormHeader>
         <ButtonRow>
           <Button
-            text="BUY"
+            text={displayMode.name === 'Price' ? "BUY" : "BACK" }
             minimal
             onClick={() => handleSideChange('BUY')}
             active={side === 'BUY'}
             intent="success"
           />
           <Button
-            text="SELL"
+            text={displayMode.name === 'Price' ? "SELL" : "LAY" }
             minimal
             onClick={() => handleSideChange('SELL')}
             active={side === 'SELL'}
@@ -211,6 +215,7 @@ const OrderFormRenderer = (props: Props) => {
                 bestBidMatcher={bestBidMatcher}
                 tokensBySymbol={tokensBySymbol}
                 buttonType={buttonType}
+                displayMode={displayMode}
               />
             }
           />
@@ -291,7 +296,8 @@ const LimitOrderPanel = props => {
     bestAskMatcher,
     bestBidMatcher,
     tokensBySymbol,
-    buttonType
+    buttonType,
+    displayMode
   } = props
 
   let fAmount = parseFloat(amount);
@@ -347,20 +353,39 @@ const LimitOrderPanel = props => {
   return (
     <React.Fragment>
       <InputBox>
-        <InputLabel>
-          Price <MutedText>(in {quoteTokenSymbol})</MutedText>
-        </InputLabel>
-        <PriceInputGroup name="price" onChange={onInputChange} value={price} placeholder="Price" />
+        {
+          displayMode.name === 'Price' ?
+            ( <InputLabel>
+              Price <MutedText>(in {quoteTokenSymbol})</MutedText>
+            </InputLabel> )
+            : ( <InputLabel>
+              Odds
+            </InputLabel> )
+        }
+        <PriceInputGroup 
+          name="price" 
+          onChange={onInputChange} 
+          value={price} 
+          placeholder={displayMode.priceAlias} 
+        />
       </InputBox>
       <InputBox>
         <InputLabel>
-          Amount <MutedText>({baseTokenSymbol})</MutedText>
+          {
+            displayMode.name === 'Price' ?
+            ( <InputLabel>
+              Amount <MutedText>({baseTokenSymbol})</MutedText>
+            </InputLabel> )
+            : ( <InputLabel>
+              Stake <MutedText>(in {quoteTokenSymbol})</MutedText>
+            </InputLabel> )
+          }
         </InputLabel>
         <PriceInputGroup
           name="amount"
           onChange={onInputChange}
           value={amount}
-          placeholder="Amount"
+          placeholder={displayMode.amountAlias}
           intent={insufficientBalance ? 'danger' : null}
           rightElement={insufficientBalance ? <Total>Insufficient Balance</Total> : null}
         />
@@ -382,7 +407,7 @@ const LimitOrderPanel = props => {
         <ButtonRenderer
           side={side}
           link={link}
-          amount={amount}
+          amount={displayMode.name === 'Price' ? amount : formatNumber(parseFloat(amount) * parseFloat(price), { precision: 3 })}
           baseTokenSymbol={baseTokenSymbol}
           quoteTokenSymbol={quoteTokenSymbol}
           handleSendOrder={handleSendOrder}

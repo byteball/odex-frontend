@@ -2,8 +2,9 @@
 import React from 'react';
 import HorizontalOrderBook from './HorizontalOrderBook';
 import VerticalOrderBook from './VerticalOrderBook'
-import type { TokenPair } from '../../types/tokens';
 import { AutoSizer } from 'react-virtualized'
+import type { TokenPair } from '../../types/tokens';
+import type { DisplayMode } from '../../types/account'
 
 
 type BidOrAsk = {
@@ -19,6 +20,7 @@ type Props = {
   currentPair: TokenPair,
   midMarketPrice: ?number,
   spread: ?number,
+  displayMode: DisplayMode,
   select: BidOrAsk => void,
   onCollapse: string => void,
   onExpand: string => void,
@@ -60,7 +62,8 @@ class OrderBook extends React.Component<Props, State> {
         midMarketPrice,
         spread,
         select,
-        onResetDefaultLayout
+        onResetDefaultLayout,
+        displayMode
       },
       state: { 
         selectedTabId, 
@@ -89,7 +92,7 @@ class OrderBook extends React.Component<Props, State> {
           toggleCollapse={toggleCollapse}
           expand={expand}
           onResetDefaultLayout={onResetDefaultLayout}
-          
+          displayMode={displayMode}
         />,
       "horizontal": 
         <HorizontalOrderBook 
@@ -105,6 +108,7 @@ class OrderBook extends React.Component<Props, State> {
           toggleCollapse={toggleCollapse}
           expand={expand}
           onResetDefaultLayout={onResetDefaultLayout}
+          displayMode={displayMode}
         />
     }[direction]
   }

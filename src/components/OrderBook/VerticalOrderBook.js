@@ -26,6 +26,7 @@ import { formatNumber } from 'accounting-js'
 
 import type { TokenPair } from '../../types/Tokens'
 import type { Node } from 'react'
+import type { DisplayMode } from '../../types/account'
 
 type BidOrAsk = {
   price: number,
@@ -44,7 +45,8 @@ type Props = {
   expand: SyntheticEvent<> => void,
   currentPair: TokenPair,
   onContextMenu: void => Node,
-  onResetDefaultLayout: void => void
+  onResetDefaultLayout: void => void,
+  displayMode: DisplayMode
 };
 
 class VerticalOrderBook extends React.Component<Props> {
@@ -76,7 +78,8 @@ class VerticalOrderBook extends React.Component<Props> {
     toggleCollapse,
     expand,
     midMarketPrice,
-    spread
+    spread,
+    displayMode
   } = this.props;
 
   return (
@@ -118,6 +121,7 @@ class VerticalOrderBook extends React.Component<Props> {
             onSelect={onSelect} 
             midMarketPrice={midMarketPrice}
             spread={spread}
+            displayMode={displayMode}
           />
         </Collapse>
       </Wrapper>
@@ -134,7 +138,8 @@ export const OrderListRenderer = (props: *) => {
     asks, 
     onSelect,
     midMarketPrice,
-    spread
+    spread,
+    displayMode
   } = props;
 
   return (
@@ -146,8 +151,8 @@ export const OrderListRenderer = (props: *) => {
               <ListHeading>
                 <HeaderRow>
                   <HeaderCell>TOTAL</HeaderCell>
-                  <HeaderCell>AMOUNT</HeaderCell>
-                  <HeaderCell>PRICE</HeaderCell>
+                  <HeaderCell>{ displayMode.amountAlias }</HeaderCell>
+                  <HeaderCell>{ displayMode.priceAlias }</HeaderCell>
                 </HeaderRow>
               </ListHeading>
             </ListContainer>
@@ -160,7 +165,7 @@ export const OrderListRenderer = (props: *) => {
                   transitionEnterTimeout={500}
                   transitionLeaveTimeout={500}
                 >
-                  {[...asks].reverse().map((order, index) => <SellOrder key={order.price+'-'+order.amount} order={order} onClick={() => onSelect(order)} />)}
+                  {[...asks].reverse().map((order, index) => <SellOrder key={order.price+'-'+order.amount} order={order} displayMode={displayMode} onClick={() => onSelect(order)} />)}
                 </ReactCSSTransitionGroup>
               </List>
             </ListContainer>
@@ -179,7 +184,7 @@ export const OrderListRenderer = (props: *) => {
                   transitionEnterTimeout={500}
                   transitionLeaveTimeout={500}
                 >
-                  {bids.map((order, index) => <BuyOrder key={order.price+'-'+order.amount} order={order} onClick={() => onSelect(order)} />)}
+                  {bids.map((order, index) => <BuyOrder key={order.price+'-'+order.amount} order={order} displayMode={displayMode} onClick={() => onSelect(order)} />)}
                 </ReactCSSTransitionGroup>
               </List>
             </ListContainer>
@@ -191,6 +196,7 @@ export const OrderListRenderer = (props: *) => {
 
 export type SingleOrderProps = {
   order: Object,
+  displayMode: DisplayMode,
   onClick: void => void
 };
 
@@ -198,21 +204,21 @@ class BuyOrder extends React.Component<SingleOrderProps> {
   
   shouldComponentUpdate(nextProps, nextState) {
     //console.log(this.props, nextProps)
-    const { order } = this.props;
-    const { order: nextOrder } = nextProps;
-    return (order.price !== nextOrder.price || order.amount !== nextOrder.amount);
+    const { order, displayMode } = this.props;
+    const { order: nextOrder, displayMode: nextMode } = nextProps;
+    return (order.price !== nextOrder.price || order.amount !== nextOrder.amount || displayMode.name !== nextMode.name);
   }
 
   render() {
-    const { order, onClick } = this.props;
+    const { order, displayMode, onClick } = this.props;
     console.log('buy order', order.price)
 
     return (
       <Row onClick={onClick}>
         <BuyRowBackground amount={order.relativeTotal} />
-        <Cell>{formatNumber(order.total, { precision: 3 })}</Cell>
-        <Cell>{formatNumber(order.amount, { precision: 3 })}</Cell>
-        <Cell color={Colors.BUY}>{formatNumber(order.price, { precision: 5 })}</Cell>
+        <Cell>{formatNumber(displayMode.name === 'Price' ? order.total: order.total * order.price, { precision: 3 })}</Cell>
+        <Cell>{formatNumber(displayMode.name === 'Price' ? order.amount: order.amount * order.price, { precision: 3 })}</Cell>
+        <Cell color={Colors.BUY}>{formatNumber(displayMode.name === 'Price' ? order.price : 1 / order.price, { precision: 5 })}</Cell>
       </Row>
     );
   }
@@ -223,21 +229,21 @@ class SellOrder extends React.Component<SingleOrderProps> {
 
   shouldComponentUpdate(nextProps, nextState) {
     //console.log(this.props, nextProps)
-    const { order } = this.props;
-    const { order: nextOrder } = nextProps;
-    return (order.price !== nextOrder.price || order.amount !== nextOrder.amount);
+    const { order, displayMode } = this.props;
+    const { order: nextOrder, displayMode: nextMode } = nextProps;
+    return (order.price !== nextOrder.price || order.amount !== nextOrder.amount || displayMode.name !== nextMode.name);
   }
 
   render() {
-    const { order, onClick } = this.props;
+    const { order, displayMode, onClick } = this.props;
     console.log('sell order', order.price)
 
     return (
       <Row onClick={onClick}>
         <SellRowBackGround amount={order.relativeTotal} />
-        <Cell>{formatNumber(order.total, { precision: 3 })}</Cell>
-        <Cell>{formatNumber(order.amount, { precision: 3 })}</Cell>
-        <Cell color={Colors.SELL}>{formatNumber(order.price, { precision: 5 })}</Cell>
+        <Cell>{formatNumber(displayMode.name === 'Price' ? order.total: order.total * order.price, { precision: 3 })}</Cell>
+        <Cell>{formatNumber(displayMode.name === 'Price' ? order.amount: order.amount * order.price, { precision: 3 })}</Cell>
+        <Cell color={Colors.SELL}>{formatNumber(displayMode.name === 'Price' ? order.price : 1 / order.price, { precision: 5 })}</Cell>
       </Row>
     );
   }
