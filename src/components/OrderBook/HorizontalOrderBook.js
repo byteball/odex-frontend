@@ -21,6 +21,7 @@ import {
 } from '@blueprintjs/core'
 
 import type { TokenPair } from '../../types/Tokens'
+import type { DisplayMode } from '../../types/account'
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 
 type BidOrAsk = {
@@ -38,7 +39,7 @@ type Props = {
   toggleCollapse: SyntheticEvent<> => void,
   expand: SyntheticEvent<> => void,
   onResetDefaultLayout: void => void,
-  displayMode: Object
+  displayMode: DisplayMode
 };
 
 

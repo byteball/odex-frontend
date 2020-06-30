@@ -26,6 +26,7 @@ import { formatNumber } from 'accounting-js'
 
 import type { TokenPair } from '../../types/Tokens'
 import type { Node } from 'react'
+import type { DisplayMode } from '../../types/account'
 
 type BidOrAsk = {
   price: number,
@@ -45,7 +46,7 @@ type Props = {
   currentPair: TokenPair,
   onContextMenu: void => Node,
   onResetDefaultLayout: void => void,
-  displayMode: Object
+  displayMode: DisplayMode
 };
 
 class VerticalOrderBook extends React.Component<Props> {
@@ -195,7 +196,7 @@ export const OrderListRenderer = (props: *) => {
 
 export type SingleOrderProps = {
   order: Object,
-  displayMode: Object,
+  displayMode: DisplayMode,
   onClick: void => void
 };
 

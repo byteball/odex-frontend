@@ -2,8 +2,9 @@
 import React from 'react';
 import HorizontalOrderBook from './HorizontalOrderBook';
 import VerticalOrderBook from './VerticalOrderBook'
-import type { TokenPair } from '../../types/tokens';
 import { AutoSizer } from 'react-virtualized'
+import type { TokenPair } from '../../types/tokens';
+import type { DisplayMode } from '../../types/account'
 
 
 type BidOrAsk = {
@@ -19,7 +20,7 @@ type Props = {
   currentPair: TokenPair,
   midMarketPrice: ?number,
   spread: ?number,
-  displayMode: Object,
+  displayMode: DisplayMode,
   select: BidOrAsk => void,
   onCollapse: string => void,
   onExpand: string => void,

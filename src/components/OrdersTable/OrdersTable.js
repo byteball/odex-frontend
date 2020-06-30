@@ -5,12 +5,13 @@ import { sortTable } from '../../utils/helpers'
 import { ContextMenuTarget, Menu, MenuItem } from '@blueprintjs/core'
 
 import type { Order } from '../../types/Orders'
+import type { DisplayMode } from '../../types/account'
 
 type Props = {
   orders: Array<Order>,
   authenticated: boolean,
   address: string,
-  displayMode: Object,
+  displayMode: DisplayMode,
   cancelOrder: string => void,
   onCollapse: string => void,
   onExpand: string => void,

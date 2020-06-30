@@ -33,6 +33,7 @@ import {
 import Help from '../../components/Help'
 
 import type { Node } from 'react'
+import type { DisplayMode } from '../../types/account'
 
 
 type Props = {
@@ -67,7 +68,7 @@ type Props = {
   expand: SyntheticEvent<> => void,
   onContextMenu: void => Node,
   buttonType: "BUY" | "SELL" | "BUY_UNLOCK" | "SELL_UNLOCK" | "BUY_LOGIN" | "SELL_LOGIN" | "BUY_UNLOCK_PENDING" | "SELL_UNLOCK_PENDING",
-  displayMode: Object,
+  displayMode: DisplayMode,
 }
 
 

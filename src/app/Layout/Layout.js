@@ -38,6 +38,8 @@ import type {
   Location
 } from '../../types/common'
 
+import type { DisplayMode } from '../../types/account'
+
 export type Props = {
   children?: Node,
   authenticated: boolean,
@@ -48,8 +50,8 @@ export type Props = {
   referenceCurrencies: Array<string>,
   updateReferenceCurrency: void => string,
   currentReferenceCurrency: string,
-  displayModes: Array<Object>,
-  currentDisplayMode: Object,
+  displayModes: Array<DisplayMode>,
+  currentDisplayMode: DisplayMode,
   updateDisplayMode: void => string,
   queryAppData: void => void,
   location: Location,

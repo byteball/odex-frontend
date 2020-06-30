@@ -4,6 +4,7 @@ import OrderFormRenderer from './OrderFormRenderer'
 import { formatNumber, unformat } from 'accounting-js'
 import { Menu, MenuItem, ContextMenuTarget } from '@blueprintjs/core'
 import { MATCHER_FEE } from '../../config/environment';
+import type { DisplayMode } from '../../types/account'
 
 type Props = {
   authenticated: boolean,
@@ -24,7 +25,7 @@ type Props = {
   operatorAddress: string,
   exchangeAddress: string,
   selectedOrder: Object,
-  displayMode: Object,
+  displayMode: DisplayMode,
   onCollapse: string => void,
   onExpand: string => void,
   onResetDefaultLayout: void => void,

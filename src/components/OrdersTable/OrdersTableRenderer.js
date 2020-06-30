@@ -29,6 +29,7 @@ import { relativeDate } from '../../utils/helpers'
 import { Order } from '../../types/orders'
 
 import type { Node } from 'react'
+import type { DisplayMode } from '../../types/account'
 import { Devices } from '../Common/Variables'
 
 type Props = {
@@ -39,7 +40,7 @@ type Props = {
   toggleCollapse: void => void,
   cancelOrder: string => void,
   authenticated: boolean,
-  displayMode: Object,
+  displayMode: DisplayMode,
   address: string,
   orders: {
     ALL: Array<Order>,

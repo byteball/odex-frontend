@@ -27,6 +27,7 @@ import {
 import type { Node } from 'react'
 import type { Trade } from '../../types/trades';
 import type { TokenPair } from '../../types/tokens';
+import type { DisplayMode } from '../../types/account'
 import { AutoSizer } from 'react-virtualized'
 
 type Props = {
@@ -41,7 +42,7 @@ type Props = {
   expand: SyntheticEvent<> => void,
   onContextMenu: void => Node,
   authenticated: boolean,
-  displayMode: Object,
+  displayMode: DisplayMode,
 };
 
 const TradesTableRenderer = (props: Props) => {

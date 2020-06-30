@@ -7,6 +7,7 @@ import { ContextMenuTarget, Menu, MenuItem } from '@blueprintjs/core'
 import type Trade from '../../types/trades';
 import type { TokenPair } from '../../types/tokens';
 import type { Node } from 'react'
+import type { DisplayMode } from '../../types/account'
 
 type State = {
   selectedTabId: string,
@@ -21,7 +22,7 @@ type Props = {
   onCollapse: string => void,
   onExpand: string => void,
   onResetDefaultLayout: void => void,
-  displayMode: Object
+  displayMode: DisplayMode
 };
 
 class TradesTable extends React.PureComponent<Props, State> {

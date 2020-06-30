@@ -23,6 +23,8 @@ type Indicator = {
   rank: number,
 };
 
+import type { DisplayMode } from '../../types/account'
+
 export const timeSpans: Array<Object> = [
   { name: '1 min', label: '1m' },
   { name: '5 min', label: '5m' },
@@ -89,7 +91,7 @@ type Props = {
   onResetDefaultLayout: void => void,
   onFullScreen: void => void,
   fullScreen: boolean,
-  displayMode: Object
+  displayMode: DisplayMode
 };
 
 type State = {
