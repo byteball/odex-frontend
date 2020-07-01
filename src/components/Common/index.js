@@ -99,14 +99,14 @@ export { default as Spacer } from './Spacer'
 export { default as Chevron } from './Chevron';
 export { default as Centered } from './Centered';
 export { default as Colors } from './Colors';
-export { default as Variables } from './Variables';
+// export { default as Variables } from './Variables';
 export { default as Divider } from './Divider';
 export { default as Heading } from './Heading';
 export { default as CenteredSpinner } from './CenteredSpinner';
 export { default as OverlaySpinner } from './OverlaySpinner';
 export { default as Hideable } from './Hideable';
 
-export { default as RowStart, RowEnd, RowCenter, RowSpaceAround, RowSpaceBetween } from './Row';
+export { default as RowStart, RowEnd, RowSpaceAround, RowSpaceBetween } from './Row';
 export { default as Column, ColumnStart, ColumnEnd, ColumnSpaceAround } from './Column';
 export { default as Loading } from './Loading';
 export { default as CenteredMessage } from './CenteredMessage';
