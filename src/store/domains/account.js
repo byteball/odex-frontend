@@ -1,5 +1,6 @@
 // @flow
 import type { AccountState, AccountParams, ReferenceCurrency, DisplayMode } from '../../types/account'
+import { displayModes } from '../../config'
 
 function dec2hex(dec) {
   return ('0' + dec.toString(16)).substr(-2)
@@ -114,6 +115,6 @@ export default function accountDomain(state: AccountState) {
     operatorAddress: state.operatorAddress,
     referenceCurrency: state.referenceCurrency,
     referenceCurrencyName: state.referenceCurrency.name,
-    displayMode: state.displayMode,
+    displayMode: state.displayMode ? state.displayMode : displayModes[0],
   };
 }

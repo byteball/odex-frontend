@@ -34,7 +34,7 @@ export default function createSelector(state) {
       ...mode
     }
   })
-  let currentDisplayMode = modes.find(mode => mode.name === displayMode.name)
+  let currentDisplayMode = displayMode ? modes.find(mode => mode.name === displayMode.name) : modes[0];
 
   return {
     GBYTEBalance,
