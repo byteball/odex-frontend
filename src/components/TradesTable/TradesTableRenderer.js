@@ -253,7 +253,6 @@ const TradesTableHeader = styled.div`
 const Wrapper = styled.div`
   overflow-y: auto;
   overflow-x: hidden;
-  height: 90%;
 `
 
 const Heading = styled.h3`
@@ -262,6 +261,8 @@ const Heading = styled.h3`
 
 const CardBox = styled(Card)`
   height: 100%;
+  display: flex;
+  flex-direction: column;
 `;
 
 const ListHeader = styled.ul`
