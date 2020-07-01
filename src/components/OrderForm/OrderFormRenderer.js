@@ -765,8 +765,7 @@ const MaxAmount = styled.div`
   `
 
 const ContentWrapper = styled.div`
-  overflow-y: auto;
-  height: 88%;
+  height: 100%;
 `
 
 export default OrderFormRenderer

@@ -267,13 +267,13 @@ const SellOrder = React.memo((props: SingleOrderProps) => {
 const CardBox = styled(Card)`
   width: 100%;
   height: 100%;
-  min-height: 50px;
+  display: flex;
+  flex-direction: column;
 `;
 
 const Wrapper = styled.div`
   overflow-y: auto;
   overflow-x: hidden;
-  height: 85%;
 `
 const OrderListBox = styled.div``
 
