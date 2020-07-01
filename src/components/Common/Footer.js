@@ -83,7 +83,7 @@ const Footer = () => (
             </NormalListItem>
             <NormalListItem>
               <LinkText
-                  href="" 
+                  href="https://tokens.ooo" 
                   target="_blank"
                   rel="noopener"
                 >
