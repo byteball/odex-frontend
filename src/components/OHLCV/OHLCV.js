@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { AutoSizer } from 'react-virtualized'
 import { IndicatorSelect, StandardSelect } from '../SelectMenu';
 import ChartLoadingScreen from './ChartLoadingScreen';
+import type { DisplayMode } from '../../types/account'
 
 import { 
   FlexRow,
@@ -22,8 +23,6 @@ type Indicator = {
   height: number,
   rank: number,
 };
-
-import type { DisplayMode } from '../../types/account'
 
 export const timeSpans: Array<Object> = [
   { name: '1 min', label: '1m' },
