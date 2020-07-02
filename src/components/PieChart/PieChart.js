@@ -52,6 +52,9 @@ export default class PieChart extends React.PureComponent<Props,State> {
     const ex = mx + (cos >= 0 ? 1 : -1) * 2;
     const ey = my;
     const textAnchor = cos >= 0 ? 'start' : 'end';
+    const boxWidth = 110;
+    const boxHight = 70;
+    const boxFontSize = payload.symbol.length > 30 ? '12px' : '15px';
 
     return (
       <g>
@@ -76,7 +79,12 @@ export default class PieChart extends React.PureComponent<Props,State> {
           fill={Colors.BLUE5}
         />
         {/* <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} 	style={{"font-size": 20}} fill={Colors.WHITE} dominantBaseline="central">{payload.symbol}</text> */}
-        <text x={cx} y={cy} dy={8} style={{"fontSize": 20}} textAnchor="middle" fill={Colors.WHITE}>{payload.symbol}</text>
+        {/* <text x={cx} y={cy} dy={8} style={{"fontSize": 20}} textAnchor="middle" fill={Colors.WHITE}>{payload.symbol}</text> */}
+        <foreignObject x={cx - boxWidth / 2} y={cy - boxHight / 2} width={boxWidth} height={boxHight}>
+          <div xmlns="http://www.w3.org/1999/xhtml" style={{width: '100%', height: '100%', display: 'flex', justifyContent: 'center', flexDirection: 'column', fontSize: boxFontSize }}>
+            <p style={{margin: '0', wordWrap: 'break-word', textAlign: 'center'}}>{payload.symbol}</p>
+          </div>
+        </foreignObject>
         <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={Colors.BLUE5} fill="none"/>
         <circle cx={ex} cy={ey} r={2} fill={Colors.PRIMARY} stroke={Colors.BLUE5}/>
         <text x={ex + (cos >= 0 ? 1 : -1) * 4} y={ey} textAnchor={textAnchor} fill={Colors.WHITE}>{`${value} ${payload.unit}`}</text>
