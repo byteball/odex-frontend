@@ -694,8 +694,9 @@ const OrderFormHeader = styled.div`
 `
 
 const Wrapper = styled(Card)`
-  min-width: 240px;
   height: 100%;
+  display: flex;
+  flex-direction: column;
 `
 
 const ButtonRow = styled.span`
@@ -765,7 +766,7 @@ const MaxAmount = styled.div`
   `
 
 const ContentWrapper = styled.div`
-  height: 100%;
+  flex: 1;
 `
 
 export default OrderFormRenderer
