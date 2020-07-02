@@ -25,7 +25,8 @@ export default function tokenSearcherSelector(state: State) {
   let ordersDomain = getOrdersDomain(state)
   let tokenPairs = domain.getTokenPairsDataArray()
   let favoriteTokenPairs = domain.getFavoritePairs()
-  const quoteTokens = getTokenDomain(state).quoteTokens()
+  const tokenDomain = getTokenDomain(state);
+  const quoteTokens = tokenDomain.quoteTokens()
   quoteTokens.sort((t1, t2) => t2.rank - t1.rank)
   let quoteTokenSymbols = quoteTokens.map(token => token.symbol)
   let tokenPairsByQuoteToken = {}
@@ -66,8 +67,8 @@ export default function tokenSearcherSelector(state: State) {
   let currentPair = { ...rawPair, pair: currentPairName, baseTokenSymbol, quoteTokenSymbol }
   let pairsList = domain.getListedPairs()
 
-  let tokenData = accountBalancesDomain.getBalances(quoteTokens, accountDomain.referenceCurrency)
-  let baseToken = tokenData.find((el) => el.symbol === rawPair.baseTokenSymbol)
+  let tokenData = accountBalancesDomain.getBalances(tokenDomain.tokens(), accountDomain.referenceCurrency)
+  let baseToken = tokenData.find((el) => el.symbol === baseTokenSymbol)
 
   return {
     tokenPairs,
