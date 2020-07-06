@@ -1,5 +1,5 @@
 // @flow
-import type { AccountState, AccountParams, ReferenceCurrency, DisplayMode } from '../../types/account'
+import type { AccountState, AccountParams, ReferenceCurrency, DisplayMode, BrowserWallet } from '../../types/account'
 import { displayModes } from '../../config'
 
 function dec2hex(dec) {
@@ -21,7 +21,8 @@ const initialState = {
   exchangeAddress: '',
   operatorAddress: '',
   referenceCurrency: { name: 'USD', symbol: '$'},
-  displayMode: { name: 'Price', priceAlias: 'PRICE', amountAlias: 'AMOUNT' }
+  displayMode: { name: 'Price', priceAlias: 'PRICE', amountAlias: 'AMOUNT' },
+  browserWallet: { address: '' }
 }
 
 export const initialized = () => {
@@ -104,6 +105,15 @@ export const displayModeUpdated = (displayMode: DisplayMode) => {
   return event
 }
 
+export const browserWalletUpdated = (browserWallet: BrowserWallet) => {
+  const event = (state: AccountState) => ({
+    ...state,
+    browserWallet
+  })
+
+  return event
+}
+
 export default function accountDomain(state: AccountState) {
   return {
     appIsLoaded: state.loaded,
@@ -116,5 +126,6 @@ export default function accountDomain(state: AccountState) {
     referenceCurrency: state.referenceCurrency,
     referenceCurrencyName: state.referenceCurrency.name,
     displayMode: state.displayMode ? state.displayMode : displayModes[0],
+    browserWallet: state.browserWallet
   };
 }

@@ -5,17 +5,21 @@ import WalletInfoRenderer from './WalletInfoRenderer';
 import { EXPLORER_URL } from '../../config/urls'
 
 import type { TokenData, Token, TokenPairs } from '../../types/tokens'
+import type { BrowserWallet } from '../../types/account'
 
 import { getAaStateVars, getHistory, getWitnesses } from '../../store/services/api'
+import { generateWallet } from '../../utils/wallet';
 
 type Props = {
   accountAddress: string,
+  browserAddress: string,
   gbyteBalance: number,
   userTokens: Array<string>,
   listedTokens: Array<string>,
   detectToken: string => { decimals: number, symbol: string, isRegistered: boolean },
   addToken: string => { error: string, token: Token, pairs: TokenPairs },
   registerToken: string => { error?: string, token?: Token, pairs?: TokenPairs },
+  updateBrowserWallet: void => string,
   recentTransactions: Array<Tx>,
   exchangeAddress: string,
   tokenData: Array<TokenData>,
@@ -61,7 +65,7 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
     getAaStateVars(exchangeAddress)
       .then(res => {
         const authorizations = Object.keys(res)
-          .filter(key => key.indexOf(`grant_${accountAddress}`) >= 0 && res[key] === '1')
+          .filter(key => key.indexOf(`grant_${accountAddress}`) >= 0 && res[key] === 1)
           .map(key => String(key).split('_to_')[1])
         this.setState({
           authorizations
@@ -176,10 +180,25 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
     }
   }
 
+  handleAddBrowserWallet = () => {
+    const { updateBrowserWallet } = this.props;
+    const browserWallet = generateWallet();
+    updateBrowserWallet(browserWallet)
+  }
+
+  handleRemoveBrowserWallet = () => {
+    const { updateBrowserWallet } = this.props;
+    const browserWallet = {
+      address: ''
+    }
+    updateBrowserWallet(browserWallet)
+  }
+
   render() {
     const {
       props: { 
         accountAddress,
+        browserAddress,
         gbyteBalance,
         userTokens,
         listedTokens,
@@ -211,6 +230,8 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
       handleAddToken,
       handleChangeAddress,
       handleToggleRevokeModal,
+      handleAddBrowserWallet,
+      handleRemoveBrowserWallet
     } = this;
 
     let tokenExplorerUrl = `${EXPLORER_URL}/#${asset}`
@@ -224,6 +245,7 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
         isModalOpen={isModalOpen}
         selectedTab={selectedTab}
         accountAddress={accountAddress}
+        browserAddress={browserAddress}
         accountExplorerUrl={accountExplorerUrl}
         asset={asset}
         assetStatus={assetStatus}
@@ -251,6 +273,8 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
         handleToggleRevokeModal={handleToggleRevokeModal}
         transactions={transactions}
         tokenData={tokenData}
+        handleAddBrowserWallet={handleAddBrowserWallet}
+        handleRemoveBrowserWallet={handleRemoveBrowserWallet}
       />
     );
   }

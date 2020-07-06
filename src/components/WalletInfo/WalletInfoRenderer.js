@@ -23,6 +23,7 @@ const { isValidAddress } = require('obyte/lib/utils');
 type Props = {
   isModalOpen: boolean,
   accountAddress: string,
+  browserAddress: string,
   balance: number,
   selectedTab: string,
   asset: string,
@@ -42,6 +43,8 @@ type Props = {
   handleDetectToken: SyntheticEvent<> => Promise<void>,
   handleAddToken: SyntheticEvent<> => Promise<void>,
   handleRegisterToken: SyntheticEvent<> => Promise<void>,
+  handleAddBrowserWallet: void => void,
+  handleRemoveBrowserWallet: void => void,
   addTokenPending: boolean,
   registerTokenPending: boolean,
   recentTransactions: Array<Tx>,
@@ -58,6 +61,7 @@ const WalletInfoRenderer = (props: Props) => {
     isModalOpen,
     handleModalClose,
     accountAddress,
+    browserAddress,
     balance,
     selectedTab,
     asset,
@@ -84,6 +88,8 @@ const WalletInfoRenderer = (props: Props) => {
     revokeAddress,
     handleToggleRevokeModal,
     tokenData,
+    handleAddBrowserWallet,
+    handleRemoveBrowserWallet,
   } = props;
 
   return (
@@ -159,11 +165,14 @@ const WalletInfoRenderer = (props: Props) => {
           panel={
             <AuthorizationsPanel
               address={address}
+              browserAddress={browserAddress}
               authorizations={authorizations}
               handleChangeAddress={handleChangeAddress}
               accountAddress={accountAddress}
               exchangeAddress={exchangeAddress}
               handleToggleRevokeModal={handleToggleRevokeModal}
+              handleAddBrowserWallet={handleAddBrowserWallet}
+              handleRemoveBrowserWallet={handleRemoveBrowserWallet}
             />
           }
         />
@@ -409,8 +418,22 @@ const GRANTTEXT = styled.div`
   word-break: break-word;
 `;
 
+const Wrapper = styled.div`
+  
+`;
+
 const AuthorizationsPanel = (props: *) => {
-  const { address, authorizations, handleChangeAddress, exchangeAddress, handleToggleRevokeModal, accountAddress } = props;
+  const { 
+    address, 
+    browserAddress, 
+    authorizations, 
+    handleChangeAddress, 
+    exchangeAddress, 
+    handleToggleRevokeModal, 
+    accountAddress, 
+    handleAddBrowserWallet, 
+    handleRemoveBrowserWallet 
+  } = props;
   let data = {
     grant: 1,
     address,
@@ -443,6 +466,20 @@ const AuthorizationsPanel = (props: *) => {
               </FlexRow>
             );
           })}
+          {
+            browserAddress &&
+              <Wrapper>
+                <h3 minimal large>
+                  Browser Address
+                </h3>
+                <FlexRow py={2} alignItems="center">
+                    <FlexItem flex="1">
+                      <GRANTTEXT>{browserAddress}</GRANTTEXT>
+                    </FlexItem>
+                    <Button icon="cross" intent="danger" minimal onClick={handleRemoveBrowserWallet} />
+                </FlexRow>
+              </Wrapper>
+          }
           <h3 minimal large>
             Add Authorizations
           </h3>
@@ -467,6 +504,31 @@ const AuthorizationsPanel = (props: *) => {
               }}
             />
           </Flex>
+          {
+            !browserAddress &&
+              <Wrapper>
+                <h3 minimal large>
+                  Generate Browser Wallet
+                </h3>
+                <Flex py={2}>
+                  <FlexItem flex="1">
+                    <InputGroup
+                      name="password"
+                      placeholder="Password"
+                      // intent={!isValid ? 'danger' : ''}
+                      // onChange={handleChangeAddress}
+                      // value={address}
+                      fill
+                    />
+                  </FlexItem>
+                  <Button
+                    intent="primary"
+                    text="Generate"
+                    onClick={handleAddBrowserWallet}
+                  />
+                </Flex>
+              </Wrapper>
+          }
           {!isValid && address !== '' && <Text muted intent="danger">{message}</Text>}
         </Box>
       )}

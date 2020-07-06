@@ -1,5 +1,6 @@
 import { connect } from 'react-redux'
 import walletInfoSelector, { detectToken, addToken, registerToken } from '../../store/models/walletInfo'
+import { updateBrowserWallet } from '../../store/actions/walletInfo';
 import getTransferTokensFormSelector from '../../store/models/transferTokensForm'
 
 
@@ -17,6 +18,7 @@ const mapDispatchToProps = {
     detectToken,
     addToken,
     registerToken,
+    updateBrowserWallet,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)

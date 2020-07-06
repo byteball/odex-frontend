@@ -2,7 +2,8 @@
 
 import type {
     AddTokenAction,
-    RegisterTokenAction
+    RegisterTokenAction,
+    UpdateBrowserWalletAction
 } from '../../types/walletInfo'
 
 import type { 
@@ -10,9 +11,14 @@ import type {
     TokenPairs    
 } from '../../types/tokens'
 
+import type {
+    BrowserWallet
+} from '../../types/account'
+
 const actionTypes = {
     addToken: 'walletInfo/ADD_TOKEN',
-    registerToken: 'walletInfo/REGISTER_TOKEN'
+    registerToken: 'walletInfo/REGISTER_TOKEN',
+    updateBrowserWallet: 'walletInfo/UPDATE_BROWSER_WALLET'
 }
 
 export function addToken(token: Token, pairs: TokenPairs): AddTokenAction {
@@ -26,6 +32,13 @@ export function registerToken(pairs: TokenPairs): RegisterTokenAction {
     return {
         type: actionTypes.registerToken,
         payload: { pairs }
+    }
+}
+
+export function updateBrowserWallet(browserWallet: BrowserWallet): UpdateBrowserWalletAction {
+    return {
+        type: actionTypes.updateBrowserWallet,
+        payload: { browserWallet }
     }
 }
 
