@@ -17,18 +17,14 @@ export default function ordersTableSelector(state: State) {
   };
 }
 
-export const cancelOrder = (hash: string): ThunkAction => {
+export const cancelOrder = (signedCancel: string): ThunkAction => {
   return async (dispatch, getState, { socket, mixpanel }) => {
     mixpanel.track('trading-page/cancel-order');
 
     try {
-      let { sessionId } = getAccountDomain(getState())
-      let orderCancelPayload = {orderHash: hash, sessionId}
-
       dispatch(notifierActionCreators.addSuccessNotification({ message: `Cancelling order ...` }))
-      socket.sendNewOrderCancelMessage(orderCancelPayload)
+      socket.sendNewOrderCancelMessage(signedCancel)
     } catch (error) {
-
       let message = parseCancelOrderError(error)
       return dispatch(notifierActionCreators.addErrorNotification({ message }))
     }
