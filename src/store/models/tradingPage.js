@@ -12,7 +12,7 @@ export default function tradingPageSelector(state: State) {
   let accountBalancesDomain = getAccountBalancesDomain(state)
   let pairDomain = getTokenPairsDomain(state)
   let { isInitiated, isConnected } = getConnectionDomain(state);
-  let { authenticated } = getAccountDomain(state)
+  let { authenticated, displayMode } = getAccountDomain(state)
 
   let {
     pair,
@@ -40,6 +40,7 @@ export default function tradingPageSelector(state: State) {
     quoteTokenBalance,
     quoteTokenSymbol,
     pairName: pair,
+    displayMode,
     displayModes
   }
 }

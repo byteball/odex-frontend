@@ -30,6 +30,7 @@ type Props = {
   baseTokenSymbol: string,
   quoteTokenSymbol: string,
   pairName: string,
+  displayMode: DisplayMode,
   displayModes: Array<DisplayMode>,
   queryTradingPageData: () => void,
   updateDisplayMode: (DisplayMode) => void,
@@ -170,7 +171,13 @@ class TradingPage extends React.PureComponent<Props, State> {
     // this.checkIfCalloutRequired()
   }
 
-  componentDidUpdate(prevProps: Props, nextProps) {
+  componentDidUpdate(prevProps: Props) {
+   
+    if (prevProps.displayMode.name !== this.props.displayMode.name) {
+      const { history, pairName, displayMode } = this.props;
+      history.replace(`/trade/${pairName}/${displayMode.name}`)
+    }
+
     if (prevProps.isConnected || !this.props.isConnected || !this.props.isInitiated || this.state.initData) {
       return;
     }
