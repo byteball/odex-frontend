@@ -37,7 +37,8 @@ export type DisplayMode = {
 }
 
 export type BrowserWallet = {
-  address: string
+  address: string,
+  wif: string,
 }
 
 export type AccountEvent = any => AccountState => AccountState;

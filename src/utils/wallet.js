@@ -22,7 +22,8 @@ export const generateWallet = () => {
   const address = getChash160(definition);
 
   return {
-    address
+    address,
+    wif
   }
 }
 

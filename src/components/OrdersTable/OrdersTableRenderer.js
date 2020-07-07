@@ -4,6 +4,8 @@ import styled from 'styled-components'
 import { formatNumber } from 'accounting-js'
 import { AutoSizer } from 'react-virtualized'
 import { CHATBOT_URL } from '../../config/urls'
+import { signMessage } from 'obyte/lib/utils';
+
 
 import { 
   Card, 
@@ -209,6 +211,13 @@ const OrdersTablePanel = (props: *) => {
 const OrderRow = (props: *) => {
   const { order, cancelOrder, address, width, labels, displayMode } = props
 
+  const onClickCancel = (hash: string) => {
+    console.log('onClickCancel', hash)
+    const signedMessage = signMessage('Cancel order ' + hash, {wif: "92Q25PfiFsZxN7mHkkgBDi3g7Qb1X4QopV3GnNCwA98mkkPL4Hn", testnet: true});
+    console.log(signedMessage)
+    cancelOrder(signedMessage)
+  }
+
   return (
     <Row>
       <Cell className="pair" muted>
@@ -259,7 +268,10 @@ const OrderRow = (props: *) => {
       </Hideable>
       <Cell className="cancel" muted>
         {order.cancelleable && (
-          <AnchorButton intent="danger" minimal href={CHATBOT_URL + "cancel-" + order.hash + "-" + address}>
+          // <AnchorButton intent="danger" minimal href={CHATBOT_URL + "cancel-" + order.hash + "-" + address}>
+          //   <Icon icon="cross" intent="danger" />&nbsp;&nbsp;Cancel
+          // </AnchorButton>
+          <AnchorButton intent="danger" minimal onClick={() => onClickCancel(order.hash)}>
             <Icon icon="cross" intent="danger" />&nbsp;&nbsp;Cancel
           </AnchorButton>
         )}

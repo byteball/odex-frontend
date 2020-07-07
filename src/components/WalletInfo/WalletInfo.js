@@ -189,7 +189,8 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
   handleRemoveBrowserWallet = () => {
     const { updateBrowserWallet } = this.props;
     const browserWallet = {
-      address: ''
+      address: '',
+      wif: ''
     }
     updateBrowserWallet(browserWallet)
   }
