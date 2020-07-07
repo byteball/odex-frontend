@@ -5,6 +5,7 @@ import * as notifierActionCreators from '../actions/app'
 
 import type { State, ThunkAction } from '../../types'
 import { parseOrders, parseTokenPairsData } from '../../utils/parsers'
+import { displayModes } from '../../config'
 
 // eslint-disable-next-line
 export default function tradingPageSelector(state: State) {
@@ -38,7 +39,8 @@ export default function tradingPageSelector(state: State) {
     isInitiated,
     quoteTokenBalance,
     quoteTokenSymbol,
-    pairName: pair
+    pairName: pair,
+    displayModes
   }
 }
 

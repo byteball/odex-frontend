@@ -12,13 +12,23 @@ import type {
   UpdateTradesTableAction,
   InitOrderBookAction,
   InitOrdersTableAction,
-  InitTradesTableAction
+  InitTradesTableAction,
+  UpdateDisplayModeAction,
 } from '../../types/tradingPage'
+
+import type { DisplayMode } from '../../types/account'
 
 export function updateCurrentPair(pair: string): UpdateCurrentPairAction {
   return {
     type: actionTypes.updateCurrentPair,
     payload: { pair }
+  }
+}
+
+export function updateDisplayMode(displayMode: DisplayMode): UpdateDisplayModeAction {
+  return {
+    type: actionTypes.updateDisplayMode,
+    payload: { displayMode }
   }
 }
 
