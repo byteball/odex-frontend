@@ -232,6 +232,7 @@ export const account = createReducer(action => {
     case layoutActionTypes.updateReferenceCurrency:
       return accountEvents.referenceCurrencyUpdated(payload.referenceCurrency)
     case layoutActionTypes.updateDisplayMode:
+    case tradingPageActionTypes.updateDisplayMode:
       return accountEvents.displayModeUpdated(payload.displayMode)
     case logoutPageActionTypes.logout:
       return accountEvents.accountRemoved()

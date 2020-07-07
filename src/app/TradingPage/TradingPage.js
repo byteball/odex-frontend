@@ -13,6 +13,8 @@ import { SizesAsNumbers as Sizes } from '../../components/Common/Variables'
 
 import { Responsive } from 'react-grid-layout'
 
+import type { DisplayMode } from '../../types/account'
+
 const ResponsiveReactGridLayout = Responsive
 
 type Layout = Array<Object>
@@ -28,7 +30,9 @@ type Props = {
   baseTokenSymbol: string,
   quoteTokenSymbol: string,
   pairName: string,
+  displayModes: Array<DisplayMode>,
   queryTradingPageData: () => void,
+  updateDisplayMode: (DisplayMode) => void,
 }
 
 type State = {
@@ -149,6 +153,15 @@ class TradingPage extends React.PureComponent<Props, State> {
   }
 
   componentDidMount() {
+    const { mode } = this.props.match.params;
+    if (mode) {
+      const { displayModes, updateDisplayMode } = this.props;
+      const displayMode = displayModes.find(m => m.name === mode);
+      if (displayMode) {
+        updateDisplayMode(displayMode);
+      }
+    }
+
     if (this.props.isConnected) {
       this.props.queryTradingPageData();
       this.setState({initData: true})
@@ -157,7 +170,7 @@ class TradingPage extends React.PureComponent<Props, State> {
     // this.checkIfCalloutRequired()
   }
 
-  componentDidUpdate(prevProps: Props) {
+  componentDidUpdate(prevProps: Props, nextProps) {
     if (prevProps.isConnected || !this.props.isConnected || !this.props.isInitiated || this.state.initData) {
       return;
     }
