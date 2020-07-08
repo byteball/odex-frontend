@@ -34,7 +34,7 @@ const App = () => {
               <Route path="/wallet" component={WalletPage} />
               {/*<Route path="/settings" component={SettingsPage} />*/}
               <Route path="/logout" component={LogoutPage} />
-              <Route path="/trade/:token1?/:token2?" component={TradingPage} />
+              <Route path="/trade/:token1?/:token2?/:mode?" component={TradingPage} />
               <Redirect to="/trade" />
             </Switch>
           </Layout>

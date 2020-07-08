@@ -5,13 +5,14 @@ import * as notifierActionCreators from '../actions/app'
 
 import type { State, ThunkAction } from '../../types'
 import { parseOrders, parseTokenPairsData } from '../../utils/parsers'
+import { displayModes } from '../../config'
 
 // eslint-disable-next-line
 export default function tradingPageSelector(state: State) {
   let accountBalancesDomain = getAccountBalancesDomain(state)
   let pairDomain = getTokenPairsDomain(state)
   let { isInitiated, isConnected } = getConnectionDomain(state);
-  let { authenticated } = getAccountDomain(state)
+  let { authenticated, displayMode } = getAccountDomain(state)
 
   let {
     pair,
@@ -38,7 +39,9 @@ export default function tradingPageSelector(state: State) {
     isInitiated,
     quoteTokenBalance,
     quoteTokenSymbol,
-    pairName: pair
+    pairName: pair,
+    displayMode,
+    displayModes
   }
 }
 
