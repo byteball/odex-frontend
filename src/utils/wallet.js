@@ -1,3 +1,4 @@
+import { signMessage } from 'obyte/lib/utils';
 import { toWif, getChash160 } from 'byteball/lib/utils';
 import Mnemonic from 'bitcore-mnemonic';
 import { DEFAULT_NETWORK_ID } from '../config/environment'
@@ -25,5 +26,10 @@ export const generateWallet = () => {
     address,
     wif
   }
+}
+
+export const signMessageByWif = (message, wif) => {
+  const testnet = DEFAULT_NETWORK_ID === 'testnet'
+  return signMessage(message, { wif, testnet });
 }
 

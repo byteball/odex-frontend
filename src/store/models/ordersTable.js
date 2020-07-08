@@ -6,14 +6,15 @@ import type { State, ThunkAction } from '../../types'
 import { parseCancelOrderError } from '../../config/errors'
 
 export default function ordersTableSelector(state: State) {
-  let { authenticated, address, displayMode } = getAccountDomain(state)
+  let { authenticated, address, displayMode, browserWallet } = getAccountDomain(state)
   let ordersDomain = getOrdersDomain(state)
 
   return {
     orders: ordersDomain.lastOrders(50),
     address,
     authenticated,
-    displayMode
+    displayMode,
+    wif: browserWallet.wif
   };
 }
 
