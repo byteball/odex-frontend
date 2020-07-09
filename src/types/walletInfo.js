@@ -1,6 +1,7 @@
 // @flow
 
 import type { Token, TokenPairs } from './tokens'
+import type { BrowserWallet } from './account'
 
 export type AddTokenAction = {
     type: 'walletInfo/ADD_TOKEN',
@@ -12,6 +13,8 @@ export type RegisterTokenAction = {
     payload: { pairs: TokenPairs }
 }
 
-
-
+export type UpdateBrowserWalletAction = {
+    type: 'walletInfo/UPDATE_BROWSER_WALLET',
+    payload: { browserWallet: BrowserWallet }
+}
 

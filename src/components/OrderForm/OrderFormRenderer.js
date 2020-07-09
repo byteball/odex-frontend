@@ -5,6 +5,7 @@ import ReactGA from 'react-ga'
 import { formatNumber } from 'accounting-js'
 import { MATCHER_FEE, MAX_PRICE_PRECISION } from '../../config/environment';
 import { CHATBOT_URL } from '../../config/urls'
+import { signMessageByWif } from '../../utils/wallet'
 
 import { 
   Position, 
@@ -69,6 +70,8 @@ type Props = {
   onContextMenu: void => Node,
   buttonType: "BUY" | "SELL" | "BUY_UNLOCK" | "SELL_UNLOCK" | "BUY_LOGIN" | "SELL_LOGIN" | "BUY_UNLOCK_PENDING" | "SELL_UNLOCK_PENDING",
   displayMode: DisplayMode,
+  wif: string,
+  sendNewOrder: string => void,
 }
 
 
@@ -126,7 +129,9 @@ const OrderFormRenderer = (props: Props) => {
     expand,
     onContextMenu,
     buttonType,
-    displayMode
+    displayMode,
+    wif,
+    sendNewOrder
   } = props
 
   return (
@@ -216,6 +221,8 @@ const OrderFormRenderer = (props: Props) => {
                 tokensBySymbol={tokensBySymbol}
                 buttonType={buttonType}
                 displayMode={displayMode}
+                wif={wif}
+                sendNewOrder={sendNewOrder}
               />
             }
           />
@@ -297,7 +304,9 @@ const LimitOrderPanel = props => {
     bestBidMatcher,
     tokensBySymbol,
     buttonType,
-    displayMode
+    displayMode,
+    wif,
+    sendNewOrder
   } = props
 
   let fAmount = parseFloat(amount);
@@ -413,6 +422,9 @@ const LimitOrderPanel = props => {
           handleSendOrder={handleSendOrder}
           buttonType={buttonType}
           disabled={insufficientBalance || !fPrice || !fAmount}
+          wif={wif}
+          order={order}
+          sendNewOrder={sendNewOrder}
         />
     </React.Fragment>
   )
@@ -566,15 +578,29 @@ const ButtonRenderer = (props: *) => {
   const {
     side,
     link,
+    wif,
+    order,
     amount,
     baseTokenSymbol,
     quoteTokenSymbol,
     handleSendOrder,
     disabled,
-    buttonType
+    buttonType,
+    sendNewOrder
   } = props
 
-  const buyGA = (symbol) => {
+
+  const sendOrder = (type) => {
+    sendNewOrder(signMessageByWif(order, wif))
+    
+    if (type === "BUY") {
+      buyGA();
+    } else {
+      sellGA();
+    }
+  }
+
+  const buyGA = () => {
     ReactGA.event({
       category: 'ODEX',
       action: 'Buy',
@@ -582,7 +608,7 @@ const ButtonRenderer = (props: *) => {
     });
   }
 
-  const sellGA = (symbol) => {
+  const sellGA = () => {
     ReactGA.event({
       category: 'ODEX',
       action: 'Sell',
@@ -592,17 +618,35 @@ const ButtonRenderer = (props: *) => {
   
   return {
     "BUY": (
+      wif ?
       <GreenGlowingAnchorButton
-          intent="success"
-          text={side + " " + amount + " " + baseTokenSymbol}
-          name="order"
-          href={link}
-          onClick={buyGA}
-          disabled={disabled} 
-          fill
+        intent="success"
+        text={side + " " + amount + " " + baseTokenSymbol}
+        name="order"
+        onClick={() => sendOrder("BUY")}
+        disabled={disabled} 
+        fill
+      /> :
+      <GreenGlowingAnchorButton
+        intent="success"
+        text={side + " " + amount + " " + baseTokenSymbol}
+        name="order"
+        href={link}
+        onClick={buyGA}
+        disabled={disabled} 
+        fill
       />
     ),
     "SELL": (
+      wif ?
+      <RedGlowingAnchorButton
+        intent="danger"
+        text={side + " " + amount + " " + baseTokenSymbol}
+        name="order"
+        onClick={() => sendOrder("SELL")}
+        disabled={disabled} 
+        fill 
+      /> :
       <RedGlowingAnchorButton
         intent="danger"
         text={side + " " + amount + " " + baseTokenSymbol}
@@ -683,8 +727,6 @@ const ButtonRenderer = (props: *) => {
     )
   }[buttonType]
 }
-
-
 
 
 

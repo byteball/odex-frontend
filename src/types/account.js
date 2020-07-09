@@ -8,6 +8,7 @@ export type AccountState = {
   +operatorAddress: string,
   +referenceCurrency: ReferenceCurrency,
   +displayMode: DisplayMode,
+  +browserWallet: BrowserWallet,
 };
 
 export type AccountParams = {
@@ -33,6 +34,11 @@ export type DisplayMode = {
   name: string,
   priceAlias: string,
   amountAlias: string
+}
+
+export type BrowserWallet = {
+  address: string,
+  wif: string,
 }
 
 export type AccountEvent = any => AccountState => AccountState;

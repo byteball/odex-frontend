@@ -1,12 +1,11 @@
-export const sendNewOrderMessage = async orderPayload => {
+export const sendNewOrderMessage = async signedOrder => {
   if (!window.socket) throw new Error('Socket connection not established')
 
   let message = JSON.stringify({
     channel: 'orders',
     event: {
       type: 'NEW_ORDER',
-      hash: orderPayload.hash,
-      payload: orderPayload
+      payload: signedOrder
     }
   })
 
@@ -15,15 +14,14 @@ export const sendNewOrderMessage = async orderPayload => {
   window.socket.send(message)
 }
 
-export const sendNewOrderCancelMessage = orderCancelPayload => {
+export const sendNewOrderCancelMessage = signedCancel => {
   if (!window.socket) throw new Error('Socket connection not established')
 
   let message = JSON.stringify({
     channel: 'orders',
     event: {
       type: 'CANCEL_ORDER',
-      hash: orderCancelPayload.hash,
-      payload: orderCancelPayload
+      payload: signedCancel
     }
   })
 

@@ -40,6 +40,7 @@
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
+    "bitcore-mnemonic": "^8.20.5",
     "connected-react-router": "^4.5.0",
     "cryptocurrency-icons": "^0.9.3",
     "d3-dsv": "^1.2.0",

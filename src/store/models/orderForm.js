@@ -30,7 +30,7 @@ export default function getOrderFormSelector(state: State) {
     quoteTokenDecimals
   } = currentPair
 
-  let { authenticated, address, operatorAddress, exchangeAddress, displayMode } = getAccountDomain(state)
+  let { authenticated, address, operatorAddress, exchangeAddress, displayMode, browserWallet } = getAccountDomain(state)
 
   let askPrice = orderBookDomain.getAskPrice()
   let bidPrice = orderBookDomain.getBidPrice()
@@ -65,7 +65,8 @@ export default function getOrderFormSelector(state: State) {
     exchangeAddress,
     tokensBySymbol,
     authenticated,
-    displayMode
+    displayMode,
+    wif: browserWallet.wif
   }
 }
 
@@ -73,3 +74,16 @@ export const defaultFunction = (): ThunkAction => {
   return async (dispatch, getState) => {}
 }
 
+export const sendNewOrder = (signedOrder: string): ThunkAction => {
+  return async (dispatch, getState, { socket, mixpanel }) => {
+    mixpanel.track('trading-page/create-order');
+
+    try {
+      dispatch(notifierActionCreators.addSuccessNotification({ message: `Sending new order ...` }))
+      socket.sendNewOrderMessage(signedOrder)
+    } catch (error) {
+      let message = parseNewOrderError(error)
+      return dispatch(notifierActionCreators.addErrorNotification({ message }))
+    }
+  }
+}

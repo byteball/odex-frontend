@@ -20,7 +20,8 @@ export default function walletInfoSelector(state: State) {
         registeredTokens: tokenDomain.registeredAssets(),
         gbyteBalance: accountBalancesDomain.formattedGbyteBalance(),
         recentTransactions: transactionsDomain.recentTransactions(8),
-        accountAddress: accountDomain.address
+        accountAddress: accountDomain.address,
+        browserAddress: accountDomain.browserWallet ? accountDomain.browserWallet.address : '',
     }
 }
 

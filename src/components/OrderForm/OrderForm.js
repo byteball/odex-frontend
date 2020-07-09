@@ -22,6 +22,7 @@ type Props = {
   quoteTokenDecimals: number,
   loggedIn: boolean,
   address: string,
+  wif: string,
   operatorAddress: string,
   exchangeAddress: string,
   selectedOrder: Object,
@@ -29,6 +30,7 @@ type Props = {
   onCollapse: string => void,
   onExpand: string => void,
   onResetDefaultLayout: void => void,
+  sendNewOrder: string => void,
 }
 
 type State = {
@@ -357,7 +359,9 @@ class OrderForm extends React.PureComponent<Props, State> {
         bestBidMatcher,
         tokensBySymbol,
         authenticated,
-        displayMode
+        displayMode,
+        wif,
+        sendNewOrder
       },
       onInputChange,
       handleChangeOrderType,
@@ -428,6 +432,8 @@ class OrderForm extends React.PureComponent<Props, State> {
         authenticated={authenticated}
         buttonType={buttonType}
         displayMode={displayMode}
+        wif={wif}
+        sendNewOrder={sendNewOrder}
       />
     )
   }
