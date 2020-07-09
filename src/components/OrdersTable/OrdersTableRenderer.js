@@ -217,15 +217,10 @@ const OrdersTablePanel = (props: *) => {
 
 const OrderRow = (props: *) => {
   const { order, cancelOrder, address, width, labels, displayMode, wif } = props
-  const cancelRef = React.createRef();
-
+  
   const onClickCancel = () => {
-    if (wif) {
-      const signedCancel = signMessageByWif('Cancel order ' + order.hash, wif)
-      cancelOrder(signedCancel)
-    } else {
-      cancelRef.current.click()
-    }
+    const signedCancel = signMessageByWif('Cancel order ' + order.hash, wif)
+    cancelOrder(signedCancel)
   }
 
   return (
@@ -278,13 +273,14 @@ const OrderRow = (props: *) => {
       </Hideable>
       <Cell className="cancel" muted>
         {order.cancelleable && (
-          <AnchorButton intent="danger" minimal onClick={onClickCancel}>
+          wif ? <AnchorButton intent="danger" minimal onClick={onClickCancel}>
+            <Icon icon="cross" intent="danger" />&nbsp;&nbsp;Cancel
+          </AnchorButton> :
+          <AnchorButton intent="danger" minimal href={CHATBOT_URL + "cancel-" + order.hash + "-" + address}>
             <Icon icon="cross" intent="danger" />&nbsp;&nbsp;Cancel
           </AnchorButton>
         )}
       </Cell>
-      <HiddenLink innerRef={cancelRef} href={CHATBOT_URL + "cancel-" + order.hash + "-" + address} />
-      
     </Row>
   )
 }
@@ -306,8 +302,6 @@ const StatusTag = ({ status }) => {
   )
 }
 
-const HiddenLink= styled.a`
-`
 
 const OrdersTableHeader = styled.div`
   display: grid;

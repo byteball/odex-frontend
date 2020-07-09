@@ -1,5 +1,4 @@
-import { signMessage } from 'obyte/lib/utils';
-import { toWif, getChash160 } from 'byteball/lib/utils';
+import { signMessage, toWif, getChash160 } from 'obyte/lib/utils';
 import Mnemonic from 'bitcore-mnemonic';
 import { DEFAULT_NETWORK_ID } from '../config/environment'
 

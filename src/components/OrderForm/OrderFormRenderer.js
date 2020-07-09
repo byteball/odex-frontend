@@ -359,8 +359,6 @@ const LimitOrderPanel = props => {
   let pairing_secret = btoa(JSON.stringify(order));
   let link = CHATBOT_URL + pairing_secret;
 
-  const orderRef = React.createRef();
-
   return (
     <React.Fragment>
       <InputBox>
@@ -417,6 +415,7 @@ const LimitOrderPanel = props => {
       <MaxAmount> Fee: {fee} {quoteTokenSymbol}</MaxAmount>
         <ButtonRenderer
           side={side}
+          link={link}
           amount={displayMode.name === 'Price' ? amount : formatNumber(parseFloat(amount) * parseFloat(price), { precision: 3 })}
           baseTokenSymbol={baseTokenSymbol}
           quoteTokenSymbol={quoteTokenSymbol}
@@ -425,10 +424,8 @@ const LimitOrderPanel = props => {
           disabled={insufficientBalance || !fPrice || !fAmount}
           wif={wif}
           order={order}
-          orderRef={orderRef}
           sendNewOrder={sendNewOrder}
         />
-      <HiddenLink innerRef={orderRef} href={link} />
     </React.Fragment>
   )
 }
@@ -580,9 +577,9 @@ const RadioButton = props => {
 const ButtonRenderer = (props: *) => {
   const {
     side,
+    link,
     wif,
     order,
-    orderRef,
     amount,
     baseTokenSymbol,
     quoteTokenSymbol,
@@ -593,17 +590,17 @@ const ButtonRenderer = (props: *) => {
   } = props
 
 
-  const sendOrder = () => {
-    if (wif) {
-      sendNewOrder(signMessageByWif(order, wif))
+  const sendOrder = (type) => {
+    sendNewOrder(signMessageByWif(order, wif))
+    
+    if (type === "BUY") {
+      buyGA();
     } else {
-      orderRef.current.click()
+      sellGA();
     }
   }
 
-  const buyGA = (symbol) => {
-    sendOrder();
-
+  const buyGA = () => {
     ReactGA.event({
       category: 'ODEX',
       action: 'Buy',
@@ -611,9 +608,7 @@ const ButtonRenderer = (props: *) => {
     });
   }
 
-  const sellGA = (symbol) => {
-    sendOrder();
-
+  const sellGA = () => {
     ReactGA.event({
       category: 'ODEX',
       action: 'Sell',
@@ -623,20 +618,40 @@ const ButtonRenderer = (props: *) => {
   
   return {
     "BUY": (
+      wif ?
       <GreenGlowingAnchorButton
-          intent="success"
-          text={side + " " + amount + " " + baseTokenSymbol}
-          name="order"
-          onClick={buyGA}
-          disabled={disabled} 
-          fill
+        intent="success"
+        text={side + " " + amount + " " + baseTokenSymbol}
+        name="order"
+        onClick={() => sendOrder("BUY")}
+        disabled={disabled} 
+        fill
+      /> :
+      <GreenGlowingAnchorButton
+        intent="success"
+        text={side + " " + amount + " " + baseTokenSymbol}
+        name="order"
+        href={link}
+        onClick={buyGA}
+        disabled={disabled} 
+        fill
       />
     ),
     "SELL": (
+      wif ?
       <RedGlowingAnchorButton
         intent="danger"
         text={side + " " + amount + " " + baseTokenSymbol}
         name="order"
+        onClick={() => sendOrder("SELL")}
+        disabled={disabled} 
+        fill 
+      /> :
+      <RedGlowingAnchorButton
+        intent="danger"
+        text={side + " " + amount + " " + baseTokenSymbol}
+        name="order"
+        href={link}
         onClick={sellGA}
         disabled={disabled} 
         fill 
@@ -713,9 +728,6 @@ const ButtonRenderer = (props: *) => {
   }[buttonType]
 }
 
-
-const HiddenLink= styled.a`
-`
 
 
 const OrderFormHeader = styled.div`
