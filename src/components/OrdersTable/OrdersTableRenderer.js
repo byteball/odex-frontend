@@ -222,7 +222,6 @@ const OrderRow = (props: *) => {
   const onClickCancel = () => {
     if (wif) {
       const signedCancel = signMessageByWif('Cancel order ' + order.hash, wif)
-      console.log(signedCancel)
       cancelOrder(signedCancel)
     } else {
       cancelRef.current.click()

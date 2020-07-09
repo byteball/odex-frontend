@@ -1,6 +1,6 @@
 // @flow
 import { connect } from 'react-redux'
-import orderFormSelector from '../../store/models/orderForm'
+import orderFormSelector, { sendNewOrder } from '../../store/models/orderForm'
 import type { State } from '../../types'
 
 type Props = {
@@ -15,6 +15,7 @@ export const mapStateToProps = (state: State, ownProps: Props) => {
 }
 
 export const mapDispatchToProps = {
+  sendNewOrder
 }
 
 export default connect(

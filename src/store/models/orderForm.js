@@ -74,3 +74,16 @@ export const defaultFunction = (): ThunkAction => {
   return async (dispatch, getState) => {}
 }
 
+export const sendNewOrder = (signedOrder: string): ThunkAction => {
+  return async (dispatch, getState, { socket, mixpanel }) => {
+    mixpanel.track('trading-page/create-order');
+
+    try {
+      dispatch(notifierActionCreators.addSuccessNotification({ message: `Sending new order ...` }))
+      socket.sendNewOrderMessage(signedOrder)
+    } catch (error) {
+      let message = parseNewOrderError(error)
+      return dispatch(notifierActionCreators.addErrorNotification({ message }))
+    }
+  }
+}

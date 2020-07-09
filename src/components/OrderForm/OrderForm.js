@@ -30,6 +30,7 @@ type Props = {
   onCollapse: string => void,
   onExpand: string => void,
   onResetDefaultLayout: void => void,
+  sendNewOrder: string => void,
 }
 
 type State = {
@@ -359,7 +360,8 @@ class OrderForm extends React.PureComponent<Props, State> {
         tokensBySymbol,
         authenticated,
         displayMode,
-        wif
+        wif,
+        sendNewOrder
       },
       onInputChange,
       handleChangeOrderType,
@@ -431,6 +433,7 @@ class OrderForm extends React.PureComponent<Props, State> {
         buttonType={buttonType}
         displayMode={displayMode}
         wif={wif}
+        sendNewOrder={sendNewOrder}
       />
     )
   }

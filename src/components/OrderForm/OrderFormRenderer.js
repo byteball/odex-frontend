@@ -71,6 +71,7 @@ type Props = {
   buttonType: "BUY" | "SELL" | "BUY_UNLOCK" | "SELL_UNLOCK" | "BUY_LOGIN" | "SELL_LOGIN" | "BUY_UNLOCK_PENDING" | "SELL_UNLOCK_PENDING",
   displayMode: DisplayMode,
   wif: string,
+  sendNewOrder: string => void,
 }
 
 
@@ -129,7 +130,8 @@ const OrderFormRenderer = (props: Props) => {
     onContextMenu,
     buttonType,
     displayMode,
-    wif
+    wif,
+    sendNewOrder
   } = props
 
   return (
@@ -220,6 +222,7 @@ const OrderFormRenderer = (props: Props) => {
                 buttonType={buttonType}
                 displayMode={displayMode}
                 wif={wif}
+                sendNewOrder={sendNewOrder}
               />
             }
           />
@@ -302,7 +305,8 @@ const LimitOrderPanel = props => {
     tokensBySymbol,
     buttonType,
     displayMode,
-    wif
+    wif,
+    sendNewOrder
   } = props
 
   let fAmount = parseFloat(amount);
@@ -354,6 +358,8 @@ const LimitOrderPanel = props => {
   console.log(order);
   let pairing_secret = btoa(JSON.stringify(order));
   let link = CHATBOT_URL + pairing_secret;
+
+  const orderRef = React.createRef();
 
   return (
     <React.Fragment>
@@ -411,7 +417,6 @@ const LimitOrderPanel = props => {
       <MaxAmount> Fee: {fee} {quoteTokenSymbol}</MaxAmount>
         <ButtonRenderer
           side={side}
-          link={link}
           amount={displayMode.name === 'Price' ? amount : formatNumber(parseFloat(amount) * parseFloat(price), { precision: 3 })}
           baseTokenSymbol={baseTokenSymbol}
           quoteTokenSymbol={quoteTokenSymbol}
@@ -419,7 +424,11 @@ const LimitOrderPanel = props => {
           buttonType={buttonType}
           disabled={insufficientBalance || !fPrice || !fAmount}
           wif={wif}
+          order={order}
+          orderRef={orderRef}
+          sendNewOrder={sendNewOrder}
         />
+      <HiddenLink innerRef={orderRef} href={link} />
     </React.Fragment>
   )
 }
@@ -571,16 +580,30 @@ const RadioButton = props => {
 const ButtonRenderer = (props: *) => {
   const {
     side,
-    link,
+    wif,
+    order,
+    orderRef,
     amount,
     baseTokenSymbol,
     quoteTokenSymbol,
     handleSendOrder,
     disabled,
-    buttonType
+    buttonType,
+    sendNewOrder
   } = props
 
+
+  const sendOrder = () => {
+    if (wif) {
+      sendNewOrder(signMessageByWif(order, wif))
+    } else {
+      orderRef.current.click()
+    }
+  }
+
   const buyGA = (symbol) => {
+    sendOrder();
+
     ReactGA.event({
       category: 'ODEX',
       action: 'Buy',
@@ -589,6 +612,8 @@ const ButtonRenderer = (props: *) => {
   }
 
   const sellGA = (symbol) => {
+    sendOrder();
+
     ReactGA.event({
       category: 'ODEX',
       action: 'Sell',
@@ -602,7 +627,6 @@ const ButtonRenderer = (props: *) => {
           intent="success"
           text={side + " " + amount + " " + baseTokenSymbol}
           name="order"
-          href={link}
           onClick={buyGA}
           disabled={disabled} 
           fill
@@ -613,7 +637,6 @@ const ButtonRenderer = (props: *) => {
         intent="danger"
         text={side + " " + amount + " " + baseTokenSymbol}
         name="order"
-        href={link}
         onClick={sellGA}
         disabled={disabled} 
         fill 
@@ -691,7 +714,8 @@ const ButtonRenderer = (props: *) => {
 }
 
 
-
+const HiddenLink= styled.a`
+`
 
 
 const OrderFormHeader = styled.div`
