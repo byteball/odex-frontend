@@ -82,6 +82,7 @@ class OrderForm extends React.PureComponent<Props, State> {
       isModalOpen: false,
       signedOrder: '',
       details: '',
+      needPassword: false,
     }
   }
 
