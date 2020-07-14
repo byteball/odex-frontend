@@ -1,18 +1,20 @@
 //@flow
 import React from 'react'
+import styled from 'styled-components';
 import OrdersTableRenderer from './OrdersTableRenderer'
+import RequestConfirmModal from '../RequestConfirmModal'
 import { sortTable } from '../../utils/helpers'
 import { ContextMenuTarget, Menu, MenuItem } from '@blueprintjs/core'
 
 import type { Order } from '../../types/Orders'
-import type { DisplayMode } from '../../types/account'
+import type { DisplayMode, BrowserWallet } from '../../types/account'
 
 type Props = {
   orders: Array<Order>,
   authenticated: boolean,
   address: string,
   displayMode: DisplayMode,
-  wif: string,
+  browserWallet: BrowserWallet,
   cancelOrder: string => void,
   onCollapse: string => void,
   onExpand: string => void,
@@ -21,7 +23,9 @@ type Props = {
 
 type State = {
   selectedTabId: string,
-  isOpen: boolean
+  isOpen: boolean,
+  isModalOpen: boolean,
+  signedCancel: string
 }
 
 class OrdersTable extends React.PureComponent<Props, State> {
@@ -29,7 +33,9 @@ class OrdersTable extends React.PureComponent<Props, State> {
 
   state = {
     selectedTabId: 'all',
-    isOpen: true
+    isOpen: true,
+    isModalOpen: false,
+    signedCancel: ''
   }
 
   changeTab = (tabId: string) => {
@@ -69,6 +75,24 @@ class OrdersTable extends React.PureComponent<Props, State> {
     return result
   }
 
+  handleModalClose = () => {
+    this.setState({ isModalOpen: !this.state.isModalOpen })
+  }
+
+  handleCancelOrder = (signedCancel: string) => {
+    const { browserWallet, cancelOrder } = this.props;
+    if (!browserWallet.requestConfirm) {
+      return cancelOrder(signedCancel);
+    }
+    this.setState({ signedCancel, isModalOpen: true })
+  }
+
+  handleModalAction = () => {
+    const { cancelOrder } = this.props;
+    const { signedCancel } = this.state;
+    cancelOrder(signedCancel);
+    this.setState({ isModalOpen: false })
+  }
 
   renderContextMenu = () => {
     const {
@@ -89,33 +113,49 @@ class OrdersTable extends React.PureComponent<Props, State> {
 
   render() {
     const {
-      props: { authenticated, address, orders, cancelOrder, displayMode, wif },
-      state: { selectedTabId, isOpen },
-      renderContextMenu
+      props: { authenticated, address, orders, displayMode, browserWallet },
+      state: { selectedTabId, isOpen, isModalOpen },
+      renderContextMenu,
+      handleCancelOrder,
+      handleModalClose,
+      handleModalAction
     } = this
 
     const filteredOrders = this.filterOrders()
     const loading = orders.length === []
 
     return (
-      <OrdersTableRenderer
-        isOpen={isOpen}
-        loading={loading}
-        selectedTabId={selectedTabId}
-        onChange={this.changeTab}
-        toggleCollapse={this.toggleCollapse}
-        expand={this.expand}
-        authenticated={authenticated}
-        displayMode={displayMode}
-        wif={wif}
-        address={address}
-        cancelOrder={cancelOrder}
-        // silence-error: currently too many flow errors, waiting for rest to be resolved
-        orders={filteredOrders}
-        onContextMenu={renderContextMenu}
-      />
+      <Wrapper>
+        <OrdersTableRenderer
+          isOpen={isOpen}
+          loading={loading}
+          selectedTabId={selectedTabId}
+          onChange={this.changeTab}
+          toggleCollapse={this.toggleCollapse}
+          expand={this.expand}
+          authenticated={authenticated}
+          displayMode={displayMode}
+          wif={browserWallet.wif}
+          address={address}
+          handleCancelOrder={handleCancelOrder}
+          // silence-error: currently too many flow errors, waiting for rest to be resolved
+          orders={filteredOrders}
+          onContextMenu={renderContextMenu}
+        />
+        <RequestConfirmModal 
+          title="Cancel Order"
+          
+          isOpen={isModalOpen}
+          handleClose={handleModalClose}
+          handleAction={handleModalAction}
+        />
+      </Wrapper>
     )
   }
 }
 
 export default ContextMenuTarget(OrdersTable)
+
+const Wrapper = styled.div`
+  height: 100%;
+`;

@@ -6,7 +6,7 @@ import TokenBalanceChart from '../../components/TokenBalanceChart'
 import RecentTxTable from '../../components/RecentTxTable'
 import Help from '../../components/Help'
 
-import { Card, Position, Button, Tag, Tabs, Tab, InputGroup, Icon } from '@blueprintjs/core';
+import { Card, Position, Button, Tag, Tabs, Tab, InputGroup, Icon, Checkbox } from '@blueprintjs/core';
 import { Flex, FlexRow, FlexItem, Box, Colors, Text, TextDiv, TextBox, BlueGlowingButton, ModalBody } from '../Common'
 import { Fonts } from '../Common/Variables'
 import { Spring } from 'react-spring'
@@ -14,6 +14,7 @@ import Modal from '../Modal';
 
 import type { TokenData } from '../../types/tokens';
 import type { Tx } from '../../types/transactions'
+import type { BrowserWallet } from '../../types/account';
 
 import { PROTOCOL } from '../../config/urls';
 import TransactionsTable from './Transactions';
@@ -23,7 +24,7 @@ const { isValidAddress } = require('obyte/lib/utils');
 type Props = {
   isModalOpen: boolean,
   accountAddress: string,
-  browserAddress: string,
+  browserWallet: BrowserWallet,
   balance: number,
   selectedTab: string,
   asset: string,
@@ -45,6 +46,7 @@ type Props = {
   handleRegisterToken: SyntheticEvent<> => Promise<void>,
   handleAddBrowserWallet: void => void,
   handleRemoveBrowserWallet: void => void,
+  handleToggleRequestConfirm: void =>  void,
   addTokenPending: boolean,
   registerTokenPending: boolean,
   recentTransactions: Array<Tx>,
@@ -54,6 +56,8 @@ type Props = {
   handleToggleRevokeModal: (?string) => void,
   transactions: Array,
   tokenData: Array<TokenData>,
+  passphrase: string,
+  handleChangePassphrase: SyntheticInputEvent<Object> => void,
 };
 
 const WalletInfoRenderer = (props: Props) => {
@@ -61,7 +65,7 @@ const WalletInfoRenderer = (props: Props) => {
     isModalOpen,
     handleModalClose,
     accountAddress,
-    browserAddress,
+    browserWallet,
     balance,
     selectedTab,
     asset,
@@ -90,6 +94,9 @@ const WalletInfoRenderer = (props: Props) => {
     tokenData,
     handleAddBrowserWallet,
     handleRemoveBrowserWallet,
+    handleToggleRequestConfirm,
+    passphrase,
+    handleChangePassphrase
   } = props;
 
   return (
@@ -165,14 +172,17 @@ const WalletInfoRenderer = (props: Props) => {
           panel={
             <AuthorizationsPanel
               address={address}
-              browserAddress={browserAddress}
+              browserWallet={browserWallet}
               authorizations={authorizations}
-              handleChangeAddress={handleChangeAddress}
+              passphrase={passphrase}
               accountAddress={accountAddress}
               exchangeAddress={exchangeAddress}
+              handleChangePassphrase={handleChangePassphrase}
+              handleChangeAddress={handleChangeAddress}
               handleToggleRevokeModal={handleToggleRevokeModal}
               handleAddBrowserWallet={handleAddBrowserWallet}
               handleRemoveBrowserWallet={handleRemoveBrowserWallet}
+              handleToggleRequestConfirm={handleToggleRequestConfirm}
             />
           }
         />
@@ -425,14 +435,17 @@ const Wrapper = styled.div`
 const AuthorizationsPanel = (props: *) => {
   const { 
     address, 
-    browserAddress, 
+    browserWallet, 
     authorizations, 
     handleChangeAddress, 
     exchangeAddress, 
     handleToggleRevokeModal, 
-    accountAddress, 
+    accountAddress,
+    passphrase, 
     handleAddBrowserWallet, 
-    handleRemoveBrowserWallet 
+    handleRemoveBrowserWallet,
+    handleToggleRequestConfirm, 
+    handleChangePassphrase
   } = props;
   let data = {
     grant: 1,
@@ -467,14 +480,24 @@ const AuthorizationsPanel = (props: *) => {
             );
           })}
           {
-            browserAddress &&
+            (browserWallet && browserWallet.address) &&
               <Wrapper>
-                <h3 minimal large>
-                  Browser Address
-                </h3>
+                <FlexRow alignItems="center">
+                  <FlexItem flex="1">
+                    <h3 minimal large>
+                      Browser Address
+                    </h3>
+                  </FlexItem>
+                  <RequestConfirmationCheck
+                    checked={browserWallet.requestConfirm}
+                    onChange={handleToggleRequestConfirm}
+                  >
+                    Request confirmation
+                  </RequestConfirmationCheck>
+                </FlexRow>
                 <FlexRow py={2} alignItems="center">
                     <FlexItem flex="1">
-                      <GRANTTEXT>{browserAddress}</GRANTTEXT>
+                      <GRANTTEXT>{browserWallet.address}</GRANTTEXT>
                     </FlexItem>
                     <Button icon="cross" intent="danger" minimal onClick={handleRemoveBrowserWallet} />
                 </FlexRow>
@@ -504,8 +527,9 @@ const AuthorizationsPanel = (props: *) => {
               }}
             />
           </Flex>
+          {!isValid && address !== '' && <Text muted intent="danger">{message}</Text>}
           {
-            !browserAddress &&
+            (!browserWallet || !browserWallet.address) &&
               <Wrapper>
                 <h3 minimal large>
                   Generate Browser Wallet
@@ -515,9 +539,8 @@ const AuthorizationsPanel = (props: *) => {
                     <InputGroup
                       name="password"
                       placeholder="Password"
-                      // intent={!isValid ? 'danger' : ''}
-                      // onChange={handleChangeAddress}
-                      // value={address}
+                      onChange={handleChangePassphrase}
+                      value={passphrase}
                       fill
                     />
                   </FlexItem>
@@ -529,12 +552,16 @@ const AuthorizationsPanel = (props: *) => {
                 </Flex>
               </Wrapper>
           }
-          {!isValid && address !== '' && <Text muted intent="danger">{message}</Text>}
+          
         </Box>
       )}
     </Spring>
   );
 };
+
+const RequestConfirmationCheck = styled(Checkbox)`
+  margin: 0 !important;
+`;
 
 const RevokeAuthorizationBox = styled.div`
   margin-top: 20px;

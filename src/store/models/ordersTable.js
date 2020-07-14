@@ -14,7 +14,7 @@ export default function ordersTableSelector(state: State) {
     address,
     authenticated,
     displayMode,
-    wif: browserWallet.wif
+    browserWallet,
   };
 }
 

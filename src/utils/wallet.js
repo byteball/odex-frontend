@@ -6,14 +6,14 @@ const testnet = DEFAULT_NETWORK_ID === 'testnet'; // Change to "true" to generat
 const path = testnet ? "m/44'/1'/0'/0/0" : "m/44'/0'/0'/0/0";
 
 
-export const generateWallet = () => {
+export const generateWallet = (passphrase: string) => {
   let mnemonic = new Mnemonic();
 
   while (!Mnemonic.isValid(mnemonic.toString())) {
     mnemonic = new Mnemonic();
   }
-
-  const xPrivKey = mnemonic.toHDPrivateKey();
+  
+  const xPrivKey = mnemonic.toHDPrivateKey(passphrase);
   const { privateKey } = xPrivKey.derive(path);
   const privKeyBuf = privateKey.bn.toBuffer({ size: 32 });
   const wif = toWif(privKeyBuf, testnet);

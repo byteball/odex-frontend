@@ -40,7 +40,7 @@ type Props = {
   onChange: string => void,
   isOpen: boolean,
   toggleCollapse: void => void,
-  cancelOrder: string => void,
+  handleCancelOrder: string => void,
   authenticated: boolean,
   displayMode: DisplayMode,
   address: string,
@@ -69,7 +69,7 @@ const OrdersTableRenderer = (props: Props) => {
     loading, 
     selectedTabId, 
     onChange, 
-    cancelOrder, 
+    handleCancelOrder, 
     orders, 
     isOpen, 
     toggleCollapse,
@@ -115,7 +115,7 @@ const OrdersTableRenderer = (props: Props) => {
                   <OrdersTablePanel 
                     loading={loading} 
                     orders={orders['ALL']} 
-                    cancelOrder={cancelOrder} 
+                    handleCancelOrder={handleCancelOrder} 
                     width={width}
                     authenticated={authenticated}
                     address={address}
@@ -127,7 +127,7 @@ const OrdersTableRenderer = (props: Props) => {
                   <OrdersTablePanel 
                     loading={loading} 
                     orders={orders['OPEN']} 
-                    cancelOrder={cancelOrder} 
+                    handleCancelOrder={handleCancelOrder} 
                     width={width} 
                     authenticated={authenticated}
                     address={address}
@@ -139,7 +139,7 @@ const OrdersTableRenderer = (props: Props) => {
                   <OrdersTablePanel 
                     loading={loading} 
                     orders={orders['CANCELLED']} 
-                    cancelOrder={cancelOrder} 
+                    handleCancelOrder={handleCancelOrder} 
                     width={width}
                     authenticated={authenticated}
                     address={address}
@@ -152,7 +152,7 @@ const OrdersTableRenderer = (props: Props) => {
                   <OrdersTablePanel 
                     loading={loading} 
                     orders={orders['FILLED']} 
-                    cancelOrder={cancelOrder} 
+                    handleCancelOrder={handleCancelOrder} 
                     width={width}
                     authenticated={authenticated}
                     address={address}
@@ -170,7 +170,7 @@ const OrdersTableRenderer = (props: Props) => {
 }
 
 const OrdersTablePanel = (props: *) => {
-  const { loading, orders, cancelOrder, width, authenticated, address, displayMode, wif } = props
+  const { loading, orders, handleCancelOrder, width, authenticated, address, displayMode, wif } = props
 
   if (loading) return <Loading />
   if (!authenticated) return <CenteredMessage message="Not logged in" />
@@ -200,7 +200,7 @@ const OrdersTablePanel = (props: *) => {
                   key={index} 
                   order={order} 
                   index={index} 
-                  cancelOrder={cancelOrder}
+                  handleCancelOrder={handleCancelOrder}
                   address={address}
                   width={width}
                   labels={['PAIR', 'AMOUNT', 'PRICE', 'STATUS', 'SIDE', 'TIME']}
@@ -216,11 +216,11 @@ const OrdersTablePanel = (props: *) => {
 }
 
 const OrderRow = (props: *) => {
-  const { order, cancelOrder, address, width, labels, displayMode, wif } = props
+  const { order, handleCancelOrder, address, width, labels, displayMode, wif } = props
   
   const onClickCancel = () => {
     const signedCancel = signMessageByWif('Cancel order ' + order.hash, wif)
-    cancelOrder(signedCancel)
+    handleCancelOrder(signedCancel)
   }
 
   return (

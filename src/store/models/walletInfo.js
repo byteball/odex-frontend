@@ -21,7 +21,7 @@ export default function walletInfoSelector(state: State) {
         gbyteBalance: accountBalancesDomain.formattedGbyteBalance(),
         recentTransactions: transactionsDomain.recentTransactions(8),
         accountAddress: accountDomain.address,
-        browserAddress: accountDomain.browserWallet ? accountDomain.browserWallet.address : '',
+        browserWallet: accountDomain.browserWallet,
     }
 }
 
