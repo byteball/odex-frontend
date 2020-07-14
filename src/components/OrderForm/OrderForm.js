@@ -51,7 +51,8 @@ type State = {
   isOpen: boolean,
   isModalOpen: false,
   signedOrder: string,
-  details: string
+  details: string,
+  needPassword: boolean
 }
 
 class OrderForm extends React.PureComponent<Props, State> {
@@ -134,17 +135,17 @@ class OrderForm extends React.PureComponent<Props, State> {
   handleModalAction = (passInput: string) => {
     const { browserWallet, sendNewOrder, addErrorNotification } = this.props;
     const { signedOrder } = this.state;
-    const passphrase = sessionStorage.getItem("passphrase");
+    const passphrase = sessionStorage.getItem("passphrase") || passInput;
 
-    if (browserWallet.encrypted && !passphrase) {
-      // validate
-      if(getAddressFromPhrases(browserWallet.phrase, passInput) !== browserWallet.address) {
-        addErrorNotification({ message: 'Whoops, your password is wrong!'})
-        return;
-      }
-      sessionStorage.setItem("passphrase", passInput)
+    if (getAddressFromPhrases(browserWallet.phrase, passphrase) !== browserWallet.address) {
+      addErrorNotification({ message: 'Whoops, your password is wrong!'})
+      return;
     }
 
+    if (!!passInput) {
+      sessionStorage.setItem("passphrase", passInput)
+    }
+    
     sendNewOrder(signedOrder);
     this.setState({ isModalOpen: false })
   }
@@ -155,9 +156,10 @@ class OrderForm extends React.PureComponent<Props, State> {
     const { browserWallet, sendNewOrder } = this.props;
     const details = `New order to ${side.toLowerCase()} ${amount} ${baseTokenSymbol} at ${price} in ${quoteTokenSymbol}?`
     const passphrase = sessionStorage.getItem("passphrase");
+    const needPassword = browserWallet.encrypted && !passphrase;
 
-    if (browserWallet.requestConfirm || (browserWallet.encrypted && !passphrase)) {
-      this.setState({ signedOrder, isModalOpen: true, details })
+    if (browserWallet.requestConfirm || needPassword) {
+      this.setState({ signedOrder, isModalOpen: true, details, needPassword })
     } else {
       sendNewOrder(signedOrder);
     }
@@ -380,7 +382,8 @@ class OrderForm extends React.PureComponent<Props, State> {
         stake,
         odds,
         details,
-        isModalOpen
+        isModalOpen,
+        needPassword
       },
       props: { 
         baseTokenSymbol, 
@@ -479,6 +482,7 @@ class OrderForm extends React.PureComponent<Props, State> {
         <RequestConfirmModal 
           title="New Order"
           details={details}
+          needPassword={needPassword}
           isOpen={isModalOpen}
           handleClose={handleModalClose}
           handleAction={handleModalAction}
