@@ -30,11 +30,13 @@ type Props = {
   selectedOrder: Object,
   displayMode: DisplayMode,
   browserWallet: BrowserWallet,
+  passphrase: string,
   onCollapse: string => void,
   onExpand: string => void,
   onResetDefaultLayout: void => void,
   sendNewOrder: string => void,
-  addErrorNotification: string => void
+  addErrorNotification: string => void,
+  updatePassphrase: string => void
 }
 
 type State = {
@@ -52,7 +54,7 @@ type State = {
   isModalOpen: false,
   signedOrder: string,
   details: string,
-  needPassword: boolean
+  needPassphrase: boolean
 }
 
 class OrderForm extends React.PureComponent<Props, State> {
@@ -82,7 +84,7 @@ class OrderForm extends React.PureComponent<Props, State> {
       isModalOpen: false,
       signedOrder: '',
       details: '',
-      needPassword: false,
+      needPassphrase: false,
     }
   }
 
@@ -134,17 +136,16 @@ class OrderForm extends React.PureComponent<Props, State> {
   }
 
   handleModalAction = (passInput: string) => {
-    const { browserWallet, sendNewOrder, addErrorNotification } = this.props;
+    const { browserWallet, passphrase, updatePassphrase, sendNewOrder, addErrorNotification } = this.props;
     const { signedOrder } = this.state;
-    const passphrase = sessionStorage.getItem("passphrase") || passInput;
 
-    if (getAddressFromPhrases(browserWallet.phrase, passphrase) !== browserWallet.address) {
-      addErrorNotification({ message: 'Whoops, your password is wrong!'})
+    if (getAddressFromPhrases(browserWallet.phrase, passphrase || passInput) !== browserWallet.address) {
+      addErrorNotification({ message: 'Whoops, your passphrase is wrong!'})
       return;
     }
 
     if (!!passInput) {
-      sessionStorage.setItem("passphrase", passInput)
+      updatePassphrase(passInput)
     }
     
     sendNewOrder(signedOrder);
@@ -154,13 +155,12 @@ class OrderForm extends React.PureComponent<Props, State> {
   handleSendOrder = (signedOrder) => {
     const { amount, price, side } = this.state
     const { baseTokenSymbol, quoteTokenSymbol } = this.props;
-    const { browserWallet, sendNewOrder } = this.props;
+    const { browserWallet, passphrase, sendNewOrder } = this.props;
     const details = `New order to ${side.toLowerCase()} ${amount} ${baseTokenSymbol} at ${price} in ${quoteTokenSymbol}?`
-    const passphrase = sessionStorage.getItem("passphrase");
-    const needPassword = browserWallet.encrypted && !passphrase;
+    const needPassphrase = browserWallet.encrypted && !passphrase;
 
-    if (browserWallet.requestConfirm || needPassword) {
-      this.setState({ signedOrder, isModalOpen: true, details, needPassword })
+    if (browserWallet.requestConfirm || needPassphrase) {
+      this.setState({ signedOrder, isModalOpen: true, details, needPassphrase })
     } else {
       sendNewOrder(signedOrder);
     }
@@ -384,7 +384,7 @@ class OrderForm extends React.PureComponent<Props, State> {
         odds,
         details,
         isModalOpen,
-        needPassword
+        needPassphrase
       },
       props: { 
         baseTokenSymbol, 
@@ -483,7 +483,7 @@ class OrderForm extends React.PureComponent<Props, State> {
         <RequestConfirmModal 
           title="New Order"
           details={details}
-          needPassword={needPassword}
+          needPassphrase={needPassphrase}
           isOpen={isModalOpen}
           handleClose={handleModalClose}
           handleAction={handleModalAction}

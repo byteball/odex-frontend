@@ -1,6 +1,6 @@
 // @flow
 import * as notifierActionCreators from '../actions/app'
-import { getOrdersDomain, getAccountDomain } from '../domains';
+import { getOrdersDomain, getAccountDomain, getWalletInfoDomain } from '../domains';
 import type { State, ThunkAction } from '../../types'
 
 import { parseCancelOrderError } from '../../config/errors'
@@ -8,6 +8,7 @@ import { parseCancelOrderError } from '../../config/errors'
 export default function ordersTableSelector(state: State) {
   let { authenticated, address, displayMode, browserWallet } = getAccountDomain(state)
   let ordersDomain = getOrdersDomain(state)
+  let { passphrase } = getWalletInfoDomain(state)
 
   return {
     orders: ordersDomain.lastOrders(50),
@@ -15,6 +16,7 @@ export default function ordersTableSelector(state: State) {
     authenticated,
     displayMode,
     browserWallet,
+    passphrase
   };
 }
 

@@ -2,6 +2,7 @@
 import { connect } from 'react-redux'
 import ordersTableSelector, { cancelOrder } from '../../store/models/ordersTable'
 import { addErrorNotification } from '../../store/actions/app'
+import { updatePassphrase } from '../../store/actions/walletInfo'
 import type { State } from '../../types'
 
 type Props = {
@@ -17,7 +18,11 @@ export const mapStateToProps = (state: State, ownProps: Props) => {
   }
 }
 
-export const mapDispatchToProps = { cancelOrder, addErrorNotification }
+export const mapDispatchToProps = { 
+  cancelOrder, 
+  updatePassphrase,
+  addErrorNotification 
+}
 
 export default connect(
   mapStateToProps,

@@ -56,7 +56,8 @@ export type Props = {
   updateDisplayMode: void => string,
   queryAppData: void => void,
   location: Location,
-  currentPair: string
+  currentPair: string,
+  updatePassphrase: string => void,
 }
 
 type State = {}
@@ -68,7 +69,7 @@ class Layout extends React.PureComponent<Props, State> {
   }
 
   onIdle = () => {
-    sessionStorage.setItem("passphrase", '')
+    this.props.updatePassphrase('')
   }
 
   render() {

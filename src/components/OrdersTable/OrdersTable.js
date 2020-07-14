@@ -16,11 +16,13 @@ type Props = {
   address: string,
   displayMode: DisplayMode,
   browserWallet: BrowserWallet,
+  passphrase: string,
   cancelOrder: string => void,
   onCollapse: string => void,
   onExpand: string => void,
   onResetDefaultLayout: void => void,
-  addErrorNotification: string => void
+  addErrorNotification: string => void,
+  updatePassphrase: string => void
 }
 
 type State = {
@@ -29,7 +31,7 @@ type State = {
   isModalOpen: boolean,
   signedCancel: string,
   details: string,
-  needPassword: boolean
+  needPassphrase: boolean
 }
 
 class OrdersTable extends React.PureComponent<Props, State> {
@@ -41,7 +43,7 @@ class OrdersTable extends React.PureComponent<Props, State> {
     isModalOpen: false,
     signedCancel: '',
     details: '',
-    needPassword: false,
+    needPassphrase: false,
   }
 
   changeTab = (tabId: string) => {
@@ -86,12 +88,11 @@ class OrdersTable extends React.PureComponent<Props, State> {
   }
 
   handleCancelOrder = (signedCancel: string, details: string) => {
-    const { browserWallet, cancelOrder } = this.props;
-    const passphrase = sessionStorage.getItem("passphrase");
-    const needPassword = browserWallet.encrypted && !passphrase;
+    const { browserWallet, cancelOrder, passphrase } = this.props;
+    const needPassphrase = browserWallet.encrypted && !passphrase;
 
-    if (browserWallet.requestConfirm || needPassword) {
-      this.setState({ signedCancel, isModalOpen: true, details, needPassword })
+    if (browserWallet.requestConfirm || needPassphrase) {
+      this.setState({ signedCancel, isModalOpen: true, details, needPassphrase })
     } else {
       cancelOrder(signedCancel);
     }
@@ -99,17 +100,16 @@ class OrdersTable extends React.PureComponent<Props, State> {
   }
 
   handleModalAction = (passInput: string) => {
-    const { browserWallet, cancelOrder, addErrorNotification } = this.props;
+    const { browserWallet, passphrase, cancelOrder, updatePassphrase, addErrorNotification } = this.props;
     const { signedCancel } = this.state;
-    const passphrase = sessionStorage.getItem("passphrase") || passInput;
 
-    if (getAddressFromPhrases(browserWallet.phrase, passphrase) !== browserWallet.address) {
-      addErrorNotification({ message: 'Whoops, your password is wrong!'})
+    if (getAddressFromPhrases(browserWallet.phrase, passphrase || passInput) !== browserWallet.address) {
+      addErrorNotification({ message: 'Whoops, your passphrase is wrong!'})
       return;
     }
 
     if (!!passInput) {
-      sessionStorage.setItem("passphrase", passInput)
+      updatePassphrase(passInput)
     }
 
     cancelOrder(signedCancel);
@@ -136,7 +136,7 @@ class OrdersTable extends React.PureComponent<Props, State> {
   render() {
     const {
       props: { authenticated, address, orders, displayMode, browserWallet },
-      state: { selectedTabId, isOpen, isModalOpen, details, needPassword },
+      state: { selectedTabId, isOpen, isModalOpen, details, needPassphrase },
       renderContextMenu,
       handleCancelOrder,
       handleModalClose,
@@ -167,7 +167,7 @@ class OrdersTable extends React.PureComponent<Props, State> {
         <RequestConfirmModal 
           title="Cancel Order"
           details={details}
-          needPassword={needPassword}
+          needPassphrase={needPassphrase}
           isOpen={isModalOpen}
           handleClose={handleModalClose}
           handleAction={handleModalAction}

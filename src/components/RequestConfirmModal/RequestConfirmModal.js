@@ -6,7 +6,7 @@ import { ControlGroup, InputGroup, Text, Button } from '@blueprintjs/core';
 
 type Props = {
   isOpen: boolean,
-  needPassword: boolean,
+  needPassphrase: boolean,
   handleClose: (SyntheticEvent<>) => void,
   title: string,
   details: string,
@@ -14,33 +14,33 @@ type Props = {
 };
 
 type State = {
-  password: string,
+  passphrase: string,
 }
 
 export default class RequestConfirmModal extends React.PureComponent<Props, State> {
   state = {
-    password: ''
+    passphrase: ''
   }
 
   onInputChange = ({target}) => {
-    this.setState({password: target.value})
+    this.setState({passphrase: target.value})
   }
 
   handleConfirm = () => {
     const { handleAction } = this.props;
-    const { password } = this.state;
-    handleAction(password);
+    const { passphrase } = this.state;
+    handleAction(passphrase);
   }
 
   componentDidUpdate(prevProps) {
     if (this.props.isOpen !== prevProps.isOpen) {
-      this.setState({password: ''});
+      this.setState({passphrase: ''});
     }
   }
 
   render () {
-    const { password } = this.state;
-    const { isOpen, handleClose, title, details, needPassword } = this.props;
+    const { passphrase } = this.state;
+    const { isOpen, handleClose, title, details, needPassphrase } = this.props;
 
     return (
       <Modal title={title} width="400px" icon="info-sign" isOpen={isOpen} onClose={handleClose}>
@@ -48,12 +48,12 @@ export default class RequestConfirmModal extends React.PureComponent<Props, Stat
           <Text muted>{details}</Text>
           <br />
           <ControlGroup fill vertical={false}>
-            { needPassword &&
+            { needPassphrase &&
                 <InputGroup
-                  name="password"
+                  name="passphrase"
                   type="password"
-                  placeholder="Password"
-                  value={password}
+                  placeholder="Passphrase"
+                  value={passphrase}
                   onChange={this.onInputChange}
                 />
              }

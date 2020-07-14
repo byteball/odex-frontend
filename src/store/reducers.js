@@ -34,6 +34,7 @@ import * as notificationEvents from './domains/notifications'
 import * as connectionEvents from './domains/connection'
 import * as transactionEvents from './domains/transactions'
 import * as statsEvents from './domains/stats'
+import * as walletInfoEvents from './domains/walletInfo'
 
 export const loginPage = createReducer(action => {
   const { type, payload } = action
@@ -265,6 +266,15 @@ export const depositForm = createReducer(action => {
   }
 })
 
+export const walletInfo = createReducer(action => {
+  const { type, payload } = action
+  switch (type) {
+    case walletInfoActionTypes.updatePassphrase:
+      return walletInfoEvents.passphraseUpdated(payload.passphrase)
+    default:
+      return walletInfoEvents.initialized()
+  }
+})
 
 /*
 export const settings = createReducer(action => {

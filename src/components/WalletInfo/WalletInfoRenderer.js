@@ -537,8 +537,8 @@ const AuthorizationsPanel = (props: *) => {
                 <Flex py={2}>
                   <FlexItem flex="1">
                     <InputGroup
-                      name="password"
-                      placeholder="Password"
+                      name="passphrase"
+                      placeholder="Passphrase"
                       onChange={handleChangePassphrase}
                       value={passphrase}
                       fill
