@@ -25,7 +25,8 @@ type State = {
   selectedTabId: string,
   isOpen: boolean,
   isModalOpen: boolean,
-  signedCancel: string
+  signedCancel: string,
+  details: String,
 }
 
 class OrdersTable extends React.PureComponent<Props, State> {
@@ -35,7 +36,8 @@ class OrdersTable extends React.PureComponent<Props, State> {
     selectedTabId: 'all',
     isOpen: true,
     isModalOpen: false,
-    signedCancel: ''
+    signedCancel: '',
+    details: ''
   }
 
   changeTab = (tabId: string) => {
@@ -79,12 +81,12 @@ class OrdersTable extends React.PureComponent<Props, State> {
     this.setState({ isModalOpen: !this.state.isModalOpen })
   }
 
-  handleCancelOrder = (signedCancel: string) => {
+  handleCancelOrder = (signedCancel: string, details: string) => {
     const { browserWallet, cancelOrder } = this.props;
     if (!browserWallet.requestConfirm) {
       return cancelOrder(signedCancel);
     }
-    this.setState({ signedCancel, isModalOpen: true })
+    this.setState({ signedCancel, isModalOpen: true, details })
   }
 
   handleModalAction = () => {
@@ -114,7 +116,7 @@ class OrdersTable extends React.PureComponent<Props, State> {
   render() {
     const {
       props: { authenticated, address, orders, displayMode, browserWallet },
-      state: { selectedTabId, isOpen, isModalOpen },
+      state: { selectedTabId, isOpen, isModalOpen, details },
       renderContextMenu,
       handleCancelOrder,
       handleModalClose,
@@ -144,7 +146,7 @@ class OrdersTable extends React.PureComponent<Props, State> {
         />
         <RequestConfirmModal 
           title="Cancel Order"
-          
+          details={details}
           isOpen={isModalOpen}
           handleClose={handleModalClose}
           handleAction={handleModalAction}

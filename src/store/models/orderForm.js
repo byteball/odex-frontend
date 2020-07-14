@@ -66,7 +66,7 @@ export default function getOrderFormSelector(state: State) {
     tokensBySymbol,
     authenticated,
     displayMode,
-    wif: browserWallet.wif
+    browserWallet
   }
 }
 

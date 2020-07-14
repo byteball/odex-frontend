@@ -40,7 +40,7 @@ type Props = {
   onChange: string => void,
   isOpen: boolean,
   toggleCollapse: void => void,
-  handleCancelOrder: string => void,
+  handleCancelOrder: (string, string) => void,
   authenticated: boolean,
   displayMode: DisplayMode,
   address: string,
@@ -219,8 +219,10 @@ const OrderRow = (props: *) => {
   const { order, handleCancelOrder, address, width, labels, displayMode, wif } = props
   
   const onClickCancel = () => {
+    console.log(order)
+    const detail = `Cancel order to ${order.side.toLowerCase()} ${order.amount} ${order.pair.split("/")[0]} at ${order.price} in ${order.pair.split("/")[1]}?`
     const signedCancel = signMessageByWif('Cancel order ' + order.hash, wif)
-    handleCancelOrder(signedCancel)
+    handleCancelOrder(signedCancel, detail)
   }
 
   return (

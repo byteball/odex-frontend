@@ -1,10 +1,12 @@
 // @flow
 import React from 'react'
+import styled from 'styled-components';
 import OrderFormRenderer from './OrderFormRenderer'
 import { formatNumber, unformat } from 'accounting-js'
 import { Menu, MenuItem, ContextMenuTarget } from '@blueprintjs/core'
 import { MATCHER_FEE } from '../../config/environment';
-import type { DisplayMode } from '../../types/account'
+import RequestConfirmModal from '../RequestConfirmModal'
+import type { DisplayMode, BrowserWallet } from '../../types/account'
 
 type Props = {
   authenticated: boolean,
@@ -22,11 +24,11 @@ type Props = {
   quoteTokenDecimals: number,
   loggedIn: boolean,
   address: string,
-  wif: string,
   operatorAddress: string,
   exchangeAddress: string,
   selectedOrder: Object,
   displayMode: DisplayMode,
+  browserWallet: BrowserWallet,
   onCollapse: string => void,
   onExpand: string => void,
   onResetDefaultLayout: void => void,
@@ -44,7 +46,10 @@ type State = {
   odds: string,
   stake: string,
   total: string,
-  isOpen: boolean
+  isOpen: boolean,
+  isModalOpen: false,
+  signedOrder: string,
+  details: string
 }
 
 class OrderForm extends React.PureComponent<Props, State> {
@@ -53,7 +58,7 @@ class OrderForm extends React.PureComponent<Props, State> {
     bidPrice: 0,
     askPrice: 0,
     baseTokenBalance: 0,
-    quoteTokenBalance: 0
+    quoteTokenBalance: 0,
   }
 
   constructor(props: Props) {
@@ -70,7 +75,10 @@ class OrderForm extends React.PureComponent<Props, State> {
       odds: formatNumber(bidPrice ? 1 / bidPrice : 0, { precision: 3 }),
       stake: '0.0',
       amount: '0.0',
-      total: '0.0'
+      total: '0.0',
+      isModalOpen: false,
+      signedOrder: '',
+      details: '',
     }
   }
 
@@ -117,13 +125,27 @@ class OrderForm extends React.PureComponent<Props, State> {
     }
   }
 
-  handleSendOrder = () => {
-    let { amount, price, side } = this.state
+  handleModalClose = () => {
+    this.setState({ isModalOpen: !this.state.isModalOpen })
+  }
 
-    amount = unformat(amount)
-    price = unformat(price)
+  handleModalAction = () => {
+    const { sendNewOrder } = this.props;
+    const { signedOrder } = this.state;
+    sendNewOrder(signedOrder);
+    this.setState({ isModalOpen: false })
+  }
 
-    //this.props.sendNewOrder(side, amount, price)
+  handleSendOrder = (signedOrder) => {
+    const { amount, price, side } = this.state
+    const { baseTokenSymbol, quoteTokenSymbol } = this.props;
+    const { browserWallet, sendNewOrder } = this.props;
+
+    const details = `New order to ${side.toLowerCase()} ${amount} ${baseTokenSymbol} at ${price} in ${quoteTokenSymbol}?`
+    if (!browserWallet.requestConfirm) {
+      return sendNewOrder(signedOrder);
+    }
+    this.setState({ signedOrder, isModalOpen: true, details })
   }
 
   handleUpdateAmountFraction = (fraction: number) => {
@@ -340,7 +362,9 @@ class OrderForm extends React.PureComponent<Props, State> {
         amount, 
         total,
         stake,
-        odds
+        odds,
+        details,
+        isModalOpen
       },
       props: { 
         baseTokenSymbol, 
@@ -360,15 +384,16 @@ class OrderForm extends React.PureComponent<Props, State> {
         tokensBySymbol,
         authenticated,
         displayMode,
-        wif,
-        sendNewOrder
+        browserWallet,
       },
       onInputChange,
       handleChangeOrderType,
       handleSendOrder,
       handleSideChange,
       toggleCollapse,
-      renderContextMenu
+      renderContextMenu,
+      handleModalClose,
+      handleModalAction
     } = this
 
 
@@ -398,45 +423,57 @@ class OrderForm extends React.PureComponent<Props, State> {
         : "SELL_LOGIN"
     
     return (
-      <OrderFormRenderer
-        selectedTabId={selectedTabId}
-        side={side}
-        fraction={fraction}
-        priceType={priceType}
-        price={displayMode.name === 'Price' ? price : odds}
-        maxAmount={maxAmount}
-        amount={displayMode.name === 'Price' ? amount : stake}
-        total={total}
-        isOpen={isOpen}
-        baseTokenSymbol={baseTokenSymbol}
-        quoteTokenSymbol={quoteTokenSymbol}
-        insufficientBalance={insufficientBalance}
-        loggedIn={loggedIn}
-        onInputChange={onInputChange}
-        toggleCollapse={toggleCollapse}
-        handleChangeOrderType={handleChangeOrderType}
-        handleSendOrder={handleSendOrder}
-        baseTokenDecimals={baseTokenDecimals}
-        quoteTokenDecimals={quoteTokenDecimals}
-        address={address}
-        operatorAddress={operatorAddress}
-        exchangeAddress={exchangeAddress}
-        askPrice={askPrice}
-        bidPrice={bidPrice}
-        bestAskMatcher={bestAskMatcher}
-        bestBidMatcher={bestBidMatcher}
-        tokensBySymbol={tokensBySymbol}
-        handleSideChange={handleSideChange}
-        expand={this.expand}
-        onContextMenu={renderContextMenu}
-        authenticated={authenticated}
-        buttonType={buttonType}
-        displayMode={displayMode}
-        wif={wif}
-        sendNewOrder={sendNewOrder}
-      />
+      <Wrapper>
+        <OrderFormRenderer
+          selectedTabId={selectedTabId}
+          side={side}
+          fraction={fraction}
+          priceType={priceType}
+          price={displayMode.name === 'Price' ? price : odds}
+          maxAmount={maxAmount}
+          amount={displayMode.name === 'Price' ? amount : stake}
+          total={total}
+          isOpen={isOpen}
+          baseTokenSymbol={baseTokenSymbol}
+          quoteTokenSymbol={quoteTokenSymbol}
+          insufficientBalance={insufficientBalance}
+          loggedIn={loggedIn}
+          onInputChange={onInputChange}
+          toggleCollapse={toggleCollapse}
+          handleChangeOrderType={handleChangeOrderType}
+          handleSendOrder={handleSendOrder}
+          baseTokenDecimals={baseTokenDecimals}
+          quoteTokenDecimals={quoteTokenDecimals}
+          address={address}
+          operatorAddress={operatorAddress}
+          exchangeAddress={exchangeAddress}
+          askPrice={askPrice}
+          bidPrice={bidPrice}
+          bestAskMatcher={bestAskMatcher}
+          bestBidMatcher={bestBidMatcher}
+          tokensBySymbol={tokensBySymbol}
+          handleSideChange={handleSideChange}
+          expand={this.expand}
+          onContextMenu={renderContextMenu}
+          authenticated={authenticated}
+          buttonType={buttonType}
+          displayMode={displayMode}
+          wif={browserWallet.wif}
+        />
+        <RequestConfirmModal 
+          title="New Order"
+          details={details}
+          isOpen={isModalOpen}
+          handleClose={handleModalClose}
+          handleAction={handleModalAction}
+        />
+      </Wrapper>
     )
   }
 }
 
 export default ContextMenuTarget(OrderForm)
+
+const Wrapper = styled.div`
+  height: 100%;
+`;

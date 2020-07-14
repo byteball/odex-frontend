@@ -71,7 +71,6 @@ type Props = {
   buttonType: "BUY" | "SELL" | "BUY_UNLOCK" | "SELL_UNLOCK" | "BUY_LOGIN" | "SELL_LOGIN" | "BUY_UNLOCK_PENDING" | "SELL_UNLOCK_PENDING",
   displayMode: DisplayMode,
   wif: string,
-  sendNewOrder: string => void,
 }
 
 
@@ -131,7 +130,6 @@ const OrderFormRenderer = (props: Props) => {
     buttonType,
     displayMode,
     wif,
-    sendNewOrder
   } = props
 
   return (
@@ -222,7 +220,6 @@ const OrderFormRenderer = (props: Props) => {
                 buttonType={buttonType}
                 displayMode={displayMode}
                 wif={wif}
-                sendNewOrder={sendNewOrder}
               />
             }
           />
@@ -306,7 +303,6 @@ const LimitOrderPanel = props => {
     buttonType,
     displayMode,
     wif,
-    sendNewOrder
   } = props
 
   let fAmount = parseFloat(amount);
@@ -424,7 +420,6 @@ const LimitOrderPanel = props => {
           disabled={insufficientBalance || !fPrice || !fAmount}
           wif={wif}
           order={order}
-          sendNewOrder={sendNewOrder}
         />
     </React.Fragment>
   )
@@ -586,12 +581,11 @@ const ButtonRenderer = (props: *) => {
     handleSendOrder,
     disabled,
     buttonType,
-    sendNewOrder
   } = props
 
 
   const sendOrder = (type) => {
-    sendNewOrder(signMessageByWif(order, wif))
+    handleSendOrder(signMessageByWif(order, wif))
     
     if (type === "BUY") {
       buyGA();

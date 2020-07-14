@@ -32,7 +32,7 @@ export default class RequestConfirmModal extends React.PureComponent<Props, Stat
     return (
       <Modal title={title} width="400px" icon="info-sign" isOpen={isOpen} onClose={handleClose}>
         <ModalBody>
-          <Text muted>Cancel Order</Text>
+          <Text muted>{details}</Text>
           <br />
           <ControlGroup fill vertical={false}>
             <InputGroup
