@@ -22,9 +22,27 @@ export const generateWallet = (passphrase: string) => {
   const address = getChash160(definition);
 
   return {
+    wif,
     address,
-    wif
+    phrase: mnemonic.toString()
   }
+}
+
+export const getAddressFromPhrases = (phrase: string, passphrase: string) => {
+
+  if (!Mnemonic.isValid(phrase)) {
+    return null;
+  } 
+
+  let mnemonic = new Mnemonic(phrase);
+
+  const xPrivKey = mnemonic.toHDPrivateKey(passphrase);
+  const { privateKey } = xPrivKey.derive(path);
+  const pubkey = privateKey.publicKey.toBuffer().toString('base64');
+  const definition = ['sig', { pubkey }];
+  const address = getChash160(definition);
+
+  return address;
 }
 
 export const signMessageByWif = (message, wif) => {

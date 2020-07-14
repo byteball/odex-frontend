@@ -39,6 +39,7 @@ export type DisplayMode = {
 export type BrowserWallet = {
   address: string,
   wif: string,
+  phrase: string,
   encrypted: boolean,
   requestConfirm: boolean
 }

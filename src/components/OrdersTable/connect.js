@@ -1,6 +1,7 @@
 // @flow
 import { connect } from 'react-redux'
 import ordersTableSelector, { cancelOrder } from '../../store/models/ordersTable'
+import { addErrorNotification } from '../../store/actions/app'
 import type { State } from '../../types'
 
 type Props = {
@@ -16,7 +17,7 @@ export const mapStateToProps = (state: State, ownProps: Props) => {
   }
 }
 
-export const mapDispatchToProps = { cancelOrder }
+export const mapDispatchToProps = { cancelOrder, addErrorNotification }
 
 export default connect(
   mapStateToProps,

@@ -6,6 +6,7 @@ import { formatNumber, unformat } from 'accounting-js'
 import { Menu, MenuItem, ContextMenuTarget } from '@blueprintjs/core'
 import { MATCHER_FEE } from '../../config/environment';
 import RequestConfirmModal from '../RequestConfirmModal'
+import { getAddressFromPhrases } from '../../utils/wallet'
 import type { DisplayMode, BrowserWallet } from '../../types/account'
 
 type Props = {
@@ -33,6 +34,7 @@ type Props = {
   onExpand: string => void,
   onResetDefaultLayout: void => void,
   sendNewOrder: string => void,
+  addErrorNotification: string => void
 }
 
 type State = {
@@ -129,9 +131,20 @@ class OrderForm extends React.PureComponent<Props, State> {
     this.setState({ isModalOpen: !this.state.isModalOpen })
   }
 
-  handleModalAction = () => {
-    const { sendNewOrder } = this.props;
+  handleModalAction = (passInput: string) => {
+    const { browserWallet, sendNewOrder, addErrorNotification } = this.props;
     const { signedOrder } = this.state;
+    const passphrase = sessionStorage.getItem("passphrase");
+
+    if (browserWallet.encrypted && !passphrase) {
+      // validate
+      if(getAddressFromPhrases(browserWallet.phrase, passInput) !== browserWallet.address) {
+        addErrorNotification({ message: 'Whoops, your password is wrong!'})
+        return;
+      }
+      sessionStorage.setItem("passphrase", passInput)
+    }
+
     sendNewOrder(signedOrder);
     this.setState({ isModalOpen: false })
   }
@@ -140,12 +153,15 @@ class OrderForm extends React.PureComponent<Props, State> {
     const { amount, price, side } = this.state
     const { baseTokenSymbol, quoteTokenSymbol } = this.props;
     const { browserWallet, sendNewOrder } = this.props;
-
     const details = `New order to ${side.toLowerCase()} ${amount} ${baseTokenSymbol} at ${price} in ${quoteTokenSymbol}?`
-    if (!browserWallet.requestConfirm) {
-      return sendNewOrder(signedOrder);
+    const passphrase = sessionStorage.getItem("passphrase");
+
+    if (browserWallet.requestConfirm || (browserWallet.encrypted && !passphrase)) {
+      this.setState({ signedOrder, isModalOpen: true, details })
+    } else {
+      sendNewOrder(signedOrder);
     }
-    this.setState({ signedOrder, isModalOpen: true, details })
+    
   }
 
   handleUpdateAmountFraction = (fraction: number) => {

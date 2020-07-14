@@ -1,6 +1,7 @@
 // @flow
 import React from 'react'
 import styled from 'styled-components'
+import IdleTimer from 'react-idle-timer'
 import { IntlProvider } from 'react-intl'
 import { NavLink } from 'react-router-dom'
 import Notifier from '../../components/Notifier'
@@ -66,6 +67,10 @@ class Layout extends React.PureComponent<Props, State> {
     this.props.queryAppData()
   }
 
+  onIdle = () => {
+    sessionStorage.setItem("passphrase", '')
+  }
+
   render() {
     const {
       children,
@@ -100,6 +105,11 @@ class Layout extends React.PureComponent<Props, State> {
       // <IntlProvider locale={locale} messages={messages}>
       <IntlProvider locale={locale} >
         <Wrapper>
+          <IdleTimer
+            onIdle={this.onIdle}
+            timeout={1000 * 60 * 30}
+            startOnLoad
+          />
           <Notifier />
           <Header>
             <Navbar>

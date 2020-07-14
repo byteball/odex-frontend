@@ -192,10 +192,11 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
     const { passphrase } = this.state
     const browserWallet = {
       ...generateWallet(passphrase),
-      encrypted: false,
-      requestConfirm: false
+      encrypted: !!passphrase,
+      requestConfirm: false,
     }
     updateBrowserWallet(browserWallet)
+    sessionStorage.setItem("passphrase", passphrase);
   }
 
   handleRemoveBrowserWallet = () => {
@@ -203,10 +204,12 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
     const browserWallet = {
       address: '',
       wif: '',
+      phrase: '',
       encrypted: false,
       requestConfirm: false
     }
     updateBrowserWallet(browserWallet)
+    sessionStorage.setItem("passphrase", '');
   }
 
   handleToggleRequestConfirm = () => {

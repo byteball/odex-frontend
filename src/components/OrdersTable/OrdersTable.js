@@ -5,6 +5,7 @@ import OrdersTableRenderer from './OrdersTableRenderer'
 import RequestConfirmModal from '../RequestConfirmModal'
 import { sortTable } from '../../utils/helpers'
 import { ContextMenuTarget, Menu, MenuItem } from '@blueprintjs/core'
+import { getAddressFromPhrases } from '../../utils/wallet'
 
 import type { Order } from '../../types/Orders'
 import type { DisplayMode, BrowserWallet } from '../../types/account'
@@ -18,7 +19,8 @@ type Props = {
   cancelOrder: string => void,
   onCollapse: string => void,
   onExpand: string => void,
-  onResetDefaultLayout: void => void
+  onResetDefaultLayout: void => void,
+  addErrorNotification: string => void
 }
 
 type State = {
@@ -83,15 +85,28 @@ class OrdersTable extends React.PureComponent<Props, State> {
 
   handleCancelOrder = (signedCancel: string, details: string) => {
     const { browserWallet, cancelOrder } = this.props;
-    if (!browserWallet.requestConfirm) {
-      return cancelOrder(signedCancel);
+    const passphrase = sessionStorage.getItem("passphrase");
+    if (browserWallet.requestConfirm || (browserWallet.encrypted && !passphrase)) {
+      this.setState({ signedCancel, isModalOpen: true, details })
+    } else {
+      cancelOrder(signedCancel);
     }
-    this.setState({ signedCancel, isModalOpen: true, details })
+    
   }
 
-  handleModalAction = () => {
-    const { cancelOrder } = this.props;
+  handleModalAction = (passInput: string) => {
+    const { browserWallet, cancelOrder, addErrorNotification } = this.props;
     const { signedCancel } = this.state;
+    const passphrase = sessionStorage.getItem("passphrase");
+
+    if (browserWallet.encrypted && !passphrase) {
+      // validate
+      if(getAddressFromPhrases(browserWallet.phrase, passInput) !== browserWallet.address) {
+        addErrorNotification({ message: 'Whoops, your password is wrong!'})
+        return;
+      }
+      sessionStorage.setItem("passphrase", passInput)
+    }
     cancelOrder(signedCancel);
     this.setState({ isModalOpen: false })
   }

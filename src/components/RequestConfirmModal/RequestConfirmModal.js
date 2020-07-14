@@ -9,7 +9,7 @@ type Props = {
   handleClose: (SyntheticEvent<>) => void,
   title: string,
   details: string,
-  handleAction:  (SyntheticEvent<>) => void,
+  handleAction: (string) => void,
 };
 
 type State = {
@@ -21,26 +21,42 @@ export default class RequestConfirmModal extends React.PureComponent<Props, Stat
     password: ''
   }
 
+  onInputChange = ({target}) => {
+    this.setState({password: target.value})
+  }
+
   handleConfirm = () => {
     const { handleAction } = this.props;
-    handleAction();
+    const { password } = this.state;
+    handleAction(password);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.isOpen !== prevProps.isOpen) {
+      this.setState({password: ''});
+    }
   }
 
   render () {
     const { password } = this.state;
     const { isOpen, handleClose, title, details } = this.props;
+    const passphrase = sessionStorage.getItem("passphrase");
+
     return (
       <Modal title={title} width="400px" icon="info-sign" isOpen={isOpen} onClose={handleClose}>
         <ModalBody>
           <Text muted>{details}</Text>
           <br />
           <ControlGroup fill vertical={false}>
-            <InputGroup
-              type="text"
-              placeholder="Password"
-              name="password"
-              value={password}
-            />
+            { !passphrase &&
+                <InputGroup
+                  name="password"
+                  type="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={this.onInputChange}
+                />
+             }
             <Button text="Confirm" onClick={this.handleConfirm} />
           </ControlGroup>
         
