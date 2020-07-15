@@ -228,7 +228,7 @@ const PortfolioPanel = (props: *) => {
     <Box>
         <Box py={0}>
           <TextBox>
-            <h3 minimal large>Obyte Account</h3>
+            <h3>Obyte Account</h3>
           </TextBox>
           <TextDiv py={2} small muted>
             Here is your Obyte address that is linked to the exchange.  Your deposits should come from this address and your withdrawals will be also sent to this address.
@@ -252,11 +252,11 @@ const PortfolioPanel = (props: *) => {
             </CopyToClipboardBox>
           </FlexRow>
         </Box>
-        <h3 minimal large>Portfolio Overview</h3>
+        <h3>Portfolio Overview</h3>
         <TokenBalanceChartBox>
           <TokenBalanceChart />
         </TokenBalanceChartBox>
-        <h3 minimal large>Recent Transactions</h3>
+        <h3>Recent Transactions</h3>
           <Box my={2}>
             <TransactionsTable 
               transactions={transactions}
@@ -462,7 +462,7 @@ const AuthorizationsPanel = (props: *) => {
     <Spring from={{ opacity: 0 }} to={{ opacity: 1 }}>
       {props => (
         <Box style={props}>
-          <h3 minimal large>
+          <h3>
             Authorized Addresses
           </h3>
 
@@ -484,7 +484,7 @@ const AuthorizationsPanel = (props: *) => {
               <Wrapper>
                 <FlexRow alignItems="center">
                   <FlexItem flex="1">
-                    <h3 minimal large>
+                    <h3>
                       Browser Address
                     </h3>
                   </FlexItem>
@@ -503,7 +503,7 @@ const AuthorizationsPanel = (props: *) => {
                 </FlexRow>
               </Wrapper>
           }
-          <h3 minimal large>
+          <h3>
             Add Authorizations
           </h3>
           <Flex py={2}>
@@ -531,7 +531,7 @@ const AuthorizationsPanel = (props: *) => {
           {
             (!browserWallet || !browserWallet.address) &&
               <Wrapper>
-                <h3 minimal large>
+                <h3>
                   Generate Browser Wallet
                 </h3>
                 <Flex py={2}>
