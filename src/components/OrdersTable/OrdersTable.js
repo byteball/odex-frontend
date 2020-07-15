@@ -5,7 +5,7 @@ import OrdersTableRenderer from './OrdersTableRenderer'
 import RequestConfirmModal from '../RequestConfirmModal'
 import { sortTable } from '../../utils/helpers'
 import { ContextMenuTarget, Menu, MenuItem } from '@blueprintjs/core'
-import { getAddressFromPhrases } from '../../utils/wallet'
+import { getWalletFromPhrases, signMessageByWif } from '../../utils/wallet'
 
 import type { Order } from '../../types/Orders'
 import type { DisplayMode, BrowserWallet } from '../../types/account'
@@ -29,7 +29,7 @@ type State = {
   selectedTabId: string,
   isOpen: boolean,
   isModalOpen: boolean,
-  signedCancel: string,
+  orderToSign: Order,
   details: string,
   needPassphrase: boolean
 }
@@ -41,7 +41,7 @@ class OrdersTable extends React.PureComponent<Props, State> {
     selectedTabId: 'all',
     isOpen: true,
     isModalOpen: false,
-    signedCancel: '',
+    orderToSign: {},
     details: '',
     needPassphrase: false,
   }
@@ -87,23 +87,33 @@ class OrdersTable extends React.PureComponent<Props, State> {
     this.setState({ isModalOpen: !this.state.isModalOpen })
   }
 
-  handleCancelOrder = (signedCancel: string, details: string) => {
-    const { browserWallet, cancelOrder, passphrase } = this.props;
+  signCancelOrder = (orderToSign: Order, wif: string) => {
+    const { cancelOrder } = this.props;
+    const signedCancel = signMessageByWif('Cancel order ' + orderToSign.hash, wif);
+    cancelOrder(signedCancel);
+  }
+
+  handleCancelOrder = (orderToSign: Order) => {
+    const { browserWallet, passphrase } = this.props;
     const needPassphrase = browserWallet.encrypted && !passphrase;
+    const { side, amount, pair, price } = orderToSign;
+    const details = `Cancel order to ${side.toLowerCase()} ${amount} ${pair.split("/")[0]} at ${price} in ${pair.split("/")[1]}?`
 
     if (browserWallet.requestConfirm || needPassphrase) {
-      this.setState({ signedCancel, isModalOpen: true, details, needPassphrase })
+      this.setState({ orderToSign, details, needPassphrase, isModalOpen: true })
     } else {
-      cancelOrder(signedCancel);
+      const wallet = getWalletFromPhrases(browserWallet.phrase, passphrase);
+      this.signCancelOrder(orderToSign, wallet.wif);
     }
     
   }
 
   handleModalAction = (passInput: string) => {
-    const { browserWallet, passphrase, cancelOrder, updatePassphrase, addErrorNotification } = this.props;
-    const { signedCancel } = this.state;
+    const { browserWallet, passphrase, updatePassphrase, addErrorNotification } = this.props;
+    const { orderToSign } = this.state;
+    const wallet = getWalletFromPhrases(browserWallet.phrase, passphrase || passInput)
 
-    if (getAddressFromPhrases(browserWallet.phrase, passphrase || passInput) !== browserWallet.address) {
+    if (wallet.address !== browserWallet.address) {
       addErrorNotification({ message: 'Whoops, your passphrase is wrong!'})
       return;
     }
@@ -112,7 +122,7 @@ class OrdersTable extends React.PureComponent<Props, State> {
       updatePassphrase(passInput)
     }
 
-    cancelOrder(signedCancel);
+    this.signCancelOrder(orderToSign, wallet.wif);
     this.setState({ isModalOpen: false })
   }
 
@@ -157,7 +167,7 @@ class OrdersTable extends React.PureComponent<Props, State> {
           expand={this.expand}
           authenticated={authenticated}
           displayMode={displayMode}
-          wif={browserWallet.wif}
+          hasBrowserWallet={!!browserWallet.address}
           address={address}
           handleCancelOrder={handleCancelOrder}
           // silence-error: currently too many flow errors, waiting for rest to be resolved

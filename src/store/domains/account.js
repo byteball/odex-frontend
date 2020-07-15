@@ -22,7 +22,7 @@ const initialState = {
   operatorAddress: '',
   referenceCurrency: { name: 'USD', symbol: '$'},
   displayMode: { name: 'Price', priceAlias: 'PRICE', amountAlias: 'AMOUNT' },
-  browserWallet: { phrase: '', address: '', wif: '', encrypted: false, requestConfirm: false }
+  browserWallet: { phrase: '', address: '', encrypted: false, requestConfirm: false }
 }
 
 export const initialized = () => {

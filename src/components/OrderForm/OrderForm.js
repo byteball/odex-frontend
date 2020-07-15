@@ -6,8 +6,9 @@ import { formatNumber, unformat } from 'accounting-js'
 import { Menu, MenuItem, ContextMenuTarget } from '@blueprintjs/core'
 import { MATCHER_FEE } from '../../config/environment';
 import RequestConfirmModal from '../RequestConfirmModal'
-import { getAddressFromPhrases } from '../../utils/wallet'
+import { getWalletFromPhrases, signMessageByWif } from '../../utils/wallet'
 import type { DisplayMode, BrowserWallet } from '../../types/account'
+import type { NewOrder } from '../../types/orderForm';
 
 type Props = {
   authenticated: boolean,
@@ -27,7 +28,7 @@ type Props = {
   address: string,
   operatorAddress: string,
   exchangeAddress: string,
-  selectedOrder: Object,
+  selectedOrder: NewOrder,
   displayMode: DisplayMode,
   browserWallet: BrowserWallet,
   passphrase: string,
@@ -52,7 +53,7 @@ type State = {
   total: string,
   isOpen: boolean,
   isModalOpen: false,
-  signedOrder: string,
+  orderToSign: NewOrder,
   details: string,
   needPassphrase: boolean
 }
@@ -82,7 +83,7 @@ class OrderForm extends React.PureComponent<Props, State> {
       amount: '0.0',
       total: '0.0',
       isModalOpen: false,
-      signedOrder: '',
+      orderToSign: {},
       details: '',
       needPassphrase: false,
     }
@@ -135,11 +136,18 @@ class OrderForm extends React.PureComponent<Props, State> {
     this.setState({ isModalOpen: !this.state.isModalOpen })
   }
 
-  handleModalAction = (passInput: string) => {
-    const { browserWallet, passphrase, updatePassphrase, sendNewOrder, addErrorNotification } = this.props;
-    const { signedOrder } = this.state;
+  signNewOrder = (orderToSign: NewOrder, wif: string) => {
+    const { sendNewOrder } = this.props;
+    const signedOrder = signMessageByWif(orderToSign, wif);
+    sendNewOrder(signedOrder);
+  }
 
-    if (getAddressFromPhrases(browserWallet.phrase, passphrase || passInput) !== browserWallet.address) {
+  handleModalAction = (passInput: string) => {
+    const { browserWallet, passphrase, updatePassphrase, addErrorNotification } = this.props;
+    const { orderToSign } = this.state;
+    const wallet = getWalletFromPhrases(browserWallet.phrase, passphrase || passInput)
+
+    if (wallet.address !== browserWallet.address) {
       addErrorNotification({ message: 'Whoops, your passphrase is wrong!'})
       return;
     }
@@ -148,21 +156,22 @@ class OrderForm extends React.PureComponent<Props, State> {
       updatePassphrase(passInput)
     }
     
-    sendNewOrder(signedOrder);
+    this.signNewOrder(orderToSign, wallet.wif);
     this.setState({ isModalOpen: false })
   }
 
-  handleSendOrder = (signedOrder) => {
+  handleSendOrder = (orderToSign: NewOrder) => {
     const { amount, price, side } = this.state
     const { baseTokenSymbol, quoteTokenSymbol } = this.props;
-    const { browserWallet, passphrase, sendNewOrder } = this.props;
+    const { browserWallet, passphrase } = this.props;
     const details = `New order to ${side.toLowerCase()} ${amount} ${baseTokenSymbol} at ${price} in ${quoteTokenSymbol}?`
     const needPassphrase = browserWallet.encrypted && !passphrase;
 
     if (browserWallet.requestConfirm || needPassphrase) {
-      this.setState({ signedOrder, isModalOpen: true, details, needPassphrase })
+      this.setState({ orderToSign, isModalOpen: true, details, needPassphrase })
     } else {
-      sendNewOrder(signedOrder);
+      const wallet = getWalletFromPhrases(browserWallet.phrase, passphrase);
+      this.signNewOrder(orderToSign, wallet.wif);
     }
     
   }
@@ -478,7 +487,7 @@ class OrderForm extends React.PureComponent<Props, State> {
           authenticated={authenticated}
           buttonType={buttonType}
           displayMode={displayMode}
-          wif={browserWallet.wif}
+          hasBrowserWallet={!!browserWallet.address}
         />
         <RequestConfirmModal 
           title="New Order"

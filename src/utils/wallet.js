@@ -15,20 +15,17 @@ export const generateWallet = (passphrase: string) => {
   
   const xPrivKey = mnemonic.toHDPrivateKey(passphrase);
   const { privateKey } = xPrivKey.derive(path);
-  const privKeyBuf = privateKey.bn.toBuffer({ size: 32 });
-  const wif = toWif(privKeyBuf, testnet);
   const pubkey = privateKey.publicKey.toBuffer().toString('base64');
   const definition = ['sig', { pubkey }];
   const address = getChash160(definition);
 
   return {
-    wif,
     address,
     phrase: mnemonic.toString()
   }
 }
 
-export const getAddressFromPhrases = (phrase: string, passphrase: string) => {
+export const getWalletFromPhrases = (phrase: string, passphrase: string) => {
 
   if (!Mnemonic.isValid(phrase)) {
     return null;
@@ -38,11 +35,16 @@ export const getAddressFromPhrases = (phrase: string, passphrase: string) => {
 
   const xPrivKey = mnemonic.toHDPrivateKey(passphrase);
   const { privateKey } = xPrivKey.derive(path);
+  const privKeyBuf = privateKey.bn.toBuffer({ size: 32 });
+  const wif = toWif(privKeyBuf, testnet);
   const pubkey = privateKey.publicKey.toBuffer().toString('base64');
   const definition = ['sig', { pubkey }];
   const address = getChash160(definition);
 
-  return address;
+  return { 
+    address,
+    wif
+  };
 }
 
 export const signMessageByWif = (message, wif) => {
