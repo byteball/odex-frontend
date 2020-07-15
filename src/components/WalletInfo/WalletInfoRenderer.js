@@ -534,6 +534,8 @@ const AuthorizationsPanel = (props: *) => {
                 <h3>
                   Generate Browser Wallet
                 </h3>
+                <Text muted>Browser wallet allows you to quickly sign orders in browser with one or two clicks instead of confirming each order with your main Obyte wallet. The private key will be stored in this browser but it will be authorized only to trade on your behalf, not to withdraw your funds to arbitrary addresses.</Text>
+                <Text muted>For better security, you can optionally set a passphrase to encrypt your browser key. You'll need to enter it to sign orders if you were inactive for more than 30 minutes.</Text>
                 <Flex py={2}>
                   <FlexItem flex="1">
                     <InputGroup
