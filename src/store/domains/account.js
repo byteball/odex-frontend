@@ -126,6 +126,6 @@ export default function accountDomain(state: AccountState) {
     referenceCurrency: state.referenceCurrency,
     referenceCurrencyName: state.referenceCurrency.name,
     displayMode: state.displayMode ? state.displayMode : displayModes[0],
-    browserWallet: state.browserWallet
+    browserWallet: state.browserWallet || {}
   };
 }
