@@ -14,6 +14,7 @@ import ordersDomain from './orders'
 import connectionDomain from './connection';
 import transactionsDomain from './transactions'
 import statsDomain from './stats'
+import walletInfoDomain from './walletInfo'
 
 export const getConnectionDomain = state => connectionDomain(state.connection)
 export const getAccountDomain = state => accountDomain(state.account)
@@ -31,3 +32,4 @@ export const getTokenDomain = state => tokenDomain(state.tokens)
 export const getNotificationsDomain = state => notificationsDomain(state.notifications)
 export const getTransactionsDomain = state => transactionsDomain(state.transactions)
 export const getStatsDomain = state => statsDomain(state.stats)
+export const getWalletInfoDomain = state => walletInfoDomain(state.walletInfo)

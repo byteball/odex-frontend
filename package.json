@@ -67,6 +67,7 @@
     "react-ga": "^2.7.0",
     "react-grid-layout": "^0.16.6",
     "react-hot-loader": "^4.12.18",
+    "react-idle-timer": "^4.2.12",
     "react-intl": "^2.9.0",
     "react-lazyload": "^2.6.5",
     "react-popper": "^1.0.2",

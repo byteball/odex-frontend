@@ -1,6 +1,7 @@
 // @flow
 import React from 'react'
 import styled from 'styled-components'
+import IdleTimer from 'react-idle-timer'
 import { IntlProvider } from 'react-intl'
 import { NavLink } from 'react-router-dom'
 import Notifier from '../../components/Notifier'
@@ -55,7 +56,8 @@ export type Props = {
   updateDisplayMode: void => string,
   queryAppData: void => void,
   location: Location,
-  currentPair: string
+  currentPair: string,
+  updatePassphrase: string => void,
 }
 
 type State = {}
@@ -64,6 +66,10 @@ class Layout extends React.PureComponent<Props, State> {
 
   componentDidMount() {
     this.props.queryAppData()
+  }
+
+  onIdle = () => {
+    this.props.updatePassphrase('')
   }
 
   render() {
@@ -100,6 +106,11 @@ class Layout extends React.PureComponent<Props, State> {
       // <IntlProvider locale={locale} messages={messages}>
       <IntlProvider locale={locale} >
         <Wrapper>
+          <IdleTimer
+            onIdle={this.onIdle}
+            timeout={1000 * 60 * 30}
+            startOnLoad
+          />
           <Notifier />
           <Header>
             <Navbar>

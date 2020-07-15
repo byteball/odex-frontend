@@ -4,7 +4,6 @@ import styled from 'styled-components'
 import { formatNumber } from 'accounting-js'
 import { AutoSizer } from 'react-virtualized'
 import { CHATBOT_URL } from '../../config/urls'
-import { signMessageByWif } from '../../utils/wallet'
 
 
 import { 
@@ -40,11 +39,11 @@ type Props = {
   onChange: string => void,
   isOpen: boolean,
   toggleCollapse: void => void,
-  cancelOrder: string => void,
+  handleCancelOrder: (Order) => void,
   authenticated: boolean,
   displayMode: DisplayMode,
   address: string,
-  wif: string,
+  hasBrowserWallet: boolean,
   orders: {
     ALL: Array<Order>,
     OPEN: Array<Order>,
@@ -69,7 +68,7 @@ const OrdersTableRenderer = (props: Props) => {
     loading, 
     selectedTabId, 
     onChange, 
-    cancelOrder, 
+    handleCancelOrder, 
     orders, 
     isOpen, 
     toggleCollapse,
@@ -78,7 +77,7 @@ const OrdersTableRenderer = (props: Props) => {
     address,
     authenticated,
     displayMode,
-    wif
+    hasBrowserWallet
   } = props
 
   return (
@@ -115,36 +114,36 @@ const OrdersTableRenderer = (props: Props) => {
                   <OrdersTablePanel 
                     loading={loading} 
                     orders={orders['ALL']} 
-                    cancelOrder={cancelOrder} 
+                    handleCancelOrder={handleCancelOrder} 
                     width={width}
                     authenticated={authenticated}
                     address={address}
                     displayMode={displayMode}
-                    wif={wif}
+                    hasBrowserWallet={hasBrowserWallet}
                   />} 
                 />
                 <Tab id="open" title="OPEN" panel={
                   <OrdersTablePanel 
                     loading={loading} 
                     orders={orders['OPEN']} 
-                    cancelOrder={cancelOrder} 
+                    handleCancelOrder={handleCancelOrder} 
                     width={width} 
                     authenticated={authenticated}
                     address={address}
                     displayMode={displayMode}
-                    wif={wif}
+                    hasBrowserWallet={hasBrowserWallet}
                   />} 
                 />
                 <Tab id="cancelled" title="CANCELLED" panel={
                   <OrdersTablePanel 
                     loading={loading} 
                     orders={orders['CANCELLED']} 
-                    cancelOrder={cancelOrder} 
+                    handleCancelOrder={handleCancelOrder} 
                     width={width}
                     authenticated={authenticated}
                     address={address}
                     displayMode={displayMode}
-                    wif={wif}
+                    hasBrowserWallet={hasBrowserWallet}
                   />
                   } 
                 />
@@ -152,12 +151,12 @@ const OrdersTableRenderer = (props: Props) => {
                   <OrdersTablePanel 
                     loading={loading} 
                     orders={orders['FILLED']} 
-                    cancelOrder={cancelOrder} 
+                    handleCancelOrder={handleCancelOrder} 
                     width={width}
                     authenticated={authenticated}
                     address={address}
                     displayMode={displayMode}
-                    wif={wif}
+                    hasBrowserWallet={hasBrowserWallet}
                   />} 
                 />
               </Tabs>
@@ -170,7 +169,7 @@ const OrdersTableRenderer = (props: Props) => {
 }
 
 const OrdersTablePanel = (props: *) => {
-  const { loading, orders, cancelOrder, width, authenticated, address, displayMode, wif } = props
+  const { loading, orders, handleCancelOrder, width, authenticated, address, displayMode, hasBrowserWallet } = props
 
   if (loading) return <Loading />
   if (!authenticated) return <CenteredMessage message="Not logged in" />
@@ -200,12 +199,12 @@ const OrdersTablePanel = (props: *) => {
                   key={index} 
                   order={order} 
                   index={index} 
-                  cancelOrder={cancelOrder}
+                  handleCancelOrder={handleCancelOrder}
                   address={address}
                   width={width}
                   labels={['PAIR', 'AMOUNT', 'PRICE', 'STATUS', 'SIDE', 'TIME']}
                   displayMode={displayMode}
-                  wif={wif}
+                  hasBrowserWallet={hasBrowserWallet}
                 />
               )
             }
@@ -216,11 +215,10 @@ const OrdersTablePanel = (props: *) => {
 }
 
 const OrderRow = (props: *) => {
-  const { order, cancelOrder, address, width, labels, displayMode, wif } = props
+  const { order, handleCancelOrder, address, width, labels, displayMode, hasBrowserWallet } = props
   
   const onClickCancel = () => {
-    const signedCancel = signMessageByWif('Cancel order ' + order.hash, wif)
-    cancelOrder(signedCancel)
+    handleCancelOrder(order)
   }
 
   return (
@@ -273,7 +271,7 @@ const OrderRow = (props: *) => {
       </Hideable>
       <Cell className="cancel" muted>
         {order.cancelleable && (
-          wif ? <AnchorButton intent="danger" minimal onClick={onClickCancel}>
+          hasBrowserWallet ? <AnchorButton intent="danger" minimal onClick={onClickCancel}>
             <Icon icon="cross" intent="danger" />&nbsp;&nbsp;Cancel
           </AnchorButton> :
           <AnchorButton intent="danger" minimal href={CHATBOT_URL + "cancel-" + order.hash + "-" + address}>

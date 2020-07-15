@@ -9,6 +9,7 @@ import {
   getAccountDomain,
   getTokenDomain,
   getOrdersDomain,
+  getWalletInfoDomain
 } from '../domains/'
 
 import type { State, ThunkAction } from '../../types'
@@ -45,6 +46,7 @@ export default function getOrderFormSelector(state: State) {
   let quoteTokenLockedBalance = orderDomain.lockedBalanceByToken(quoteTokenSymbol, address)
   let baseTokenBalance = baseToken.balance - baseTokenLockedBalance
   let quoteTokenBalance = quoteToken.balance - quoteTokenLockedBalance
+  let { passphrase } = getWalletInfoDomain(state)
 
 
   return {
@@ -66,7 +68,8 @@ export default function getOrderFormSelector(state: State) {
     tokensBySymbol,
     authenticated,
     displayMode,
-    wif: browserWallet.wif
+    browserWallet,
+    passphrase
   }
 }
 

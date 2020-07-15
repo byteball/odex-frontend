@@ -18,7 +18,8 @@ import type {
 const actionTypes = {
     addToken: 'walletInfo/ADD_TOKEN',
     registerToken: 'walletInfo/REGISTER_TOKEN',
-    updateBrowserWallet: 'walletInfo/UPDATE_BROWSER_WALLET'
+    updateBrowserWallet: 'walletInfo/UPDATE_BROWSER_WALLET',
+    updatePassphrase: 'walletInfo/UPDATE_PASSPHRASE'
 }
 
 export function addToken(token: Token, pairs: TokenPairs): AddTokenAction {
@@ -39,6 +40,13 @@ export function updateBrowserWallet(browserWallet: BrowserWallet): UpdateBrowser
     return {
         type: actionTypes.updateBrowserWallet,
         payload: { browserWallet }
+    }
+}
+
+export function updatePassphrase(passphrase: string): UpdatePassphraseAction {
+    return {
+        type: actionTypes.updatePassphrase,
+        payload: { passphrase }
     }
 }
 

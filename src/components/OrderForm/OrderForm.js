@@ -1,10 +1,14 @@
 // @flow
 import React from 'react'
+import styled from 'styled-components';
 import OrderFormRenderer from './OrderFormRenderer'
 import { formatNumber, unformat } from 'accounting-js'
 import { Menu, MenuItem, ContextMenuTarget } from '@blueprintjs/core'
 import { MATCHER_FEE } from '../../config/environment';
-import type { DisplayMode } from '../../types/account'
+import RequestConfirmModal from '../RequestConfirmModal'
+import { getWalletFromPhrases, signMessageByWif } from '../../utils/wallet'
+import type { DisplayMode, BrowserWallet } from '../../types/account'
+import type { NewOrder } from '../../types/orderForm';
 
 type Props = {
   authenticated: boolean,
@@ -22,15 +26,18 @@ type Props = {
   quoteTokenDecimals: number,
   loggedIn: boolean,
   address: string,
-  wif: string,
   operatorAddress: string,
   exchangeAddress: string,
-  selectedOrder: Object,
+  selectedOrder: NewOrder,
   displayMode: DisplayMode,
+  browserWallet: BrowserWallet,
+  passphrase: string,
   onCollapse: string => void,
   onExpand: string => void,
   onResetDefaultLayout: void => void,
   sendNewOrder: string => void,
+  addErrorNotification: string => void,
+  updatePassphrase: string => void
 }
 
 type State = {
@@ -44,7 +51,11 @@ type State = {
   odds: string,
   stake: string,
   total: string,
-  isOpen: boolean
+  isOpen: boolean,
+  isModalOpen: false,
+  orderToSign: NewOrder,
+  details: string,
+  needPassphrase: boolean
 }
 
 class OrderForm extends React.PureComponent<Props, State> {
@@ -53,7 +64,7 @@ class OrderForm extends React.PureComponent<Props, State> {
     bidPrice: 0,
     askPrice: 0,
     baseTokenBalance: 0,
-    quoteTokenBalance: 0
+    quoteTokenBalance: 0,
   }
 
   constructor(props: Props) {
@@ -70,7 +81,11 @@ class OrderForm extends React.PureComponent<Props, State> {
       odds: formatNumber(bidPrice ? 1 / bidPrice : 0, { precision: 3 }),
       stake: '0.0',
       amount: '0.0',
-      total: '0.0'
+      total: '0.0',
+      isModalOpen: false,
+      orderToSign: {},
+      details: '',
+      needPassphrase: false,
     }
   }
 
@@ -117,13 +132,48 @@ class OrderForm extends React.PureComponent<Props, State> {
     }
   }
 
-  handleSendOrder = () => {
-    let { amount, price, side } = this.state
+  handleModalClose = () => {
+    this.setState({ isModalOpen: !this.state.isModalOpen })
+  }
 
-    amount = unformat(amount)
-    price = unformat(price)
+  signNewOrder = (orderToSign: NewOrder, wif: string) => {
+    const { sendNewOrder } = this.props;
+    const signedOrder = signMessageByWif(orderToSign, wif);
+    sendNewOrder(signedOrder);
+  }
 
-    //this.props.sendNewOrder(side, amount, price)
+  handleModalAction = (passInput: string) => {
+    const { browserWallet, passphrase, updatePassphrase, addErrorNotification } = this.props;
+    const { orderToSign } = this.state;
+    const wallet = getWalletFromPhrases(browserWallet.phrase, passphrase || passInput)
+
+    if (wallet.address !== browserWallet.address) {
+      addErrorNotification({ message: 'Whoops, your passphrase is wrong!'})
+      return;
+    }
+
+    if (!!passInput) {
+      updatePassphrase(passInput)
+    }
+    
+    this.signNewOrder(orderToSign, wallet.wif);
+    this.setState({ isModalOpen: false })
+  }
+
+  handleSendOrder = (orderToSign: NewOrder) => {
+    const { amount, price, side } = this.state
+    const { baseTokenSymbol, quoteTokenSymbol } = this.props;
+    const { browserWallet, passphrase } = this.props;
+    const details = `New order to ${side.toLowerCase()} ${amount} ${baseTokenSymbol} at ${price} in ${quoteTokenSymbol}?`
+    const needPassphrase = browserWallet.encrypted && !passphrase;
+
+    if (browserWallet.requestConfirm || needPassphrase) {
+      this.setState({ orderToSign, isModalOpen: true, details, needPassphrase })
+    } else {
+      const wallet = getWalletFromPhrases(browserWallet.phrase, passphrase);
+      this.signNewOrder(orderToSign, wallet.wif);
+    }
+    
   }
 
   handleUpdateAmountFraction = (fraction: number) => {
@@ -340,7 +390,10 @@ class OrderForm extends React.PureComponent<Props, State> {
         amount, 
         total,
         stake,
-        odds
+        odds,
+        details,
+        isModalOpen,
+        needPassphrase
       },
       props: { 
         baseTokenSymbol, 
@@ -360,15 +413,16 @@ class OrderForm extends React.PureComponent<Props, State> {
         tokensBySymbol,
         authenticated,
         displayMode,
-        wif,
-        sendNewOrder
+        browserWallet,
       },
       onInputChange,
       handleChangeOrderType,
       handleSendOrder,
       handleSideChange,
       toggleCollapse,
-      renderContextMenu
+      renderContextMenu,
+      handleModalClose,
+      handleModalAction
     } = this
 
 
@@ -398,45 +452,58 @@ class OrderForm extends React.PureComponent<Props, State> {
         : "SELL_LOGIN"
     
     return (
-      <OrderFormRenderer
-        selectedTabId={selectedTabId}
-        side={side}
-        fraction={fraction}
-        priceType={priceType}
-        price={displayMode.name === 'Price' ? price : odds}
-        maxAmount={maxAmount}
-        amount={displayMode.name === 'Price' ? amount : stake}
-        total={total}
-        isOpen={isOpen}
-        baseTokenSymbol={baseTokenSymbol}
-        quoteTokenSymbol={quoteTokenSymbol}
-        insufficientBalance={insufficientBalance}
-        loggedIn={loggedIn}
-        onInputChange={onInputChange}
-        toggleCollapse={toggleCollapse}
-        handleChangeOrderType={handleChangeOrderType}
-        handleSendOrder={handleSendOrder}
-        baseTokenDecimals={baseTokenDecimals}
-        quoteTokenDecimals={quoteTokenDecimals}
-        address={address}
-        operatorAddress={operatorAddress}
-        exchangeAddress={exchangeAddress}
-        askPrice={askPrice}
-        bidPrice={bidPrice}
-        bestAskMatcher={bestAskMatcher}
-        bestBidMatcher={bestBidMatcher}
-        tokensBySymbol={tokensBySymbol}
-        handleSideChange={handleSideChange}
-        expand={this.expand}
-        onContextMenu={renderContextMenu}
-        authenticated={authenticated}
-        buttonType={buttonType}
-        displayMode={displayMode}
-        wif={wif}
-        sendNewOrder={sendNewOrder}
-      />
+      <Wrapper>
+        <OrderFormRenderer
+          selectedTabId={selectedTabId}
+          side={side}
+          fraction={fraction}
+          priceType={priceType}
+          price={displayMode.name === 'Price' ? price : odds}
+          maxAmount={maxAmount}
+          amount={displayMode.name === 'Price' ? amount : stake}
+          total={total}
+          isOpen={isOpen}
+          baseTokenSymbol={baseTokenSymbol}
+          quoteTokenSymbol={quoteTokenSymbol}
+          insufficientBalance={insufficientBalance}
+          loggedIn={loggedIn}
+          onInputChange={onInputChange}
+          toggleCollapse={toggleCollapse}
+          handleChangeOrderType={handleChangeOrderType}
+          handleSendOrder={handleSendOrder}
+          baseTokenDecimals={baseTokenDecimals}
+          quoteTokenDecimals={quoteTokenDecimals}
+          address={address}
+          operatorAddress={operatorAddress}
+          exchangeAddress={exchangeAddress}
+          askPrice={askPrice}
+          bidPrice={bidPrice}
+          bestAskMatcher={bestAskMatcher}
+          bestBidMatcher={bestBidMatcher}
+          tokensBySymbol={tokensBySymbol}
+          handleSideChange={handleSideChange}
+          expand={this.expand}
+          onContextMenu={renderContextMenu}
+          authenticated={authenticated}
+          buttonType={buttonType}
+          displayMode={displayMode}
+          hasBrowserWallet={!!browserWallet.address}
+        />
+        <RequestConfirmModal 
+          title="New Order"
+          details={details}
+          needPassphrase={needPassphrase}
+          isOpen={isModalOpen}
+          handleClose={handleModalClose}
+          handleAction={handleModalAction}
+        />
+      </Wrapper>
     )
   }
 }
 
 export default ContextMenuTarget(OrderForm)
+
+const Wrapper = styled.div`
+  height: 100%;
+`;

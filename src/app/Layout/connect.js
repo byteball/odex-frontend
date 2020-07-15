@@ -2,7 +2,7 @@
 import { connect } from 'react-redux';
 import layoutSelector, { queryAppData } from '../../store/models/layout';
 import { updateReferenceCurrency, updateDisplayMode } from '../../store/actions/layout'
-
+import { updatePassphrase } from '../../store/actions/walletInfo'
 import type { State } from '../../types'
 
 export function mapStateToProps(state: State, props: Object) {
@@ -19,6 +19,7 @@ const mapDispatchToProps = {
   updateReferenceCurrency,
   updateDisplayMode,
   queryAppData,
+  updatePassphrase
 }
 
 export default connect(

@@ -5,7 +5,6 @@ import ReactGA from 'react-ga'
 import { formatNumber } from 'accounting-js'
 import { MATCHER_FEE, MAX_PRICE_PRECISION } from '../../config/environment';
 import { CHATBOT_URL } from '../../config/urls'
-import { signMessageByWif } from '../../utils/wallet'
 
 import { 
   Position, 
@@ -35,6 +34,7 @@ import Help from '../../components/Help'
 
 import type { Node } from 'react'
 import type { DisplayMode } from '../../types/account'
+import type { NewOrder } from '../../types/orderForm';
 
 
 type Props = {
@@ -58,7 +58,7 @@ type Props = {
   loggedIn: boolean,
   onInputChange: Object => void,
   handleChangeOrderType: string => void,
-  handleSendOrder: void => void,
+  handleSendOrder: NewOrder => void,
   baseTokenDecimals: number,
   quoteTokenDecimals: number,
   address: string,
@@ -70,8 +70,7 @@ type Props = {
   onContextMenu: void => Node,
   buttonType: "BUY" | "SELL" | "BUY_UNLOCK" | "SELL_UNLOCK" | "BUY_LOGIN" | "SELL_LOGIN" | "BUY_UNLOCK_PENDING" | "SELL_UNLOCK_PENDING",
   displayMode: DisplayMode,
-  wif: string,
-  sendNewOrder: string => void,
+  hasBrowserWallet: boolean,
 }
 
 
@@ -130,8 +129,7 @@ const OrderFormRenderer = (props: Props) => {
     onContextMenu,
     buttonType,
     displayMode,
-    wif,
-    sendNewOrder
+    hasBrowserWallet,
   } = props
 
   return (
@@ -221,8 +219,7 @@ const OrderFormRenderer = (props: Props) => {
                 tokensBySymbol={tokensBySymbol}
                 buttonType={buttonType}
                 displayMode={displayMode}
-                wif={wif}
-                sendNewOrder={sendNewOrder}
+                hasBrowserWallet={hasBrowserWallet}
               />
             }
           />
@@ -305,8 +302,7 @@ const LimitOrderPanel = props => {
     tokensBySymbol,
     buttonType,
     displayMode,
-    wif,
-    sendNewOrder
+    hasBrowserWallet,
   } = props
 
   let fAmount = parseFloat(amount);
@@ -422,9 +418,8 @@ const LimitOrderPanel = props => {
           handleSendOrder={handleSendOrder}
           buttonType={buttonType}
           disabled={insufficientBalance || !fPrice || !fAmount}
-          wif={wif}
+          hasBrowserWallet={hasBrowserWallet}
           order={order}
-          sendNewOrder={sendNewOrder}
         />
     </React.Fragment>
   )
@@ -578,7 +573,7 @@ const ButtonRenderer = (props: *) => {
   const {
     side,
     link,
-    wif,
+    hasBrowserWallet,
     order,
     amount,
     baseTokenSymbol,
@@ -586,12 +581,11 @@ const ButtonRenderer = (props: *) => {
     handleSendOrder,
     disabled,
     buttonType,
-    sendNewOrder
   } = props
 
 
   const sendOrder = (type) => {
-    sendNewOrder(signMessageByWif(order, wif))
+    handleSendOrder(order)
     
     if (type === "BUY") {
       buyGA();
@@ -618,7 +612,7 @@ const ButtonRenderer = (props: *) => {
   
   return {
     "BUY": (
-      wif ?
+      hasBrowserWallet ?
       <GreenGlowingAnchorButton
         intent="success"
         text={side + " " + amount + " " + baseTokenSymbol}
@@ -638,7 +632,7 @@ const ButtonRenderer = (props: *) => {
       />
     ),
     "SELL": (
-      wif ?
+      hasBrowserWallet ?
       <RedGlowingAnchorButton
         intent="danger"
         text={side + " " + amount + " " + baseTokenSymbol}

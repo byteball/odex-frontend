@@ -9,3 +9,15 @@ export type OrderFormState = {
   baseToken: string,
   quoteToken: string,
 };
+
+export type NewOrder = {
+  sell_asset: string,
+  buy_asset: string,
+  sell_amount: number,
+  price: number,
+  matcher_fee_asset: string,
+  matcher_fee: number,
+  matcher: string,
+  aa: string,
+  address: string
+}
