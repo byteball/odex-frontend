@@ -167,7 +167,7 @@ class OrdersTable extends React.PureComponent<Props, State> {
           expand={this.expand}
           authenticated={authenticated}
           displayMode={displayMode}
-          hasBrowserWallet={!!browserWallet.address}
+          hasBrowserWallet={browserWallet.authorized}
           address={address}
           handleCancelOrder={handleCancelOrder}
           // silence-error: currently too many flow errors, waiting for rest to be resolved
