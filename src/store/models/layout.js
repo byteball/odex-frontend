@@ -1,6 +1,7 @@
 import * as actionCreators from '../actions/layout'
 import * as balanceActionCreators from '../actions/accountBalances';
 import * as notifierActionCreators from '../actions/app'
+import { updateBrowserWallet } from '../actions/walletInfo'
 
 import {
   getTokenDomain,
@@ -9,6 +10,8 @@ import {
  } from '../domains'
 
 import { fiatCurrencies, pricedTokens, displayModes } from '../../config'
+
+import { client } from '../../store/services/api/obyte';
 
 export default function createSelector(state) {
   let { authenticated, address, referenceCurrency, displayMode } = getAccountDomain(state)
@@ -47,7 +50,92 @@ export default function createSelector(state) {
     displayModes: modes,
     location,
     currentPair
-  };
+  }
+}
+
+export function initAAs(): ThunkAction {
+  return async(dispatch, getState) => {
+    const state = getState();
+    let { exchangeAddress, address: accountAddress, browserWallet } = getAccountDomain(state);
+    if (!accountAddress || !exchangeAddress || !browserWallet || !browserWallet.address) {
+      return;
+    }
+
+    try {
+      const aaVars = await client.api.getAaStateVars({ address: exchangeAddress });
+      const authorizations = Object.keys(aaVars)
+          .filter(key => key.indexOf(`grant_${accountAddress}`) >= 0 && aaVars[key] === 1)
+          .map(key => String(key).split('_to_')[1])
+      if (authorizations.find((aa) => aa === browserWallet.address)) {
+        dispatch(updateBrowserWallet({
+          ...browserWallet,
+          authorized: true
+        }))
+      } else {
+        dispatch(updateBrowserWallet({
+          ...browserWallet,
+          authorized: false
+        }))
+      }
+    } catch (e) {
+      console.log("error", e);
+    }
+  }
+}
+
+export function subscribeAA(): ThunkAction {
+  return async(dispatch, getState) => {
+    const state = getState();
+    let { exchangeAddress } = getAccountDomain(state);
+    if (!exchangeAddress) {
+      return;
+    }
+
+    try {
+      await client.justsaying("light/new_aa_to_watch", {
+        aa: exchangeAddress
+      });
+    } catch (e) {
+      console.log("error", e);
+    }
+  }
+}
+
+export function watchRequestAA(): ThunkAction {
+  return async(dispatch, getState) => {
+    let { exchangeAddress } = getAccountDomain(getState());
+
+    try {
+      client.subscribe(async (err, result) => {
+        console.log("notification", result);
+        
+        if (result[1].subject === "light/aa_response") {
+          const AA = result[1].body.aa_address;
+
+          if (AA === exchangeAddress) {
+            const { responseVars } = result[1].body.response;
+            const browserWallet = getAccountDomain(getState()).browserWallet || {};
+
+            if (responseVars.event === "revocation" && responseVars.address === browserWallet.address) {
+              dispatch(updateBrowserWallet({
+                ...browserWallet,
+                authorized: false
+              }))
+            }
+            
+            if (responseVars.event === "grant" && responseVars.authorized_address === browserWallet.address) {
+              dispatch(updateBrowserWallet({
+                ...browserWallet,
+                authorized: true
+              }))
+            }
+          }
+        }
+      })
+    } catch(error) {
+      console.log("error", error)
+    }
+  }
 }
 
 
