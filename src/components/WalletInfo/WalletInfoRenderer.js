@@ -580,7 +580,7 @@ const BrowserWalletPanel = (props: *) => {
                   <Flex py={2}>
                     <InputGroup
                       name="passphrase"
-                      placeholder="Passphrase(Optional)"
+                      placeholder="Passphrase (Optional)"
                       onChange={handleChangePassphrase}
                       value={passphrase}
                       fill
@@ -603,7 +603,7 @@ const BrowserWalletPanel = (props: *) => {
                         </RequestConfirmationCheck>
                         <Box pl={3} style={{display: "flex", alignItems: "center"}}>
                           <Help position={Position.BOTTOM}>
-                            When an order (cancel-order) is about to be signed, it will show a confirmation modal that display the future operation details.
+                            When an order (cancel-order) is about to be signed, it will show a confirmation dialog that display the future operation details.
                           </Help>
                         </Box>
                       </Flex>

@@ -58,36 +58,36 @@ export type Props = {
   location: Location,
   currentPair: string,
   updatePassphrase: string => void,
-  initAAs: void => void,
+  updateBrowserWalletAuthorization: void => void,
   subscribeAA: void => void,
-  watchRequestAA: void => void,
+  watchAaNotifications: void => void,
 }
 
 type State = {
-  init: boolean
+  initialized: boolean
 }
 
 class Layout extends React.PureComponent<Props, State> {
   state = {
-    init: false,
+    initialized: false,
   }
 
   componentDidMount() {
     this.props.queryAppData()
-    this.props.watchRequestAA()
+    this.props.watchAaNotifications()
 
   }
 
   componentDidUpdate() {
-    if(this.props.authenticated && !this.state.init) {
-      this.props.initAAs();
+    if(this.props.authenticated && !this.state.initialized) {
+      this.props.updateBrowserWalletAuthorization();
   
       client.onConnect(async () => {
         console.log("open connection...")
         this.props.subscribeAA();
       })
 
-      this.setState({ init : true})
+      this.setState({ initialized : true})
     }
   }
 
