@@ -424,8 +424,10 @@ const handleBalancesMessage = (event: WebsocketMessage): ThunkAction => {
     let assocBalances = event.payload.balances
     let ev = event.payload.event
     let balances = []
-    for (var symbol in assocBalances)
-      balances.push({balance: assocBalances[symbol] / Math.pow(10, tokensBySymbol[symbol].decimals), symbol});
+    for (var symbol in assocBalances) {
+      if(tokensBySymbol[symbol])
+        balances.push({balance: assocBalances[symbol] / Math.pow(10, tokensBySymbol[symbol].decimals), symbol});
+    }
 
     dispatch(balanceActionCreators.updateBalances(balances));
     if (ev === 'deposit')

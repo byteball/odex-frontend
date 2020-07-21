@@ -1,14 +1,15 @@
-import { ENGINE_WS_URL } from '../../../config/urls';
+import { DEFAULT_NETWORK_ID } from '../../../config/environment';
+const testnet = DEFAULT_NETWORK_ID === 'testnet';
 
 const obyte = require('obyte');
 
-const client = new obyte.Client(`${ENGINE_WS_URL}/bb`);
+export const client = new obyte.Client(`wss://obyte.org/bb${testnet ? "-test" : ""}`, {
+  testnet,
+  reconnect: true
+});
 
-export const getAaStateVars = address =>
+export const getAaStateVars = params =>
   new Promise((resolve, reject) => {
-    const params = {
-      address,
-    };
 
     client.api.getAaStateVars(params, function(err, result) {
       if (err) {

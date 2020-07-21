@@ -105,6 +105,7 @@ const WalletInfoRenderer = (props: Props) => {
         <Button
           text="Portfolio"
           minimal
+          small
           onClick={() => handleChangeTab("Portfolio")}
           active={selectedTab === "Portfolio"}
           intent={selectedTab === "Portfolio" ? 'primary' : ''}
@@ -112,6 +113,7 @@ const WalletInfoRenderer = (props: Props) => {
         <Button
           text="Add Token"
           minimal
+          small
           onClick={() => handleChangeTab("Add Token")}
           active={selectedTab === "Add Token"}
           intent={selectedTab === "Add Token" ? 'primary' : ''}
@@ -119,9 +121,18 @@ const WalletInfoRenderer = (props: Props) => {
         <Button
           text="Authorizations"
           minimal
+          small
           onClick={() => handleChangeTab('Authorizations')}
           active={selectedTab === 'Authorizations'}
           intent={selectedTab === 'Authorizations' ? 'primary' : ''}
+        />
+        <Button
+          text="Browser Wallet"
+          minimal
+          small
+          onClick={() => handleChangeTab('Browser Wallet')}
+          active={selectedTab === 'Browser Wallet'}
+          intent={selectedTab === 'Browser Wallet' ? 'primary' : ''}
         />
         {/* {<Button
           text="Premium Listing"
@@ -172,14 +183,21 @@ const WalletInfoRenderer = (props: Props) => {
           panel={
             <AuthorizationsPanel
               address={address}
-              browserWallet={browserWallet}
               authorizations={authorizations}
-              passphrase={passphrase}
               accountAddress={accountAddress}
               exchangeAddress={exchangeAddress}
-              handleChangePassphrase={handleChangePassphrase}
               handleChangeAddress={handleChangeAddress}
               handleToggleRevokeModal={handleToggleRevokeModal}
+            />
+          }
+        />
+        <Tab
+          id="Browser Wallet"
+          panel={
+            <BrowserWalletPanel
+              browserWallet={browserWallet}
+              passphrase={passphrase}
+              handleChangePassphrase={handleChangePassphrase}
               handleAddBrowserWallet={handleAddBrowserWallet}
               handleRemoveBrowserWallet={handleRemoveBrowserWallet}
               handleToggleRequestConfirm={handleToggleRequestConfirm}
@@ -428,24 +446,14 @@ const GRANTTEXT = styled.div`
   word-break: break-word;
 `;
 
-const Wrapper = styled.div`
-  
-`;
-
 const AuthorizationsPanel = (props: *) => {
   const { 
-    address, 
-    browserWallet, 
+    address,
     authorizations, 
     handleChangeAddress, 
     exchangeAddress, 
     handleToggleRevokeModal, 
     accountAddress,
-    passphrase, 
-    handleAddBrowserWallet, 
-    handleRemoveBrowserWallet,
-    handleToggleRequestConfirm, 
-    handleChangePassphrase
   } = props;
   let data = {
     grant: 1,
@@ -457,6 +465,12 @@ const AuthorizationsPanel = (props: *) => {
   const isValid = isValidAddress(address) && ![accountAddress, ...authorizations].includes(address)
   const message = !isValidAddress(address) ? 'Please input a valid address' 
     : address === accountAddress ? `You can't authorize your wallet address`: `You can't authorize the address that you authorized in the past`
+
+  const openLink = () => {
+    const alink = document.createElement('a');
+    alink.href = link;
+    alink.click();
+  }
 
   return (
     <Spring from={{ opacity: 0 }} to={{ opacity: 1 }}>
@@ -479,6 +493,56 @@ const AuthorizationsPanel = (props: *) => {
               </FlexRow>
             );
           })}
+          <h3>
+            Add Authorizations
+          </h3>
+          <Flex py={2}>
+            <FlexItem flex="1">
+              <InputGroup
+                name="address"
+                placeholder="Address"
+                intent={!isValid ? 'danger' : ''}
+                onChange={handleChangeAddress}
+                value={address}
+                autoFocus
+                fill
+              />
+            </FlexItem>
+            <Button
+              intent="primary"
+              text="Authorize"
+              disabled={!isValid}
+              onClick={openLink}
+            />
+          </Flex>
+          {!isValid && address !== '' && <Text muted intent="danger">{message}</Text>}
+        </Box>
+      )}
+    </Spring>
+  );
+};
+
+const RequestConfirmationCheck = styled(Checkbox)`
+  margin: 0 !important;
+`;
+
+const Wrapper = styled.div`
+`;
+
+const BrowserWalletPanel = (props: *) => {
+  const { 
+    browserWallet, 
+    passphrase, 
+    handleAddBrowserWallet, 
+    handleRemoveBrowserWallet,
+    handleToggleRequestConfirm, 
+    handleChangePassphrase
+  } = props;
+  
+  return (
+    <Spring from={{ opacity: 0 }} to={{ opacity: 1 }}>
+      {props => (
+        <Box style={props}>
           {
             (browserWallet && browserWallet.address) &&
               <Wrapper>
@@ -503,67 +567,61 @@ const AuthorizationsPanel = (props: *) => {
                 </FlexRow>
               </Wrapper>
           }
-          <h3>
-            Add Authorizations
-          </h3>
-          <Flex py={2}>
-            <FlexItem flex="1">
-              <InputGroup
-                name="address"
-                placeholder="Address"
-                intent={!isValid ? 'danger' : ''}
-                onChange={handleChangeAddress}
-                value={address}
-                autoFocus
-                fill
-              />
-            </FlexItem>
-            <Button
-              intent="primary"
-              text="Authorize"
-              disabled={!isValid}
-              onClick={() => {
-                window.open(link);
-              }}
-            />
-          </Flex>
-          {!isValid && address !== '' && <Text muted intent="danger">{message}</Text>}
+          
           {
             (!browserWallet || !browserWallet.address) &&
               <Wrapper>
                 <h3>
                   Generate Browser Wallet
                 </h3>
-                <Text muted>Browser wallet allows you to quickly sign orders in browser with one or two clicks instead of confirming each order with your main Obyte wallet. The private key will be stored in this browser but it will be authorized only to trade on your behalf, not to withdraw your funds to arbitrary addresses.</Text>
-                <Text muted>For better security, you can optionally set a passphrase to encrypt your browser key. You'll need to enter it to sign orders if you were inactive for more than 30 minutes.</Text>
-                <Flex py={2}>
-                  <FlexItem flex="1">
+                <Text muted>Browser wallet allows you to quickly sign orders in browser with one or two clicks instead of confirming each order with your main Obyte wallet.</Text>
+                <Text muted>The private key will be stored in this browser but it will be authorized only to trade on your behalf, not to withdraw your funds to arbitrary addresses.</Text>
+                <Box py={3}>
+                  <Flex py={2}>
                     <InputGroup
                       name="passphrase"
-                      placeholder="Passphrase"
+                      placeholder="Passphrase (Optional)"
                       onChange={handleChangePassphrase}
                       value={passphrase}
                       fill
                     />
-                  </FlexItem>
-                  <Button
-                    intent="primary"
-                    text="Generate"
-                    onClick={handleAddBrowserWallet}
-                  />
-                </Flex>
+                    <Box pl={3} style={{display: "flex", alignItems: "center"}}>
+                      <Help position={Position.BOTTOM}>
+                        For better security, you can optionally set a passphrase to encrypt your browser key. 
+                        <br /> You'll need to enter it to sign orders if you were inactive for more than 30 minutes.
+                      </Help>
+                    </Box>
+                  </Flex>
+                  <Flex py={2} alignItems="center">
+                    <FlexItem flex="1">
+                      <Flex>
+                        <RequestConfirmationCheck
+                          checked={browserWallet.requestConfirm}
+                          onChange={handleToggleRequestConfirm}
+                        >
+                          Request confirmation
+                        </RequestConfirmationCheck>
+                        <Box pl={3} style={{display: "flex", alignItems: "center"}}>
+                          <Help position={Position.BOTTOM}>
+                            When an order (cancel-order) is about to be signed, it will show a confirmation dialog that display the future operation details.
+                          </Help>
+                        </Box>
+                      </Flex>
+                    </FlexItem>
+                    <Button
+                      intent="primary"
+                      text="Generate"
+                      onClick={handleAddBrowserWallet}
+                    />
+                  </Flex>
+                </Box>
               </Wrapper>
           }
-          
         </Box>
       )}
     </Spring>
   );
 };
-
-const RequestConfirmationCheck = styled(Checkbox)`
-  margin: 0 !important;
-`;
 
 const RevokeAuthorizationBox = styled.div`
   margin-top: 20px;

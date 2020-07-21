@@ -12,6 +12,8 @@ import { getAaStateVars, getHistory, getWitnesses } from '../../store/services/a
 import { generateWallet } from '../../utils/wallet';
 import { updatePassphrase } from '../../store/actions/walletInfo';
 
+import { PROTOCOL } from '../../config/urls';
+
 type Props = {
   accountAddress: string,
   browserWallet: BrowserWallet,
@@ -67,10 +69,14 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
 
   componentDidMount() {
     const { exchangeAddress, accountAddress } = this.props
-    getAaStateVars(exchangeAddress)
+    const params =  {
+      address: exchangeAddress,
+      var_prefix: `grant_${accountAddress}_to`
+    }
+
+    getAaStateVars(params)
       .then(res => {
         const authorizations = Object.keys(res)
-          .filter(key => key.indexOf(`grant_${accountAddress}`) >= 0 && res[key] === 1)
           .map(key => String(key).split('_to_')[1])
         this.setState({
           authorizations
@@ -190,15 +196,26 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
   }
 
   handleAddBrowserWallet = () => {
-    const { updateBrowserWallet, updatePassphrase } = this.props;
+    const { exchangeAddress, browserWallet: wallet, updateBrowserWallet, updatePassphrase } = this.props;
     const { passphrase } = this.state
     const browserWallet = {
       ...generateWallet(passphrase),
+      authorized: false,
       encrypted: !!passphrase,
-      requestConfirm: false,
+      requestConfirm: wallet.requestConfirm
     }
     updateBrowserWallet(browserWallet)
     updatePassphrase(passphrase)
+
+    let data = {
+      grant: 1,
+      address: browserWallet.address,
+    };
+    let base64data = btoa(JSON.stringify(data));
+    const link = PROTOCOL + exchangeAddress + '?amount=10000&base64data=' + encodeURIComponent(base64data);
+    const alink = document.createElement('a');
+    alink.href = link;
+    alink.click();
   }
 
   handleRemoveBrowserWallet = () => {
@@ -206,6 +223,7 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
     const browserWallet = {
       address: '',
       phrase: '',
+      authorized: false,
       encrypted: false,
       requestConfirm: false
     }

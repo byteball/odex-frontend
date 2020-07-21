@@ -1,6 +1,6 @@
 //@flow
 import { connect } from 'react-redux';
-import layoutSelector, { queryAppData } from '../../store/models/layout';
+import layoutSelector, { queryAppData, updateBrowserWalletAuthorization, subscribeAA, watchAaNotifications } from '../../store/models/layout';
 import { updateReferenceCurrency, updateDisplayMode } from '../../store/actions/layout'
 import { updatePassphrase } from '../../store/actions/walletInfo'
 import type { State } from '../../types'
@@ -19,7 +19,10 @@ const mapDispatchToProps = {
   updateReferenceCurrency,
   updateDisplayMode,
   queryAppData,
-  updatePassphrase
+  updatePassphrase,
+  updateBrowserWalletAuthorization,
+  subscribeAA,
+  watchAaNotifications
 }
 
 export default connect(

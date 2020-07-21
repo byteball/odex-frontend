@@ -7,7 +7,7 @@ import { NavLink } from 'react-router-dom'
 import Notifier from '../../components/Notifier'
 import odexLogo from '../../assets/odex_logo_white.png'
 import ConnectionStatus from '../../components/ConnectionStatus'
-
+import { client } from '../../store/services/api/obyte'
 
 import { 
   Footer, 
@@ -58,14 +58,37 @@ export type Props = {
   location: Location,
   currentPair: string,
   updatePassphrase: string => void,
+  updateBrowserWalletAuthorization: void => void,
+  subscribeAA: void => void,
+  watchAaNotifications: void => void,
 }
 
-type State = {}
+type State = {
+  initialized: boolean
+}
 
 class Layout extends React.PureComponent<Props, State> {
+  state = {
+    initialized: false,
+  }
 
   componentDidMount() {
     this.props.queryAppData()
+    this.props.watchAaNotifications()
+
+  }
+
+  componentDidUpdate() {
+    if(this.props.authenticated && !this.state.initialized) {
+      this.props.updateBrowserWalletAuthorization();
+  
+      client.onConnect(async () => {
+        console.log("open connection...")
+        this.props.subscribeAA();
+      })
+
+      this.setState({ initialized : true})
+    }
   }
 
   onIdle = () => {

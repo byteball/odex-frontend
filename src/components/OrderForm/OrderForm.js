@@ -487,7 +487,7 @@ class OrderForm extends React.PureComponent<Props, State> {
           authenticated={authenticated}
           buttonType={buttonType}
           displayMode={displayMode}
-          hasBrowserWallet={!!browserWallet.address}
+          hasBrowserWallet={browserWallet.authorized}
         />
         <RequestConfirmModal 
           title="New Order"
