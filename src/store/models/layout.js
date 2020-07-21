@@ -138,6 +138,14 @@ export function watchAaNotifications(): ThunkAction {
                 authorized: true
               }))
             }
+
+            if (responseVars.event === "revocation" && responseVars.address === browserWallet.address) {
+              dispatch(updateBrowserWallet({
+                ...browserWallet,
+                authorized: false
+              }))
+            }
+
           }
         }
       })

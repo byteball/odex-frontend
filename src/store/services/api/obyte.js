@@ -8,11 +8,8 @@ export const client = new obyte.Client(`wss://obyte.org/bb${testnet ? "-test" : 
   reconnect: true
 });
 
-export const getAaStateVars = address =>
+export const getAaStateVars = params =>
   new Promise((resolve, reject) => {
-    const params = {
-      address,
-    };
 
     client.api.getAaStateVars(params, function(err, result) {
       if (err) {

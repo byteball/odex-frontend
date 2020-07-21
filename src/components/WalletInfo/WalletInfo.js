@@ -69,10 +69,14 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
 
   componentDidMount() {
     const { exchangeAddress, accountAddress } = this.props
-    getAaStateVars(exchangeAddress)
+    const params =  {
+      address: exchangeAddress,
+      var_prefix: `grant_${accountAddress}_to`
+    }
+
+    getAaStateVars(params)
       .then(res => {
         const authorizations = Object.keys(res)
-          .filter(key => key.indexOf(`grant_${accountAddress}`) >= 0 && res[key] === 1)
           .map(key => String(key).split('_to_')[1])
         this.setState({
           authorizations
