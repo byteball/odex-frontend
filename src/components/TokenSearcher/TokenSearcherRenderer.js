@@ -114,7 +114,7 @@ const TokenSearchRenderer = (props: Props) => {
       {loading ? (
         <OverlaySpinner visible={loading} transparent />
       ) : (
-        <div style={{ height: '100%', overflowY: 'auto' }} onContextMenu={onContextMenu}>
+        <TokenSearchCardWrapper onContextMenu={onContextMenu}>
           <TokenSearcherToolBar>
             <SearchInput
               leftIcon="search"
@@ -185,7 +185,7 @@ const TokenSearchRenderer = (props: Props) => {
               </Tabs>
             </TabsWrapper>
           </Collapse>
-        </div>
+        </TokenSearchCardWrapper>
       )}
     </TokenSearchCard>
   )
@@ -252,7 +252,7 @@ const Panel = (props: PanelProps) => {
         sortOrder={sortOrder}
       />
       <ListBox>
-        <AutoSizer style={{ height: '150px'}}>
+        <AutoSizer style={{ height: '500px'}}>
           {({ width, height }) => (
             <List
               width={width}
@@ -436,6 +436,15 @@ const TokenSearchCard = styled(Card).attrs({
 })`
   position: relative;
   height: 100%;
+`
+
+const TokenSearchCardWrapper = styled.div`
+  height: 100%;
+  overflow-y: auto;
+  ::-webkit-scrollbar {
+    width: 0px !important;  /* Remove scrollbar space */
+    background: transparent !important;  /* Optional: just make scrollbar invisible */
+  }
 `
 
 const Row = styled.div`
