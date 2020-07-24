@@ -445,6 +445,8 @@ const TokenSearchCardWrapper = styled.div`
     width: 0px !important;  /* Remove scrollbar space */
     background: transparent !important;  /* Optional: just make scrollbar invisible */
   }
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
 `
 
 const Row = styled.div`

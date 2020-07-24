@@ -559,7 +559,7 @@ const BrowserWalletPanel = (props: *) => {
             (browserWallet && browserWallet.address) &&
               <Wrapper>
                 <TextWrapper>
-                  <Text muted>The private key is stored in this browser but it will be authorized only to trade on your behalf, not to withdraw your funds to arbitrary addresses.</Text>
+                  <Text muted>The private key is stored in this browser but it is authorized only to trade on your behalf, not to withdraw your funds to arbitrary addresses.</Text>
                 </TextWrapper>
                 <FlexRow alignItems="center">
                   <FlexItem flex="1">
