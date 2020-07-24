@@ -439,6 +439,7 @@ const ButtonRow = styled.span`
   justify-content: flex-start;
   & .bp3-button {
     margin-left: 5px;
+    text-align: center;
   }
 `
 
@@ -529,6 +530,10 @@ const RequestConfirmationCheck = styled(Checkbox)`
 const Wrapper = styled.div`
 `;
 
+const TextWrapper = styled.div`
+  padding: 3px 0;
+`;
+
 const BrowserWalletPanel = (props: *) => {
   const { 
     browserWallet, 
@@ -543,9 +548,19 @@ const BrowserWalletPanel = (props: *) => {
     <Spring from={{ opacity: 0 }} to={{ opacity: 1 }}>
       {props => (
         <Box style={props}>
+          <h3>
+            About Browser Wallet
+          </h3>
+          <TextWrapper>
+            <Text muted>Browser wallet allows you to quickly sign orders in browser with one or two clicks instead of confirming each order with your main Obyte wallet.</Text>
+          </TextWrapper>
+          
           {
             (browserWallet && browserWallet.address) &&
               <Wrapper>
+                <TextWrapper>
+                  <Text muted>The private key is stored in this browser but it is authorized only to trade on your behalf, not to withdraw your funds to arbitrary addresses.</Text>
+                </TextWrapper>
                 <FlexRow alignItems="center">
                   <FlexItem flex="1">
                     <h3>
@@ -559,7 +574,7 @@ const BrowserWalletPanel = (props: *) => {
                     Request confirmation
                   </RequestConfirmationCheck>
                 </FlexRow>
-                <FlexRow py={2} alignItems="center">
+                <FlexRow alignItems="center">
                     <FlexItem flex="1">
                       <GRANTTEXT>{browserWallet.address}</GRANTTEXT>
                     </FlexItem>
@@ -571,12 +586,13 @@ const BrowserWalletPanel = (props: *) => {
           {
             (!browserWallet || !browserWallet.address) &&
               <Wrapper>
+                <TextWrapper>
+                  <Text muted>The private key will be stored in this browser but it will be authorized only to trade on your behalf, not to withdraw your funds to arbitrary addresses.</Text>
+                </TextWrapper>
                 <h3>
                   Generate Browser Wallet
                 </h3>
-                <Text muted>Browser wallet allows you to quickly sign orders in browser with one or two clicks instead of confirming each order with your main Obyte wallet.</Text>
-                <Text muted>The private key will be stored in this browser but it will be authorized only to trade on your behalf, not to withdraw your funds to arbitrary addresses.</Text>
-                <Box py={3}>
+                <Box>
                   <Flex py={2}>
                     <InputGroup
                       name="passphrase"

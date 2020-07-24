@@ -31,6 +31,11 @@ import {
 } from '../Common'
 
 import {
+  List,
+  AutoSizer
+} from 'react-virtualized'
+
+import {
   isNotNull
 } from '../../utils/helpers'
 
@@ -109,7 +114,7 @@ const TokenSearchRenderer = (props: Props) => {
       {loading ? (
         <OverlaySpinner visible={loading} transparent />
       ) : (
-        <div style={{ height: '100%', overflowY: 'auto' }} onContextMenu={onContextMenu}>
+        <TokenSearchCardWrapper onContextMenu={onContextMenu}>
           <TokenSearcherToolBar>
             <SearchInput
               leftIcon="search"
@@ -134,7 +139,7 @@ const TokenSearchRenderer = (props: Props) => {
               openSendModal={openSendModal}
             />
             <TabsWrapper>
-              <Tabs selectedTabId={selectedTabId} onChange={changeTab}>
+              <Tabs selectedTabId={selectedTabId} onChange={changeTab} renderActiveTabPanelOnly={true}>
                 <Tab
                   id="star"
                   title={<Icon icon="star" />}
@@ -180,7 +185,7 @@ const TokenSearchRenderer = (props: Props) => {
               </Tabs>
             </TabsWrapper>
           </Collapse>
-        </div>
+        </TokenSearchCardWrapper>
       )}
     </TokenSearchCard>
   )
@@ -213,7 +218,30 @@ const Panel = (props: PanelProps) => {
     changeSelectedToken
   } = props
 
+
   const isFavoriteTokensList = selectedTabId === 'star'
+
+  const rowRenderer = ({ key, index, style }: *) => { 
+    return (
+      <TokenRow
+        key={key}
+        row_key={key}
+        index={index}
+        style={style} 
+        token={tokenPairs[index]}
+        selectedTabId={selectedTabId}
+        isFavoriteTokensList={isFavoriteTokensList}
+        updateFavorite={updateFavorite}
+        changeSelectedToken={changeSelectedToken}
+      />
+    )
+  }
+
+  const noRowRenderer = () => {
+    return (
+      <Centered>No Tokens to show</Centered>
+    )
+  }
 
   return (
     <TokenSearchPanelBox>
@@ -224,18 +252,18 @@ const Panel = (props: PanelProps) => {
         sortOrder={sortOrder}
       />
       <ListBox>
-        {tokenPairs.map((token, index) => (
-          <TokenRow
-            key={index}
-            index={index}
-            token={token}
-            selectedTabId={selectedTabId}
-            isFavoriteTokensList={isFavoriteTokensList}
-            updateFavorite={updateFavorite}
-            changeSelectedToken={changeSelectedToken}
-          />
-        ))}
-        {tokenPairs.length === 0 && <Centered>No Tokens to show</Centered>}
+        <AutoSizer style={{ height: '500px'}}>
+          {({ width, height }) => (
+            <List
+              width={width}
+              height={height}
+              rowCount={tokenPairs.length}
+              rowHeight={30}
+              rowRenderer={rowRenderer}
+              noRowsRenderer={noRowRenderer}
+            />
+          )}
+        </AutoSizer>
       </ListBox>
     </TokenSearchPanelBox>
   )
@@ -249,10 +277,10 @@ type TokenRowProps = {
   changeSelectedToken: Object => void
 }
 
-const TokenRow = ({ index, token, updateFavorite, isFavoriteTokensList, changeSelectedToken }: TokenRowProps) => {
+const TokenRow = ({ index, row_key, style, token, updateFavorite, isFavoriteTokensList, changeSelectedToken }: TokenRowProps) => {
   const { favorited, lastPrice, change, base, pair } = token
   return (
-    <li key={pair} className="row">
+    <li key={row_key} className="row" style={style}>
       <ColoredCryptoIcon size={25} name={base} />
       <SmallText
         className="base" 
@@ -365,7 +393,7 @@ const SelectedPair = (props: *) => {
           </SmallTextDiv>
         </TokenPair>
       </Row>
-      <List>
+      <PairList>
         <Item>
           <SmallTextDiv>Price:</SmallTextDiv>
           <SmallTextDiv>{ lastPrice ? `${ formatNumber((lastPrice), { precision: 5 }) } ${quote}` : 'N.A'}</SmallTextDiv>
@@ -382,7 +410,7 @@ const SelectedPair = (props: *) => {
           <SmallTextDiv>Low:</SmallTextDiv>
           <SmallTextDiv>{low ? formatNumber(low, { precision: 2 }) + " " + quote : 'N.A'}</SmallTextDiv>
         </Item>
-      </List>
+      </PairList>
       <ActionBox>
         <ButtonWrapper>
           <BlueGlowingButton
@@ -410,6 +438,17 @@ const TokenSearchCard = styled(Card).attrs({
   height: 100%;
 `
 
+const TokenSearchCardWrapper = styled.div`
+  height: 100%;
+  overflow-y: auto;
+  ::-webkit-scrollbar {
+    width: 0px !important;  /* Remove scrollbar space */
+    background: transparent !important;  /* Optional: just make scrollbar invisible */
+  }
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+`
+
 const Row = styled.div`
   display: flex;
   align-items: center;
@@ -428,6 +467,7 @@ const SelectedPairCard = styled(Card)`
 
 const ListBox = styled.ul.attrs({ className: 'list' })`
   height: 100%;
+  position: relative;
   .row {
     span {
       white-space: nowrap;
@@ -438,7 +478,7 @@ const ListBox = styled.ul.attrs({ className: 'list' })`
   }
 `;
 
-const List = styled.ul`
+const PairList = styled.ul`
   border-top: 1px dashed #202f39;
   padding-top: 15px;
   margin-top: 5px;
