@@ -11,6 +11,7 @@ import { Flex, FlexRow, FlexItem, Box, Colors, Text, TextDiv, TextBox, BlueGlowi
 import { Fonts } from '../Common/Variables'
 import { Spring } from 'react-spring'
 import Modal from '../Modal';
+import { TextColors } from '../Common/Colors';
 
 import type { TokenData } from '../../types/tokens';
 import type { Tx } from '../../types/transactions'
@@ -186,6 +187,7 @@ const WalletInfoRenderer = (props: Props) => {
               authorizations={authorizations}
               accountAddress={accountAddress}
               exchangeAddress={exchangeAddress}
+              browserWallet={browserWallet}
               handleChangeAddress={handleChangeAddress}
               handleToggleRevokeModal={handleToggleRevokeModal}
             />
@@ -455,6 +457,7 @@ const AuthorizationsPanel = (props: *) => {
     exchangeAddress, 
     handleToggleRevokeModal, 
     accountAddress,
+    browserWallet
   } = props;
   let data = {
     grant: 1,
@@ -473,6 +476,8 @@ const AuthorizationsPanel = (props: *) => {
     alink.click();
   }
 
+  const authorizedAddresses = !browserWallet.authorized ? authorizations : authorizations.filter(address => address !== browserWallet.address);
+
   return (
     <Spring from={{ opacity: 0 }} to={{ opacity: 1 }}>
       {props => (
@@ -483,7 +488,7 @@ const AuthorizationsPanel = (props: *) => {
 
           {authorizations.length === 0 && <Text muted>You don't have any authorized addresses</Text>}
 
-          {authorizations.map(element => {
+          {authorizedAddresses.map(element => {
 
             return (
               <FlexRow py={2} key={element} alignItems="center">
@@ -494,6 +499,22 @@ const AuthorizationsPanel = (props: *) => {
               </FlexRow>
             );
           })}
+          {
+            browserWallet.authorized && (
+              <FlexRow py={2} alignItems="center">
+                <FlexItem flex="1">
+                  <FlexRow>
+                    <GRANTTEXT style={{ color: TextColors.PT_TEXT_SELECTION_COLOR }}>{browserWallet.address}</GRANTTEXT>
+                    <Box pl={2} style={{display: "flex", alignItems: "center"}}>
+                      <Help position={Position.BOTTOM} icon="globe-network">
+                        This is browser address
+                      </Help>
+                    </Box>
+                  </FlexRow>
+                </FlexItem>
+              </FlexRow>
+            )
+          }
           <h3>
             Add Authorizations
           </h3>

@@ -219,7 +219,7 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
   }
 
   handleRemoveBrowserWallet = () => {
-    const { updateBrowserWallet } = this.props;
+    const { updateBrowserWallet, exchangeAddress, browserWallet: { address: revokeAddress } } = this.props;
     const browserWallet = {
       address: '',
       phrase: '',
@@ -229,6 +229,17 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
     }
     updateBrowserWallet(browserWallet)
     updatePassphrase('')
+
+    const revokeBase64Data = btoa(
+      JSON.stringify({
+        revoke: true,
+        address: revokeAddress,
+      })
+    );
+    const link = PROTOCOL + exchangeAddress + '?amount=10000&base64data=' + encodeURIComponent(revokeBase64Data);
+    const alink = document.createElement('a');
+    alink.href = link;
+    alink.click();
   }
 
   handleToggleRequestConfirm = () => {
