@@ -11,6 +11,7 @@ import { Flex, FlexRow, FlexItem, Box, Colors, Text, TextDiv, TextBox, BlueGlowi
 import { Fonts } from '../Common/Variables'
 import { Spring } from 'react-spring'
 import Modal from '../Modal';
+import { TextColors } from '../Common/Colors';
 
 import type { TokenData } from '../../types/tokens';
 import type { Tx } from '../../types/transactions'
@@ -186,6 +187,7 @@ const WalletInfoRenderer = (props: Props) => {
               authorizations={authorizations}
               accountAddress={accountAddress}
               exchangeAddress={exchangeAddress}
+              browserWallet={browserWallet}
               handleChangeAddress={handleChangeAddress}
               handleToggleRevokeModal={handleToggleRevokeModal}
             />
@@ -199,7 +201,7 @@ const WalletInfoRenderer = (props: Props) => {
               passphrase={passphrase}
               handleChangePassphrase={handleChangePassphrase}
               handleAddBrowserWallet={handleAddBrowserWallet}
-              handleRemoveBrowserWallet={handleRemoveBrowserWallet}
+              handleToggleRevokeModal={handleToggleRevokeModal}
               handleToggleRequestConfirm={handleToggleRequestConfirm}
             />
           }
@@ -208,6 +210,8 @@ const WalletInfoRenderer = (props: Props) => {
           exchangeAddress={exchangeAddress}
           showRevokeModal={showRevokeModal}
           revokeAddress={revokeAddress}
+          browserWallet={browserWallet}
+          handleRemoveBrowserWallet={handleRemoveBrowserWallet}
           handleToggleRevokeModal={handleToggleRevokeModal}
         />
         {/* {<Tab
@@ -455,6 +459,7 @@ const AuthorizationsPanel = (props: *) => {
     exchangeAddress, 
     handleToggleRevokeModal, 
     accountAddress,
+    browserWallet
   } = props;
   let data = {
     grant: 1,
@@ -473,6 +478,8 @@ const AuthorizationsPanel = (props: *) => {
     alink.click();
   }
 
+  const authorizedAddresses = !browserWallet.authorized ? authorizations : authorizations.filter(address => address !== browserWallet.address);
+
   return (
     <Spring from={{ opacity: 0 }} to={{ opacity: 1 }}>
       {props => (
@@ -483,7 +490,7 @@ const AuthorizationsPanel = (props: *) => {
 
           {authorizations.length === 0 && <Text muted>You don't have any authorized addresses</Text>}
 
-          {authorizations.map(element => {
+          {authorizedAddresses.map(element => {
 
             return (
               <FlexRow py={2} key={element} alignItems="center">
@@ -494,6 +501,22 @@ const AuthorizationsPanel = (props: *) => {
               </FlexRow>
             );
           })}
+          {
+            browserWallet.authorized && (
+              <FlexRow py={2} alignItems="center">
+                <FlexItem flex="1">
+                  <FlexRow>
+                    <GRANTTEXT style={{ color: TextColors.PT_TEXT_SELECTION_COLOR }}>{browserWallet.address}</GRANTTEXT>
+                    <Box pl={2} style={{display: "flex", alignItems: "center"}}>
+                      <Help position={Position.BOTTOM} icon="globe-network">
+                        This is browser address
+                      </Help>
+                    </Box>
+                  </FlexRow>
+                </FlexItem>
+              </FlexRow>
+            )
+          }
           <h3>
             Add Authorizations
           </h3>
@@ -539,7 +562,7 @@ const BrowserWalletPanel = (props: *) => {
     browserWallet, 
     passphrase, 
     handleAddBrowserWallet, 
-    handleRemoveBrowserWallet,
+    handleToggleRevokeModal,
     handleToggleRequestConfirm, 
     handleChangePassphrase
   } = props;
@@ -578,7 +601,7 @@ const BrowserWalletPanel = (props: *) => {
                     <FlexItem flex="1">
                       <GRANTTEXT>{browserWallet.address}</GRANTTEXT>
                     </FlexItem>
-                    <Button icon="cross" intent="danger" minimal onClick={handleRemoveBrowserWallet} />
+                    <Button icon="cross" intent="danger" minimal onClick={() => handleToggleRevokeModal(browserWallet.address)} />
                 </FlexRow>
               </Wrapper>
           }
@@ -646,7 +669,7 @@ const RevokeAuthorizationBox = styled.div`
 `;
 
 const RevokeAddressModal = (props: *) => {
-  const { showRevokeModal, revokeAddress, exchangeAddress, handleToggleRevokeModal } = props;
+  const { showRevokeModal, revokeAddress, exchangeAddress, browserWallet, handleRemoveBrowserWallet, handleToggleRevokeModal } = props;
   const revokeBase64Data = btoa(
     JSON.stringify({
       revoke: true,
@@ -656,21 +679,32 @@ const RevokeAddressModal = (props: *) => {
 
   const link = PROTOCOL + exchangeAddress + '?amount=10000&base64data=' + encodeURIComponent(revokeBase64Data);
 
+  const isBrowserWallet = revokeAddress === browserWallet.address;
+  const title = isBrowserWallet ?  'Revoke Browser Wallet' : 'Revoke Authorization';
+  const text = `Do you really want to revoke ${isBrowserWallet ? 'browser wallet' : 'authorization'}?`
+
+  const onClickRevoke = () => {
+    if (isBrowserWallet) {
+      handleRemoveBrowserWallet();
+    }
+    handleToggleRevokeModal();
+  }
+
   return (
     <Modal
-      title="Revoke Authorization"
+      title={title}
       width="400px"
       icon="info-sign"
       isOpen={showRevokeModal}
-      onClose={handleToggleRevokeModal}
+      onClose={() => handleToggleRevokeModal()}
     >
       <ModalBody>
-        <Text muted>Do you really want to revoke authorization?</Text>
+        <Text muted>{text}</Text>
 
         <RevokeAuthorizationBox>
           <a
             onClick={() => {
-              handleToggleRevokeModal();
+              onClickRevoke();
             }}
             href={link}
           >

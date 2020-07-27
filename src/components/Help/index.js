@@ -4,6 +4,7 @@ import { Colors, Box } from '../Common'
 
 function Help(props) {
   const {
+    icon,
     position,
     disabled,
     children,
@@ -21,7 +22,7 @@ function Help(props) {
           disabled={disabled}
         >
           <Box {...props}>
-            <Icon icon="help" color={Colors.GRAY1}/>
+            <Icon icon={icon} color={Colors.GRAY1}/>
           </Box>
         </Tooltip>
       </Popover>
@@ -30,6 +31,7 @@ function Help(props) {
 
 Help.defaultProps = {
   label: 'Click to know more',
+  icon: 'help'
 };
 
 export default Help;
