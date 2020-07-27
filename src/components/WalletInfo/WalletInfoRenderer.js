@@ -201,7 +201,7 @@ const WalletInfoRenderer = (props: Props) => {
               passphrase={passphrase}
               handleChangePassphrase={handleChangePassphrase}
               handleAddBrowserWallet={handleAddBrowserWallet}
-              handleRemoveBrowserWallet={handleRemoveBrowserWallet}
+              handleToggleRevokeModal={handleToggleRevokeModal}
               handleToggleRequestConfirm={handleToggleRequestConfirm}
             />
           }
@@ -210,6 +210,8 @@ const WalletInfoRenderer = (props: Props) => {
           exchangeAddress={exchangeAddress}
           showRevokeModal={showRevokeModal}
           revokeAddress={revokeAddress}
+          browserWallet={browserWallet}
+          handleRemoveBrowserWallet={handleRemoveBrowserWallet}
           handleToggleRevokeModal={handleToggleRevokeModal}
         />
         {/* {<Tab
@@ -560,7 +562,7 @@ const BrowserWalletPanel = (props: *) => {
     browserWallet, 
     passphrase, 
     handleAddBrowserWallet, 
-    handleRemoveBrowserWallet,
+    handleToggleRevokeModal,
     handleToggleRequestConfirm, 
     handleChangePassphrase
   } = props;
@@ -599,7 +601,7 @@ const BrowserWalletPanel = (props: *) => {
                     <FlexItem flex="1">
                       <GRANTTEXT>{browserWallet.address}</GRANTTEXT>
                     </FlexItem>
-                    <Button icon="cross" intent="danger" minimal onClick={handleRemoveBrowserWallet} />
+                    <Button icon="cross" intent="danger" minimal onClick={() => handleToggleRevokeModal(browserWallet.address)} />
                 </FlexRow>
               </Wrapper>
           }
@@ -667,7 +669,7 @@ const RevokeAuthorizationBox = styled.div`
 `;
 
 const RevokeAddressModal = (props: *) => {
-  const { showRevokeModal, revokeAddress, exchangeAddress, handleToggleRevokeModal } = props;
+  const { showRevokeModal, revokeAddress, exchangeAddress, browserWallet, handleRemoveBrowserWallet, handleToggleRevokeModal } = props;
   const revokeBase64Data = btoa(
     JSON.stringify({
       revoke: true,
@@ -677,21 +679,32 @@ const RevokeAddressModal = (props: *) => {
 
   const link = PROTOCOL + exchangeAddress + '?amount=10000&base64data=' + encodeURIComponent(revokeBase64Data);
 
+  const isBrowserWallet = revokeAddress === browserWallet.address;
+  const title = isBrowserWallet ?  'Revoke Browser Wallet' : 'Revoke Authorization';
+  const text = `Do you really want to revoke ${isBrowserWallet ? 'browser wallet' : 'authorization'}?`
+
+  const onClickRevoke = () => {
+    if (isBrowserWallet) {
+      handleRemoveBrowserWallet();
+    }
+    handleToggleRevokeModal();
+  }
+
   return (
     <Modal
-      title="Revoke Authorization"
+      title={title}
       width="400px"
       icon="info-sign"
       isOpen={showRevokeModal}
-      onClose={handleToggleRevokeModal}
+      onClose={() => handleToggleRevokeModal()}
     >
       <ModalBody>
-        <Text muted>Do you really want to revoke authorization?</Text>
+        <Text muted>{text}</Text>
 
         <RevokeAuthorizationBox>
           <a
             onClick={() => {
-              handleToggleRevokeModal();
+              onClickRevoke();
             }}
             href={link}
           >
