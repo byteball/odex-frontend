@@ -488,6 +488,10 @@ const AuthorizationsPanel = (props: *) => {
             Authorized Addresses
           </h3>
 
+          <TextWrapper>
+            <Text muted>Authorized addresses are allowed to trade on your behalf but are not allowed to withdraw your funds to any address but yours. You need them if you want to trade using <a href="https://github.com/byteball/odex-client">bots</a>.</Text>
+          </TextWrapper>
+
           {authorizations.length === 0 && <Text muted>You don't have any authorized addresses</Text>}
 
           {authorizedAddresses.map(element => {
