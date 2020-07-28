@@ -4,7 +4,7 @@ import layoutSelector, { queryAppData,
   updateBrowserWalletAuthorization, 
   subscribeAA, 
   watchAaNotifications,
-  updateAuthorizedAddressed
+  updateAuthorizedAddresses
  } from '../../store/models/layout';
 import { updateReferenceCurrency, updateDisplayMode } from '../../store/actions/layout'
 import { updatePassphrase } from '../../store/actions/walletInfo'
@@ -28,7 +28,7 @@ const mapDispatchToProps = {
   updateBrowserWalletAuthorization,
   subscribeAA,
   watchAaNotifications,
-  updateAuthorizedAddressed
+  updateAuthorizedAddresses
 }
 
 export default connect(

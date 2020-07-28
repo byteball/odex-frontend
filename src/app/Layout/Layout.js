@@ -61,7 +61,7 @@ export type Props = {
   updateBrowserWalletAuthorization: void => void,
   subscribeAA: void => void,
   watchAaNotifications: void => void,
-  updateAuthorizedAddressed: void => void
+  updateAuthorizedAddresses: void => void
 }
 
 type State = {
@@ -79,7 +79,7 @@ class Layout extends React.PureComponent<Props, State> {
 
   componentDidUpdate() {
     if(this.props.authenticated && !this.state.initialized) {
-      this.props.updateAuthorizedAddressed()
+      this.props.updateAuthorizedAddresses()
       this.props.updateBrowserWalletAuthorization()
       this.props.watchAaNotifications()
   

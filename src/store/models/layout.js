@@ -55,7 +55,7 @@ export default function createSelector(state) {
   }
 }
 
-export function updateAuthorizedAddressed(): ThunkAction {
+export function updateAuthorizedAddresses(): ThunkAction {
   return async(dispatch, getState) => {
     const state = getState();
     let { exchangeAddress, address: accountAddress} = getAccountDomain(state);
