@@ -154,11 +154,16 @@ export function watchAaNotifications(): ThunkAction {
             const { responseVars } = result[1].body.response;
             const { browserWallet, authorizations } = getAccountDomain(getState());
             
-            if (responseVars.event === "grant" && responseVars.authorized_address === browserWallet.address) {
-              dispatch(updateBrowserWallet({
-                ...browserWallet,
-                authorized: true
-              }))
+            if (responseVars.event === "grant") {
+              
+              dispatch(actionCreators.updateAuthorizations([...authorizations, responseVars.authorized_address]))
+
+              if (responseVars.authorized_address === browserWallet.address) {
+                dispatch(updateBrowserWallet({
+                  ...browserWallet,
+                  authorized: true
+                }))
+              }
             }
 
             if (responseVars.event === "revocation") {
