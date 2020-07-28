@@ -237,6 +237,8 @@ export const account = createReducer(action => {
       return accountEvents.displayModeUpdated(payload.displayMode)
     case walletInfoActionTypes.updateBrowserWallet:
       return accountEvents.browserWalletUpdated(payload.browserWallet)
+    case layoutActionTypes.updateAuthorizations:
+      return accountEvents.authorizationsUpdated(payload.authorizations)
     case logoutPageActionTypes.logout:
       return accountEvents.accountRemoved()
     default:

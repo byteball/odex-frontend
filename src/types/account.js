@@ -9,6 +9,7 @@ export type AccountState = {
   +referenceCurrency: ReferenceCurrency,
   +displayMode: DisplayMode,
   +browserWallet: BrowserWallet,
+  +authorizations: string[]
 };
 
 export type AccountParams = {

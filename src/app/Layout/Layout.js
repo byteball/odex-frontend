@@ -61,6 +61,7 @@ export type Props = {
   updateBrowserWalletAuthorization: void => void,
   subscribeAA: void => void,
   watchAaNotifications: void => void,
+  updateAuthorizedAddresses: void => void
 }
 
 type State = {
@@ -74,13 +75,13 @@ class Layout extends React.PureComponent<Props, State> {
 
   componentDidMount() {
     this.props.queryAppData()
-    this.props.watchAaNotifications()
-
   }
 
   componentDidUpdate() {
     if(this.props.authenticated && !this.state.initialized) {
-      this.props.updateBrowserWalletAuthorization();
+      this.props.updateAuthorizedAddresses()
+      this.props.updateBrowserWalletAuthorization()
+      this.props.watchAaNotifications()
   
       client.onConnect(async () => {
         console.log("open connection...")

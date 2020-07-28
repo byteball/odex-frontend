@@ -22,7 +22,8 @@ export default function walletInfoSelector(state: State) {
         recentTransactions: transactionsDomain.recentTransactions(8),
         accountAddress: accountDomain.address,
         browserWallet: accountDomain.browserWallet,
-        exchangeAddress: accountDomain.exchangeAddress
+        exchangeAddress: accountDomain.exchangeAddress,
+        authorizations: accountDomain.authorizations
     }
 }
 

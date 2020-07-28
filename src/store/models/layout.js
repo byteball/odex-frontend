@@ -12,6 +12,8 @@ import {
 import { fiatCurrencies, pricedTokens, displayModes } from '../../config'
 
 import { client } from '../../store/services/api/obyte';
+import { getAaStateVars } from '../../store/services/api'
+
 
 export default function createSelector(state) {
   let { authenticated, address, referenceCurrency, displayMode } = getAccountDomain(state)
@@ -50,6 +52,28 @@ export default function createSelector(state) {
     displayModes: modes,
     location,
     currentPair
+  }
+}
+
+export function updateAuthorizedAddresses(): ThunkAction {
+  return async(dispatch, getState) => {
+    const state = getState();
+    let { exchangeAddress, address: accountAddress} = getAccountDomain(state);
+    const params =  {
+      address: exchangeAddress,
+      var_prefix: `grant_${accountAddress}_to`
+    }
+    
+    try {
+      const res = await getAaStateVars(params)
+      const authorizations = Object.keys(res)
+        .map(key => String(key).split('_to_')[1])
+
+      dispatch(actionCreators.updateAuthorizations(authorizations))
+    } catch(e) {
+      console.log("error", e);
+    }
+      
   }
 }
 
@@ -114,13 +138,11 @@ export function watchAaNotifications(): ThunkAction {
 
           if (AA === exchangeAddress) {
             const { payload } = result[1].body.unit.messages[0];
-            const browserWallet = getAccountDomain(getState()).browserWallet || {};
+            const { authorizations } = getAccountDomain(getState());
 
-            if (payload.revoke && payload.address === browserWallet.address) {
-              dispatch(updateBrowserWallet({
-                ...browserWallet,
-                authorized: false
-              }))
+            if (payload.revoke) {
+              const filtered = authorizations.filter((address) => address !== payload.address)
+              dispatch(actionCreators.updateAuthorizations(filtered))
             }
           }
         }
@@ -130,20 +152,23 @@ export function watchAaNotifications(): ThunkAction {
 
           if (AA === exchangeAddress) {
             const { responseVars } = result[1].body.response;
-            const browserWallet = getAccountDomain(getState()).browserWallet || {};
+            const { browserWallet, authorizations } = getAccountDomain(getState());
             
-            if (responseVars.event === "grant" && responseVars.authorized_address === browserWallet.address) {
-              dispatch(updateBrowserWallet({
-                ...browserWallet,
-                authorized: true
-              }))
+            if (responseVars.event === "grant") {
+              
+              dispatch(actionCreators.updateAuthorizations([...authorizations, responseVars.authorized_address]))
+
+              if (responseVars.authorized_address === browserWallet.address) {
+                dispatch(updateBrowserWallet({
+                  ...browserWallet,
+                  authorized: true
+                }))
+              }
             }
 
-            if (responseVars.event === "revocation" && responseVars.address === browserWallet.address) {
-              dispatch(updateBrowserWallet({
-                ...browserWallet,
-                authorized: false
-              }))
+            if (responseVars.event === "revocation") {
+              const filtered = authorizations.filter((address) => address !== responseVars.address)
+              dispatch(actionCreators.updateAuthorizations(filtered))
             }
 
           }
