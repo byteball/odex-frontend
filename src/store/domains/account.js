@@ -22,7 +22,8 @@ const initialState = {
   operatorAddress: '',
   referenceCurrency: { name: 'USD', symbol: '$'},
   displayMode: { name: 'Price', priceAlias: 'PRICE', amountAlias: 'AMOUNT' },
-  browserWallet: { phrase: '', address: '', authorized: false, encrypted: false, requestConfirm: false }
+  browserWallet: { phrase: '', address: '', authorized: false, encrypted: false, requestConfirm: false },
+  authorizations: []
 }
 
 export const initialized = () => {
@@ -114,6 +115,15 @@ export const browserWalletUpdated = (browserWallet: BrowserWallet) => {
   return event
 }
 
+export const authorizationsUpdated = (authorizations: string[]) => {
+  const event = (state: AccountState) => ({
+    ...state,
+    authorizations
+  })
+
+  return event
+}
+
 export default function accountDomain(state: AccountState) {
   return {
     appIsLoaded: state.loaded,
@@ -126,6 +136,7 @@ export default function accountDomain(state: AccountState) {
     referenceCurrency: state.referenceCurrency,
     referenceCurrencyName: state.referenceCurrency.name,
     displayMode: state.displayMode ? state.displayMode : displayModes[0],
-    browserWallet: state.browserWallet || {}
+    browserWallet: state.browserWallet || {},
+    authorizations: state.authorizations || []
   };
 }

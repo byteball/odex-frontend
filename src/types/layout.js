@@ -13,7 +13,13 @@ export type UpdateDisplayModeAction = {
   payload: { displayMode: DisplayMode },
 };
 
+export type UpdateAuthorizationsAction = {
+  type: 'layout/UPDATE_AUTHORIZATIONS',
+  payload: { authorizations: string[] }
+}
+
 export type LayoutAction =
   | UpdateAppDataAction
   | UpdateReferenceCurrencyAction
   | UpdateDisplayModeAction
+  | UpdateAuthorizationsAction

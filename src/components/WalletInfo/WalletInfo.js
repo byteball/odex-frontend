@@ -8,7 +8,7 @@ import type { TokenData, Token, TokenPairs } from '../../types/tokens'
 import type { BrowserWallet } from '../../types/account'
 
 
-import { getAaStateVars, getHistory, getWitnesses } from '../../store/services/api'
+import { getHistory } from '../../store/services/api'
 import { generateWallet } from '../../utils/wallet';
 import { updatePassphrase } from '../../store/actions/walletInfo';
 
@@ -27,6 +27,7 @@ type Props = {
   recentTransactions: Array<Tx>,
   exchangeAddress: string,
   tokenData: Array<TokenData>,
+  authorizations: string[],
   updatePassphrase: string => void,
 }
 
@@ -41,7 +42,6 @@ type State = {
   addTokenPending: boolean,
   registerTokenPending: boolean,
   address: string,
-  authorizations: Array,
   showRevokeModal: boolean,
   revokeAddress: string,
   transactions: Array,
@@ -60,7 +60,6 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
     addTokenPending: false,
     registerTokenPending: false,
     address: '',
-    authorizations: [],
     showRevokeModal: false,
     revokeAddress: '',
     transactions: null,
@@ -68,21 +67,7 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
   };
 
   componentDidMount() {
-    const { exchangeAddress, accountAddress } = this.props
-    const params =  {
-      address: exchangeAddress,
-      var_prefix: `grant_${accountAddress}_to`
-    }
-
-    getAaStateVars(params)
-      .then(res => {
-        const authorizations = Object.keys(res)
-          .map(key => String(key).split('_to_')[1])
-        this.setState({
-          authorizations
-        })
-      })
-      .catch(err => {})
+    const { accountAddress } = this.props
 
     getHistory(accountAddress)
       .then(({ joints }) => {
@@ -249,7 +234,8 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
         listedTokens,
         recentTransactions,
         exchangeAddress,
-        tokenData
+        tokenData,
+        authorizations
       },
       state: { 
         isModalOpen,
@@ -261,7 +247,6 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
         addTokenPending,
         registerTokenPending,
         address,
-        authorizations,
         showLink,
         showRevokeModal,
         revokeAddress,
