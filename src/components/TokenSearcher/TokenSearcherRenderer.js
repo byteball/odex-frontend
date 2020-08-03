@@ -252,7 +252,7 @@ const Panel = (props: PanelProps) => {
         sortOrder={sortOrder}
       />
       <ListBox>
-        <AutoSizer style={{ height: '500px'}}>
+        <AutoSizer style={{ height: '300px'}}>
           {({ width, height }) => (
             <List
               width={width}
