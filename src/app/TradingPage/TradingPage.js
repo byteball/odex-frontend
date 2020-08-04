@@ -404,14 +404,16 @@ class TradingPage extends React.PureComponent<Props, State> {
   }
 
   render() {
-    const { authenticated, isInitiated } = this.props
+    const { authenticated, isInitiated, pairName } = this.props
     const { calloutOptions, calloutVisible, layouts, items } = this.state
 
+    const pair = pairName.replace("/", " - ")
+    const title = `Exchange ${pair} | ODEX`
     // if (!authenticated) return <Redirect to="/login" />
     // if (!isInitiated) return null;
 
     return (
-      <DocumentTitle title="Exchange | ODEX">
+      <DocumentTitle title={title}>
         <AutoSizer style={{ width: '100%', height: '100%' }}>
           {({ width, height }) => (
             <ResponsiveReactGridLayout

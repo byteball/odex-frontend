@@ -23,7 +23,7 @@ class FaqPage extends React.PureComponent {
     const { match } = this.props;
 
     return (
-      <DocumentTitle title="FAG | ODEX">
+      <DocumentTitle title="FAQ | ODEX">
         <Spring from={{ opacity: 0 }} to={{ opacity: 1 }}>
         {props => 
         <Container style={props}>
