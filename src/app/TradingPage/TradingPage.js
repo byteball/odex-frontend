@@ -101,7 +101,7 @@ const fullScreenOHLCVLayouts: LayoutMap = {
 const defaultLayouts = {
   'lg': [
     { i: 'tokenSearcher', x: 0, y: 0, w: 12, h: 35, minW: 12 },
-    { i: 'orderForm', x: 0, y: 35, w: 12, h: 18, isDraggable: false, isResizable: false },
+    { i: 'orderForm', x: 0, y: 35, w: 12, h: 18, isResizable: false },
     { i: 'ohlcv', x: 12, y: 0, w: 36, h: 35, minW: 10 },
     { i: 'ordersTable', x: 12, y: 35, w: 23, h: 18, minW: 10 },
     { i: 'orderBook', x: 48, y: 0, w: 12, h: 35, minW: 10 },
@@ -109,7 +109,7 @@ const defaultLayouts = {
   ],
   'md': [
     { i: 'tokenSearcher', x: 0, y: 0, w: 18, h: 35, minW: 12 },
-    { i: 'orderForm', x: 0, y: 35, w: 18, h: 20, isDraggable: false, isResizable: false },
+    { i: 'orderForm', x: 0, y: 35, w: 18, h: 20, isResizable: false },
     { i: 'ohlcv', x: 18, y: 0, w: 42, h: 35, minW: 15 },
     { i: 'ordersTable', x: 18, y: 35, w: 42, h: 20, minW: 15 },
     { i: 'orderBook', x: 0, y: 55, w: 18, h: 30, minW: 15 },
@@ -117,7 +117,7 @@ const defaultLayouts = {
   ],
   'sm': [
     { i: 'tokenSearcher', x: 0, y: 0, w: 30, h: 35, minW: 12 },
-    { i: 'orderForm', x: 0, y: 65, w: 30, h: 18, isDraggable: false, isResizable: false },
+    { i: 'orderForm', x: 0, y: 65, w: 30, h: 18, isResizable: false },
     { i: 'ohlcv', x: 0, y: 35, w: 60, h: 30 },
     { i: 'ordersTable', x: 0, y: 83, w: 60, h: 20 },
     { i: 'orderBook', x: 30, y: 0, w: 30, h: 35, minW: 20 },
@@ -408,7 +408,7 @@ class TradingPage extends React.PureComponent<Props, State> {
     const { calloutOptions, calloutVisible, layouts, items } = this.state
 
     const pair = pairName.replace("/", " - ")
-    const title = `Exchange ${pair} | ODEX`
+    const title = `${pair} Exchange | ODEX`
     // if (!authenticated) return <Redirect to="/login" />
     // if (!isInitiated) return null;
 
