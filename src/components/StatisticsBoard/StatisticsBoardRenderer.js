@@ -59,12 +59,12 @@ const colorsTable = [
 const StatisticsBoardRenderer = (props: Props) => {
 
     const {
-        tradeCountsByToken,
-        orderCountsByToken,
         tradeCountsByPair,
         orderCountsByPair,
         tradeValuesByToken,
         orderValuesByToken,
+        tradeCountsByToken,
+        orderCountsByToken,
         tradeValuesByPair,
         orderValuesByPair,
         mostTradedToken,

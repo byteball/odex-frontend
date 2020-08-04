@@ -8,7 +8,6 @@ import {
 } from '../domains'
 import type { State } from '../../types'
 
-
 export default function statisticsBoardSelector(state: State) {
     let tokenPairsDomain = getTokenPairsDomain(state)
     let tokensDomain = getTokenDomain(state)
@@ -23,12 +22,30 @@ export default function statisticsBoardSelector(state: State) {
     let tradeCountsByPair = tokenPairsDomain.tradeCountsBySymbol()
     let orderValuesByPair = tokenPairsDomain.orderBookVolumeBySymbol(exchangeRates, currency)
     let tradeValuesByPair = tokenPairsDomain.tradeVolumeBySymbol(exchangeRates, currency)
+    
+    let tradeCountsByToken;
+    let orderCountsByToken;
+    let tradeValuesByToken;
+    let orderValuesByToken;
+    let total24HVolume = statsDomain.totalVolume;
+    let totalOrderVolume = statsDomain.totalOrderAmount;
+    let numberOfTrades = statsDomain.totalTrades;
+    let numberOfOrders = statsDomain.totalOrders;
 
     return {
         ...tradingStats,
         orderCountsByPair,
         orderValuesByPair,
         tradeCountsByPair,
-        tradeValuesByPair
+        tradeValuesByPair,
+        tradeCountsByToken,
+        orderCountsByToken,
+        tradeValuesByToken,
+        orderValuesByToken,
+        totalOrderVolume,
+        total24HVolume,
+        numberOfOrders,
+        numberOfTrades,
+        currency,
     }
 }
