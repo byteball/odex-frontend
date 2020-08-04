@@ -1,5 +1,6 @@
 // @flow
 import React from 'react'
+import DocumentTitle from 'react-document-title';
 import WalletPageRenderer from './WalletPageRenderer'
 import { Redirect } from 'react-router-dom'
 
@@ -66,19 +67,21 @@ class WalletPage extends React.PureComponent<Props, State> {
     const isHelpModalOpen = this.checkOpenHelpModal()
 
     return (
-      <WalletPageRenderer
-        tokenData={tokenData}
-        baseTokens={baseTokens}
-        quoteTokens={quoteTokens}
-        connected={connected}
-        accountAddress={accountAddress}
-        balancesLoading={balancesLoading}
-        redirectToTradingPage={redirectToTradingPage}
-        isHelpModalOpen={isHelpModalOpen}
-        closeHelpModal={closeHelpModal}
-        referenceCurrency={referenceCurrency}
-        recentTransactions={recentTransactions}
-      />
+      <DocumentTitle title="Wallet | ODEX">
+        <WalletPageRenderer
+          tokenData={tokenData}
+          baseTokens={baseTokens}
+          quoteTokens={quoteTokens}
+          connected={connected}
+          accountAddress={accountAddress}
+          balancesLoading={balancesLoading}
+          redirectToTradingPage={redirectToTradingPage}
+          isHelpModalOpen={isHelpModalOpen}
+          closeHelpModal={closeHelpModal}
+          referenceCurrency={referenceCurrency}
+          recentTransactions={recentTransactions}
+        />
+      </DocumentTitle>
     )
   }
 }

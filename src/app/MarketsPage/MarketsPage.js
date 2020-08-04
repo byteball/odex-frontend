@@ -1,5 +1,6 @@
 // @flow
 import React from 'react'
+import DocumentTitle from 'react-document-title';
 import MarketsPageRenderer from './MarketsPageRenderer'
 
 export type Props = {
@@ -42,11 +43,13 @@ class MarketsPage extends React.PureComponent<Props, State> {
     if (!appIsLoaded) return null
 
     return (
-      <MarketsPageRenderer
-        loading={loading}
-        showMarketStatistics={showMarketStatistics}
-        toggleMarketStatistics={this.toggleMarketStatistics}
-      />
+      <DocumentTitle title="Markets | ODEX">
+        <MarketsPageRenderer
+          loading={loading}
+          showMarketStatistics={showMarketStatistics}
+          toggleMarketStatistics={this.toggleMarketStatistics}
+        />
+      </DocumentTitle>
     )
   }
 }

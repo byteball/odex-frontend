@@ -1,5 +1,6 @@
 // @flow
 import React from 'react'
+import DocumentTitle from 'react-document-title';
 import OHLCV from '../../components/OHLCV'
 import OrdersTable from '../../components/OrdersTable'
 import OrderForm from '../../components/OrderForm'
@@ -48,36 +49,44 @@ type State = {
 
 const defaultSizes = {
   'lg': {
-    'tokenSearcher': { x: 0, y: 0, w: 12, h: 30, minW: 12 },
-    'orderForm': { x: 0, y: 30, w: 12, h: 18, minW: 12, minH: 18, maxH: 18 },
-    'ohlcv': { x: 12, y: 0, w: 36, h: 28 },
+    'tokenSearcher': { x: 0, y: 0, w: 12, h: 35, minW: 12 },
+    'orderForm': { x: 0, y: 35, w: 12, h: 18, isDraggable: false, isResizable: false },
+    'ohlcv': { x: 12, y: 0, w: 36, h: 35 },
     'ordersTable': { x: 12, y: 35, w: 23, h: 18 },
-    'orderBook': { x: 48, y: 0, w: 12, h: 28, minW: 10 },
+    'orderBook': { x: 48, y: 0, w: 12, h: 35, minW: 10 },
     'tradesTable': { x: 35, y: 35, w: 25, h: 18 },
   },
   'md': {
-    'tokenSearcher': { x: 0, y: 0, w: 18, h: 30, minW: 12 },
-    'orderForm': { x: 0, y: 30, w: 18, h: 20, minW: 12, minH: 18, maxH: 20 },
-    'ohlcv': { x: 18, y: 0, w: 42, h: 30 },
-    'ordersTable': { x: 18, y: 30, w: 42, h: 20 },
-    'orderBook': { x: 18, y: 50, w: 21, h: 30 },
-    'tradesTable': { x: 39, y: 50, w: 21, h: 30 },
+    'tokenSearcher': { x: 0, y: 0, w: 18, h: 35, minW: 18 },
+    'orderForm': { x: 0, y: 35, w: 18, h: 20, isDraggable: false, isResizable: false },
+    'ohlcv': { x: 18, y: 0, w: 42, h: 35 },
+    'ordersTable': { x: 18, y: 35, w: 42, h: 20 },
+    'orderBook': { x: 18, y: 55, w: 18, h: 30 },
+    'tradesTable': { x: 30, y: 55, w: 42, h: 30 },
   },
   'sm': {
-    'tokenSearcher': { x: 0, y: 0, w: 30, h: 18, minW: 12 },
-    'orderForm': { x: 30, y: 0, w: 30, h: 18, minW: 12, minH: 18, maxH: 18 },
-    'ohlcv': { x: 0, y: 16, w: 60, h: 30 },
-    'ordersTable': { x: 0, y: 106, w: 60, h: 20 },
-    'orderBook': { x: 0, y: 46, w: 30, h: 30 },
-    'tradesTable': { x: 30, y: 46, w: 30, h: 30 },
+    'tokenSearcher': { x: 0, y: 0, w: 30, h: 35, minW: 30 },
+    'orderForm': { x: 0, y: 65, w: 30, h: 18, isDraggable: false, isResizable: false },
+    'ohlcv': { x: 0, y: 35, w: 60, h: 30 },
+    'ordersTable': { x: 0, y: 83, w: 60, h: 20 },
+    'orderBook': { x: 30, y: 0, w: 30, h: 35 },
+    'tradesTable': { x: 30, y: 46, w: 30, h: 18 },
   },
   'xs': {
-    'tokenSearcher': { x: 0, y: 0, w: 60, h: 20, minW: 12 },
-    'orderForm': { x: 0, y: 40, w: 60, h: 18, minW: 12, minH: 18, maxH: 18 },
-    'ohlcv': { x: 0, y: 20, w: 60, h: 20 },
-    'ordersTable': { x: 0, y: 56, w: 60, h: 20 },
-    'orderBook': { x: 0, y: 76, w: 60, h: 30 },
-    'tradesTable': { x: 0, y: 96, w: 60, h: 30 },
+    'tokenSearcher': { x: 0, y: 0, w: 60, h: 35 },
+    'orderForm': { x: 0, y: 55, w: 60, h: 18 },
+    'ohlcv': { x: 0, y: 30, w: 65, h: 20 },
+    'ordersTable': { x: 0, y: 71, w: 60, h: 20 },
+    'orderBook': { x: 0, y: 91, w: 60, h: 20 },
+    'tradesTable': { x: 0, y: 111, w: 60, h: 20 },
+  },
+  'xxs': {
+    'tokenSearcher': { x: 0, y: 0, w: 60, h: 35 },
+    'orderForm': { x: 0, y: 55, w: 60, h: 18 },
+    'ohlcv': { x: 0, y: 30, w: 65, h: 20 },
+    'ordersTable': { x: 0, y: 71, w: 60, h: 20 },
+    'orderBook': { x: 0, y: 91, w: 60, h: 20 },
+    'tradesTable': { x: 0, y: 111, w: 60, h: 20 },
   },
 }
 
@@ -86,12 +95,13 @@ const fullScreenOHLCVLayouts: LayoutMap = {
   'md': [{ i: 'ohlcv', x: 0, y: 0, w: 60, h: 60 }],
   'sm': [{ i: 'ohlcv', x: 0, y: 0, w: 60, h: 60 }],
   'xs': [{ i: 'ohlcv', x: 0, y: 0, w: 60, h: 60 }],
+  'xxs': [{ i: 'ohlcv', x: 0, y: 0, w: 60, h: 60 }],
 }
 
 const defaultLayouts = {
   'lg': [
     { i: 'tokenSearcher', x: 0, y: 0, w: 12, h: 35, minW: 12 },
-    { i: 'orderForm', x: 0, y: 35, w: 12, h: 18, minW: 12, minH: 18, maxH: 18 },
+    { i: 'orderForm', x: 0, y: 35, w: 12, h: 18, isDraggable: false, isResizable: false },
     { i: 'ohlcv', x: 12, y: 0, w: 36, h: 35, minW: 10 },
     { i: 'ordersTable', x: 12, y: 35, w: 23, h: 18, minW: 10 },
     { i: 'orderBook', x: 48, y: 0, w: 12, h: 35, minW: 10 },
@@ -99,7 +109,7 @@ const defaultLayouts = {
   ],
   'md': [
     { i: 'tokenSearcher', x: 0, y: 0, w: 18, h: 35, minW: 12 },
-    { i: 'orderForm', x: 0, y: 35, w: 18, h: 20, minW: 12, minH: 18, maxH: 20 },
+    { i: 'orderForm', x: 0, y: 35, w: 18, h: 20, isDraggable: false, isResizable: false },
     { i: 'ohlcv', x: 18, y: 0, w: 42, h: 35, minW: 15 },
     { i: 'ordersTable', x: 18, y: 35, w: 42, h: 20, minW: 15 },
     { i: 'orderBook', x: 0, y: 55, w: 18, h: 30, minW: 15 },
@@ -107,19 +117,27 @@ const defaultLayouts = {
   ],
   'sm': [
     { i: 'tokenSearcher', x: 0, y: 0, w: 30, h: 35, minW: 12 },
-    { i: 'orderForm', x: 0, y: 65, w: 30, h: 18, minW: 12, minH: 18, maxH: 18 },
+    { i: 'orderForm', x: 0, y: 65, w: 30, h: 18, isDraggable: false, isResizable: false },
     { i: 'ohlcv', x: 0, y: 35, w: 60, h: 30 },
     { i: 'ordersTable', x: 0, y: 83, w: 60, h: 20 },
     { i: 'orderBook', x: 30, y: 0, w: 30, h: 35, minW: 20 },
     { i: 'tradesTable', x: 30, y: 65, w: 30, h: 18 },
   ],
   'xs': [
-    { i: 'tokenSearcher', x: 0, y: 0, w: 60, h: 35, minW: 60, maxW: 60 },
-    { i: 'orderForm', x: 0, y: 55, w: 60, h: 18, minH: 18, maxH: 18, minW: 60, maxW: 60 },
-    { i: 'ohlcv', x: 0, y: 30, w: 65, h: 20, minW: 60, maxW: 60 },
-    { i: 'ordersTable', x: 0, y: 71, w: 60, h: 20, minW: 60, maxW: 60 },
-    { i: 'orderBook', x: 0, y: 91, w: 60, h: 20, minW: 60, maxW: 60 },
-    { i: 'tradesTable', x: 0, y: 111, w: 60, h: 20, minW: 60, maxW: 60 },
+    { i: 'tokenSearcher', x: 0, y: 0, w: 60, h: 35, isDraggable: false, isResizable: false  },
+    { i: 'orderForm', x: 0, y: 55, w: 60, h: 18, isDraggable: false, isResizable: false },
+    { i: 'ohlcv', x: 0, y: 30, w: 65, h: 20, isDraggable: false, isResizable: false },
+    { i: 'ordersTable', x: 0, y: 71, w: 60, h: 20, isDraggable: false, isResizable: false },
+    { i: 'orderBook', x: 0, y: 91, w: 60, h: 20, isDraggable: false, isResizable: false },
+    { i: 'tradesTable', x: 0, y: 111, w: 60, h: 20, isDraggable: false, isResizable: false },
+  ],
+  'xxs': [
+    { i: 'tokenSearcher', x: 0, y: 0, w: 60, h: 35, isDraggable: false, isResizable: false  },
+    { i: 'orderForm', x: 0, y: 55, w: 60, h: 18, isDraggable: false, isResizable: false },
+    { i: 'ohlcv', x: 0, y: 30, w: 65, h: 20, isDraggable: false, isResizable: false },
+    { i: 'ordersTable', x: 0, y: 71, w: 60, h: 20, isDraggable: false, isResizable: false },
+    { i: 'orderBook', x: 0, y: 91, w: 60, h: 20, isDraggable: false, isResizable: false },
+    { i: 'tradesTable', x: 0, y: 111, w: 60, h: 20, isDraggable: false, isResizable: false },
   ]
 }
 
@@ -393,24 +411,26 @@ class TradingPage extends React.PureComponent<Props, State> {
     // if (!isInitiated) return null;
 
     return (
-      <AutoSizer style={{ width: '100%', height: '100%' }}>
-        {({ width, height }) => (
-          <ResponsiveReactGridLayout
-            width={width}
-            layouts={layouts}
-            breakpoints={{ lg: Sizes.laptop, md: Sizes.tablet, sm: Sizes.mobileL, xs: Sizes.mobileM, xxs: Sizes.mobileS }}
-            cols={{ lg: 60, md: 60, sm: 60, xs: 60, xxs: 60 }}
-            onLayoutChange={(layout, layouts) => this.onLayoutChange(layout, layouts)}
-            onBreakpointChange={this.onBreakpointChange}
-            className="layout"
-            rowHeight={10}
-            compactType="vertical"
-            draggableHandle=".drag"
-          >
-            {items.map(item => this.renderItem(item))}
-          </ResponsiveReactGridLayout>
-        )}
-      </AutoSizer>
+      <DocumentTitle title="Exchange | ODEX">
+        <AutoSizer style={{ width: '100%', height: '100%' }}>
+          {({ width, height }) => (
+            <ResponsiveReactGridLayout
+              width={width}
+              layouts={layouts}
+              breakpoints={{ lg: Sizes.laptop, md: Sizes.tablet, sm: Sizes.mobileL, xs: Sizes.mobileM, xxs: Sizes.mobileS }}
+              cols={{ lg: 60, md: 60, sm: 60, xs: 60, xxs: 60 }}
+              onLayoutChange={(layout, layouts) => this.onLayoutChange(layout, layouts)}
+              onBreakpointChange={this.onBreakpointChange}
+              className="layout"
+              rowHeight={10}
+              compactType="vertical"
+              draggableHandle=".drag"
+            >
+              {items.map(item => this.renderItem(item))}
+            </ResponsiveReactGridLayout>
+          )}
+        </AutoSizer>
+      </DocumentTitle>
     )
   }
 }

@@ -1,5 +1,6 @@
 // @flow
 import React from 'react';
+import DocumentTitle from 'react-document-title';
 import { Redirect } from 'react-router-dom';
 import LoginPageRenderer from './LoginPageRenderer';
 
@@ -71,13 +72,15 @@ class LoginPage extends React.PureComponent<Props, State> {
     }
     return (
       <div>
-        <LoginPageRenderer
-          view={view}
-          sessionId={sessionId}
-          loginWithApp={loginWithApp}
-          hideModal={hideModal}
-          showLoginMethods={showLoginMethods}
-        />
+        <DocumentTitle title="Login | ODEX">
+          <LoginPageRenderer
+            view={view}
+            sessionId={sessionId}
+            loginWithApp={loginWithApp}
+            hideModal={hideModal}
+            showLoginMethods={showLoginMethods}
+          />
+        </DocumentTitle>
       </div>
     );
   }
