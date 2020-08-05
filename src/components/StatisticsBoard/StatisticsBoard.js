@@ -3,12 +3,8 @@ import React from 'react'
 import StatisticsBoardRenderer from './StatisticsBoardRenderer'
 
 type Props = {
-    tradeCountsByToken: Array<Object>,
-    orderCountsByToken: Array<Object>,
     tradeCountsByPair: Array<Object>,
     orderCountsByPair: Array<Object>,
-    tradeValuesByToken: Array<Object>,
-    orderValuesByToken: Array<Object>,
     tradeValuesByPair: Array<Object>,
     orderValuesByPair: Array<Object>,
     mostTradedToken: string,
