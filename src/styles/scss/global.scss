@@ -49,3 +49,9 @@ a:hover {
 *:focus {
   outline: none !important;
 }
+
+@media only screen and (max-width: 480px) {
+  .bp3-input-group .bp3-input {
+    font-size: 16px;
+  }
+}
