@@ -441,6 +441,7 @@ const TokenSearchCard = styled(Card).attrs({
 const TokenSearchCardWrapper = styled.div`
   height: 100%;
   overflow-y: auto;
+  overflow: visible;
   ::-webkit-scrollbar {
     width: 0px !important;  /* Remove scrollbar space */
     background: transparent !important;  /* Optional: just make scrollbar invisible */
