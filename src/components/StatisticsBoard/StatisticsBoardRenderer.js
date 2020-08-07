@@ -27,6 +27,10 @@ type Props = {
     orderCountsByPair: Array<Object>,
     tradeValuesByPair: Array<Object>,
     orderValuesByPair: Array<Object>,
+    orderCountsByToken: Array<Object>,
+    tradeCountsByToken: Array<Object>,
+    orderValuesByToken: Array<Object>,
+    tradeValuesByToken: Array<Object>,
     mostTradedToken: string,
     mostTradedPair: string,
     tradeSuccessRatio: number,
@@ -59,6 +63,10 @@ const StatisticsBoardRenderer = (props: Props) => {
         orderCountsByPair,
         tradeValuesByPair,
         orderValuesByPair,
+        orderCountsByToken,
+        tradeCountsByToken,
+        orderValuesByToken,
+        tradeValuesByToken,
         mostTradedToken,
         tradeSuccessRatio,
         numberOfTrades,
@@ -149,6 +157,20 @@ const StatisticsBoardRenderer = (props: Props) => {
                 </LeftPanelBox>
                 <RightPanelBox>
                     {
+                        arrayIsNotEmpty(tradeCountsByToken) &&
+                        <FlexColumn alignItems="center" mb={5}>
+                            <PieChart data={tradeCountsByToken} colors={colorsTable[1]}/>
+                            <ChartTitle>Number of Trades / Token</ChartTitle>
+                        </FlexColumn>
+                    }
+                    {
+                        arrayIsNotEmpty(orderCountsByToken) &&
+                        <FlexColumn alignItems="center" mb={5}>
+                            <PieChart data={orderCountsByToken}colors={colorsTable[2]} />
+                            <ChartTitle>Number of Orders / Token</ChartTitle>
+                        </FlexColumn>
+                    }
+                    {
                         arrayIsNotEmpty(tradeCountsByPair) &&
                         <FlexColumn alignItems="center" mb={5}>
                             <PieChart data={tradeCountsByPair}colors={colorsTable[3]} />
@@ -161,6 +183,20 @@ const StatisticsBoardRenderer = (props: Props) => {
                             <PieChart data={orderCountsByPair} colors={colorsTable[4]} />
                             <ChartTitle>Number of Orders / Pair</ChartTitle>
                         </FlexColumn>    
+                    }
+                    {
+                        arrayIsNotEmpty(tradeValuesByToken) &&
+                        <FlexColumn alignItems="center" mb={5}>
+                            <PieChart data={tradeValuesByToken} colors={colorsTable[5]} />
+                            <ChartTitle>Trade Volume / Token</ChartTitle>
+                        </FlexColumn>
+                    }
+                    {   
+                        arrayIsNotEmpty(orderValuesByToken) &&
+                        <FlexColumn alignItems="center" mb={5}>
+                            <PieChart data={orderValuesByToken} colors={colorsTable[6]} />
+                            <ChartTitle>Order Volume / Token</ChartTitle>
+                        </FlexColumn>
                     }
                     {
                         arrayIsNotEmpty(tradeValuesByPair) &&

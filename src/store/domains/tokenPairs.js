@@ -4,6 +4,7 @@ import { quoteTokens } from '../../config/quotes'
 import { tokens } from '../../config/tokens'
 import { generateTokenPairs, getPairSymbol, getBaseToken } from '../../utils/tokens'
 import type { Token, TokenPair, TokenPairs, TokenPairState, TokenPairData } from '../../types/tokens'
+import { getQuoteToken } from '../../utils/helpers'
 
 const defaultTokenPairs = generateTokenPairs(quoteTokens, tokens)
 
@@ -222,7 +223,7 @@ export default function getTokenPairsDomain(state: TokenPairState) {
       return tokenPairData
     },
 
-    orderCountsBySymbol: () => {
+    orderCountsByPair: () => {
       let symbols = Object.keys(state.data)
       let counts = []
 
@@ -233,8 +234,58 @@ export default function getTokenPairsDomain(state: TokenPairState) {
       
       return counts
     },
-    
-    tradeCountsBySymbol: () => {
+
+    orderCountsByToken: (quoteTokens) => {
+      let symbols = Object.keys(state.data)
+      let counts = []
+
+      let tokens = quoteTokens;
+
+      tokens.forEach(token => {
+        symbols.forEach(symbol => {
+          let value = state.data[symbol].orderCount
+
+          if (getQuoteToken(symbol) === token.symbol && value > 0) {
+            if (token.value === undefined) {
+              token.value = value;
+            } else {
+              token.value += value;
+            }
+          }
+        })
+
+        if (token.value) counts.push({ symbol: token.symbol, value: token.value, unit: 'orders' })  
+      })
+      
+      return counts
+    },
+
+    tradeCountsByToken: (quoteTokens) => {
+      let symbols = Object.keys(state.data)
+      let counts = []
+
+      let tokens = quoteTokens;
+
+      tokens.forEach(token => {
+        symbols.forEach(symbol => {
+          let value = state.data[symbol].tradeCount
+
+          if (getQuoteToken(symbol) === token.symbol && value > 0) {
+            if (token.value === undefined) {
+              token.value = value;
+            } else {
+              token.value += value;
+            }
+          }
+        })
+
+        if (token.value) counts.push({ symbol: token.symbol, value: token.value, unit: 'trades' })  
+      })
+      
+      return counts
+    },
+
+    tradeCountsByPair: () => {
       let symbols = Object.keys(state.data)
       let counts = []
 
@@ -246,12 +297,9 @@ export default function getTokenPairsDomain(state: TokenPairState) {
       return counts
     },
 
-    orderBookVolumeBySymbol: (exchangeRates: *, currency: string) => {
+    orderBookVolumeByPair: (exchangeRates: *, currency: string) => {
       let symbols = Object.keys(state.data)
       let volumes = []
-
-      console.log(exchangeRates)
-
 
       symbols.forEach(symbol => {
         let volume = state.data[symbol].orderVolume
@@ -269,7 +317,36 @@ export default function getTokenPairsDomain(state: TokenPairState) {
       return volumes
     },
 
-    tradeVolumeBySymbol: (exchangeRates: *, currency: string) => {
+    orderBookVolumeByToken: (quoteTokens, exchangeRates: *, currency: string) => {
+      let symbols = Object.keys(state.data)
+      let volumes = []
+      let tokens = quoteTokens;
+
+      tokens.forEach(token => {
+        symbols.forEach(symbol => {
+          let volume = state.data[symbol].orderVolume
+          
+          if (getQuoteToken(symbol) === token.symbol && volume > 0) {
+            let baseTokenSymbol = getBaseToken(symbol)
+            let exchangeRate = exchangeRates[baseTokenSymbol] && exchangeRates[baseTokenSymbol][currency]
+            if (exchangeRate) {
+              let value = volume * exchangeRate
+              if (token.value === undefined) {
+                token.value = value;
+              } else {
+                token.value += value;
+              }
+            } 
+          }
+        })
+
+        if (token.value) volumes.push({ symbol: token.symbol, value: token.value, unit: '$' })  
+      })
+
+      return volumes
+    },
+
+    tradeVolumeByPair: (exchangeRates: *, currency: string) => {
       let symbols = Object.keys(state.data)
       let volumes = []
 
@@ -287,6 +364,35 @@ export default function getTokenPairsDomain(state: TokenPairState) {
       })
 
       return volumes
-    }
+    },
+
+    tradeVolumeByToken: (quoteTokens, exchangeRates: *, currency: string) => {
+      let symbols = Object.keys(state.data)
+      let volumes = []
+      let tokens = quoteTokens;
+
+      tokens.forEach(token => {
+        symbols.forEach(symbol => {
+          let volume = state.data[symbol].tradeVolume
+  
+          if (getQuoteToken(symbol) === token.symbol && volume > 0) {
+            let baseTokenSymbol = getBaseToken(symbol)
+            let exchangeRate = exchangeRates[baseTokenSymbol] && exchangeRates[baseTokenSymbol][currency]
+            if (exchangeRate) {
+              let value = volume * exchangeRate
+              if (token.value === undefined) {
+                token.value = value;
+              } else {
+                token.value += value;
+              }
+            } 
+          }
+        })
+
+        if (token.value) volumes.push({ symbol: token.symbol, value: token.value, unit: '$' })  
+      })
+
+      return volumes
+    },
   }
 }

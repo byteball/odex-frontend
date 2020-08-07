@@ -16,12 +16,18 @@ export default function statisticsBoardSelector(state: State) {
 
     let currency = referenceCurrencyName
     let exchangeRates = tokensDomain.exchangeRates(currency)
+    let quoteTokens = tokensDomain.quoteTokens()
     let tradingStats = statsDomain.state
 
-    let orderCountsByPair = tokenPairsDomain.orderCountsBySymbol()
-    let tradeCountsByPair = tokenPairsDomain.tradeCountsBySymbol()
-    let orderValuesByPair = tokenPairsDomain.orderBookVolumeBySymbol(exchangeRates, currency)
-    let tradeValuesByPair = tokenPairsDomain.tradeVolumeBySymbol(exchangeRates, currency)
+    let orderCountsByPair = tokenPairsDomain.orderCountsByPair()
+    let tradeCountsByPair = tokenPairsDomain.tradeCountsByPair()
+    let orderValuesByPair = tokenPairsDomain.orderBookVolumeByPair(exchangeRates, currency)
+    let tradeValuesByPair = tokenPairsDomain.tradeVolumeByPair(exchangeRates, currency)
+
+    let orderCountsByToken = tokenPairsDomain.orderCountsByToken(quoteTokens)
+    let tradeCountsByToken = tokenPairsDomain.tradeCountsByToken(quoteTokens)
+    let orderValuesByToken = tokenPairsDomain.orderBookVolumeByToken(quoteTokens, exchangeRates, currency)
+    let tradeValuesByToken = tokenPairsDomain.tradeVolumeByToken(quoteTokens, exchangeRates, currency)
     
     let total24HVolume = statsDomain.totalVolume
     let totalOrderVolume = statsDomain.totalOrderAmount
@@ -34,6 +40,10 @@ export default function statisticsBoardSelector(state: State) {
         orderValuesByPair,
         tradeCountsByPair,
         tradeValuesByPair,
+        orderCountsByToken,
+        tradeCountsByToken,
+        orderValuesByToken,
+        tradeValuesByToken,
         totalOrderVolume,
         total24HVolume,
         numberOfOrders,
