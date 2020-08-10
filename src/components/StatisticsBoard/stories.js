@@ -45,7 +45,6 @@ const orderCountsByPair = [
   {symbol: 'ETH/WETH', balance: 100, value: 200, unit: 'orders' }
 ]
 
-
 //Values
 const tradeValuesByToken = [
   {symbol: 'EOS', balance: 100, value: 400, unit: '$' },
@@ -91,28 +90,26 @@ storiesOf('StatisticsBoard', module)
     withInfo({ source: false })(() => (
       <Card className="bp3-dark">
         <StatisticsBoardRenderer
-            mostTradedToken="USDC"
-            mostTradedPair="USDC/WETH"
-            biggestWinners={["WETH", "PRFT"]}
-            biggestLosers={["ZRX", "AUR"]}
-            tradeSuccessRatio={0.99}
-            totalBuyValue={1000}
-            totalSellValue={2000}
-            total24HVolume={234}
-            totalOrderVolume={234}
-            numberOfTrades={223}
-            numberOfOrders={234}
-            numberOfSells={123}
-            numberOfBuys={100}
-            currency="$"
-            tradeCountsByToken={tradeCountsByToken}
-            orderCountsByToken={orderCountsByToken}
-            tradeCountsByPair={tradeCountsByPair}
-            orderCountsByPair={orderCountsByPair}
-            tradeValuesByToken={tradeValuesByToken}
-            orderValuesByToken={orderValuesByToken}
-            tradeValuesByPair={tradeValuesByPair}
-            orderValuesByPair={orderValuesByPair}
+          mostTradedToken="USDC"
+          mostTradedPair="USDC/WETH"
+          biggestWinners={["WETH", "PRFT"]}
+          biggestLosers={["ZRX", "AUR"]}
+          tradeSuccessRatio={0.99}
+          totalBuyValue={1000}
+          totalSellValue={2000}
+          total24HVolume={234}
+          totalOrderVolume={234}
+          numberOfTrades={223}
+          numberOfOrders={234}
+          currency="$"
+          tradeCountsByPair={tradeCountsByPair}
+          orderCountsByPair={orderCountsByPair}
+          tradeValuesByPair={tradeValuesByPair}
+          orderValuesByPair={orderValuesByPair}
+          tradeCountsByToken={tradeCountsByToken}
+          orderCountsByToken={orderCountsByToken}
+          tradeValuesByToken={tradeValuesByToken}
+          orderValuesByToken={orderValuesByToken}
         />
       </Card>
     ))

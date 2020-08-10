@@ -3,14 +3,14 @@ import React from 'react'
 import StatisticsBoardRenderer from './StatisticsBoardRenderer'
 
 type Props = {
-    tradeCountsByToken: Array<Object>,
-    orderCountsByToken: Array<Object>,
     tradeCountsByPair: Array<Object>,
     orderCountsByPair: Array<Object>,
-    tradeValuesByToken: Array<Object>,
-    orderValuesByToken: Array<Object>,
     tradeValuesByPair: Array<Object>,
     orderValuesByPair: Array<Object>,
+    orderCountsByToken: Array<Object>,
+    tradeCountsByToken: Array<Object>,
+    orderValuesByToken: Array<Object>,
+    tradeValuesByToken: Array<Object>,
     mostTradedToken: string,
     mostTradedPair: string,
     tradeSuccessRatio: number,
@@ -26,7 +26,6 @@ type Props = {
 }
 
 type State = {}
-
 
 export default class StatisticsBoard extends React.PureComponent<Props, State> {
 

@@ -4,6 +4,7 @@ import { quoteTokens } from '../../config/quotes'
 import { tokens } from '../../config/tokens'
 import { generateTokenPairs, getPairSymbol, getBaseToken } from '../../utils/tokens'
 import type { Token, TokenPair, TokenPairs, TokenPairState, TokenPairData } from '../../types/tokens'
+import { getQuoteToken } from '../../utils/helpers'
 
 const defaultTokenPairs = generateTokenPairs(quoteTokens, tokens)
 
@@ -193,11 +194,11 @@ export default function getTokenPairsDomain(state: TokenPairState) {
     getTokenPairsWithDataObject: () => {
       let symbols = Object.keys(state.byPair)
       return symbols.reduce((
-        (result, symbol) => {
-          if (state.data[symbol] && state.byPair[symbol]) {
-            result[symbol] = {
-            ...state.data[symbol],
-            ...state.byPair[symbol]
+        (result, pairSymbol) => {
+          if (state.data[pairSymbol] && state.byPair[pairSymbol]) {
+            result[pairSymbol] = {
+            ...state.data[pairSymbol],
+            ...state.byPair[pairSymbol]
             }
           }
           
@@ -210,11 +211,11 @@ export default function getTokenPairsDomain(state: TokenPairState) {
       let tokenPairData = []
       let symbols = state.sortedPairs
 
-      symbols.forEach(symbol => {
-        if (state.data[symbol] && state.byPair[symbol]) {
+      symbols.forEach(pairSymbol => {
+        if (state.data[pairSymbol] && state.byPair[pairSymbol]) {
           tokenPairData.push({
-            ...state.data[symbol],
-            ...state.byPair[symbol]
+            ...state.data[pairSymbol],
+            ...state.byPair[pairSymbol]
           })
         }
       })
@@ -222,46 +223,93 @@ export default function getTokenPairsDomain(state: TokenPairState) {
       return tokenPairData
     },
 
-    orderCountsBySymbol: () => {
-      let symbols = Object.keys(state.data)
-      let counts = []
+    orderCountsByPair: () => {
+      let pairSymbols = Object.keys(state.data)
+      let orderCounts = []
 
-      symbols.forEach(symbol => {
-        let value = state.data[symbol].orderCount
-        if (value) counts.push({ symbol, value, unit: 'orders' })
+      pairSymbols.forEach(pairSymbol => {
+        let value = state.data[pairSymbol].orderCount
+        if (value) orderCounts.push({ symbol: pairSymbol, value, unit: 'orders' })
       })
       
-      return counts
+      return orderCounts
     },
-    
-    tradeCountsBySymbol: () => {
-      let symbols = Object.keys(state.data)
-      let counts = []
 
-      symbols.forEach(symbol => {
-        let value = state.data[symbol].tradeCount
-        if (value) counts.push({ symbol, value, unit: 'trades' })
+    orderCountsByToken: (quoteTokens) => {
+      let pairSymbols = Object.keys(state.data)
+      let orderCounts = []
+
+      quoteTokens.forEach(token => {
+        pairSymbols.forEach(pairSymbol => {
+          let value = state.data[pairSymbol].orderCount
+          let countIndex = orderCounts.findIndex(item => item.symbol === token.symbol);
+          if (getQuoteToken(pairSymbol) === token.symbol && value > 0) {
+            if (countIndex === -1) {
+              orderCounts.push({
+                symbol: token.symbol,
+                value,
+                unit: 'orders'
+              })
+            } else {
+              orderCounts[countIndex].value += value;
+            }
+          }
+        })
       })
 
-      return counts
+      return orderCounts
     },
 
-    orderBookVolumeBySymbol: (exchangeRates: *, currency: string) => {
-      let symbols = Object.keys(state.data)
+    tradeCountsByPair: () => {
+      let pairSymbols = Object.keys(state.data)
+      let tradeCounts = []
+
+      pairSymbols.forEach(pairSymbol => {
+        let value = state.data[pairSymbol].tradeCount
+        if (value) tradeCounts.push({ symbol: pairSymbol, value, unit: 'trades' })
+      })
+
+      return tradeCounts
+    },
+    
+    tradeCountsByToken: (quoteTokens) => {
+      let pairSymbols = Object.keys(state.data)
+      let tradeCounts = []
+
+      quoteTokens.forEach(token => {
+        pairSymbols.forEach(pairSymbol => {
+          let value = state.data[pairSymbol].tradeCount
+          let countIndex = tradeCounts.findIndex(item => item.symbol === token.symbol);
+          if (getQuoteToken(pairSymbol) === token.symbol && value > 0) {
+            if (countIndex === -1) {
+              tradeCounts.push({
+                symbol: token.symbol,
+                value,
+                unit: 'trades'
+              })
+            } else {
+              tradeCounts[countIndex].value += value;
+            }
+          }
+        })
+      })
+      
+      return tradeCounts
+    },
+
+    orderBookVolumeByPair: (exchangeRates: *, currency: string) => {
+      let pairSymbols = Object.keys(state.data)
       let volumes = []
 
-      console.log(exchangeRates)
-
-
-      symbols.forEach(symbol => {
-        let volume = state.data[symbol].orderVolume
+      pairSymbols.forEach(pairSymbol => {
+        let volume = state.data[pairSymbol].orderVolume
 
         if (volume) {
-          let baseTokenSymbol = getBaseToken(symbol)
+          let baseTokenSymbol = getBaseToken(pairSymbol)
           let exchangeRate = exchangeRates[baseTokenSymbol] && exchangeRates[baseTokenSymbol][currency]
           if (exchangeRate) {
             let value = volume * exchangeRate
-            volumes.push({ symbol, value, unit: '$' })
+            volumes.push({ symbol: pairSymbol, value, unit: '$' })
           } 
         }
       })
@@ -269,24 +317,86 @@ export default function getTokenPairsDomain(state: TokenPairState) {
       return volumes
     },
 
-    tradeVolumeBySymbol: (exchangeRates: *, currency: string) => {
-      let symbols = Object.keys(state.data)
+    orderBookVolumeByToken: (quoteTokens, exchangeRates: *, currency: string) => {
+      let pairSymbols = Object.keys(state.data)
+      let volumes = []
+      
+      quoteTokens.forEach(token => {
+        pairSymbols.forEach(pairSymbol => {
+          let volume = state.data[pairSymbol].orderVolume
+          let volumeIndex = volumes.findIndex(item => item.symbol === token.symbol);
+
+          if (getQuoteToken(pairSymbol) === token.symbol && volume > 0) {
+            let baseTokenSymbol = getBaseToken(pairSymbol)
+            let exchangeRate = exchangeRates[baseTokenSymbol] && exchangeRates[baseTokenSymbol][currency]
+            if (exchangeRate) {
+              let value = volume * exchangeRate
+              if (volumeIndex === -1) {
+                volumes.push({
+                  symbol: token.symbol,
+                  value,
+                  unit: '$'
+                })
+              } else {
+                volumes[volumeIndex].value += value;
+              }
+            } 
+          }
+        })
+      })
+
+      return volumes
+    },
+
+    tradeVolumeByPair: (exchangeRates: *, currency: string) => {
+      let pairSymbols = Object.keys(state.data)
       let volumes = []
 
-      symbols.forEach(symbol => {
-        let volume = state.data[symbol].tradeVolume
+      pairSymbols.forEach(pairSymbol => {
+        let volume = state.data[pairSymbol].tradeVolume
 
         if (volume) {
-          let baseTokenSymbol = getBaseToken(symbol)
+          let baseTokenSymbol = getBaseToken(pairSymbol)
           let exchangeRate = exchangeRates[baseTokenSymbol] && exchangeRates[baseTokenSymbol][currency]
           if (exchangeRate) {
             let value = volume * exchangeRate
-            volumes.push({ symbol, value, unit: '$' })
+            volumes.push({ symbol: pairSymbol, value, unit: '$' })
           }
         }
       })
 
       return volumes
-    }
+    },
+
+    tradeVolumeByToken: (quoteTokens, exchangeRates: *, currency: string) => {
+      let pairSymbols = Object.keys(state.data)
+      let volumes = []
+
+      quoteTokens.forEach(token => {
+        pairSymbols.forEach(pairSymbol => {
+          let volume = state.data[pairSymbol].tradeVolume
+          let volumeIndex = volumes.findIndex(item => item.symbol === token.symbol);
+
+          if (getQuoteToken(pairSymbol) === token.symbol && volume > 0) {
+            let baseTokenSymbol = getBaseToken(pairSymbol)
+            let exchangeRate = exchangeRates[baseTokenSymbol] && exchangeRates[baseTokenSymbol][currency]
+            if (exchangeRate) {
+              let value = volume * exchangeRate
+              if (volumeIndex === -1) {
+                volumes.push({
+                  symbol: token.symbol,
+                  value,
+                  unit: '$'
+                })
+              } else {
+                volumes[volumeIndex].value += value;
+              }
+            } 
+          }
+        })
+      })
+
+      return volumes
+    },
   }
 }
