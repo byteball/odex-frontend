@@ -27,7 +27,7 @@ const defaultTokenDecimals = {
   AION: 18,
   LOOM: 18,
   USDC: 6,
-  USD_20200701: 2,
+  OUSD: 4,
 }
 
 const defaultTokens = [
@@ -49,7 +49,7 @@ const defaultTokens = [
   "WTC",
   "ZRX",
   "USDC",
-  "USD_20200701",
+  "OUSD",
 ]
 
 let tokensBySymbolTable = {}
