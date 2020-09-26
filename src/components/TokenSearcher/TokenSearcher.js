@@ -30,6 +30,7 @@ type Props = {
   baseTokenAvailableBalance: number,
   quoteTokenAvailableBalance: number,
   baseToken: Object,
+  quoteToken: Object,
   tokenData: Array<Object>,
   updateFavorite: (string, boolean) => void,
   updateCurrentPair: string => void,
@@ -280,6 +281,7 @@ class TokenSearcher extends React.PureComponent<Props, State> {
         baseTokenAvailableBalance,
         quoteTokenAvailableBalance,
         baseToken,
+        quoteToken,
         tokenData
       },
       onChangeSearchFilter,
@@ -306,6 +308,8 @@ class TokenSearcher extends React.PureComponent<Props, State> {
           searchFilter={searchFilter}
           baseTokenBalance={baseTokenBalance}
           quoteTokenBalance={quoteTokenBalance}
+          baseToken={baseToken}
+          quoteToken={quoteToken}
           // silence-error: couldn't resolve selectedPair === undefined case
           selectedPair={selectedPair}
           sortOrder={sortOrder}

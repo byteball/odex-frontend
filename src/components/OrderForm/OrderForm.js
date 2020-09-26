@@ -433,9 +433,9 @@ class OrderForm extends React.PureComponent<Props, State> {
 
     //if (price !== '0.000') {
       if (side === 'BUY') {
-        maxAmount = (price !== '0.000') ? formatNumber(maxQuoteTokenAmount / unformat(price), { decimals: 3 }) : '0.000'
+        maxAmount = (price !== '0.000') ? formatNumber(maxQuoteTokenAmount / unformat(price), { precision: quoteTokenDecimals }) : '0.000'
       } else {
-        maxAmount = formatNumber(baseTokenBalance, { decimals: 3 })
+        maxAmount = formatNumber(baseTokenBalance, { precision: baseTokenDecimals })
       }
     //} else {
     //  maxAmount = '0.0'

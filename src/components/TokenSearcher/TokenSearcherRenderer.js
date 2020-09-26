@@ -36,7 +36,7 @@ import {
 } from 'react-virtualized'
 
 import {
-  isNotNull
+  isNotNull, round
 } from '../../utils/helpers'
 
 import type { Node } from 'react'
@@ -62,6 +62,8 @@ type Props = {
   quoteTokenBalance: number,
   baseTokenAvailableBalance: number,
   quoteTokenAvailableBalance: number,
+  baseToken: Object,
+  quoteToken: Object,
   searchFilter: string,
   selectedPair: Token,
   filterName: string,
@@ -103,6 +105,8 @@ const TokenSearchRenderer = (props: Props) => {
     quoteTokenBalance,
     baseTokenAvailableBalance,
     quoteTokenAvailableBalance,
+    baseToken,
+    quoteToken,
     expand,
     onContextMenu,
     openDepositModal,
@@ -135,6 +139,8 @@ const TokenSearchRenderer = (props: Props) => {
               quoteTokenBalance={quoteTokenBalance}
               baseTokenAvailableBalance={baseTokenAvailableBalance}
               quoteTokenAvailableBalance={quoteTokenAvailableBalance}
+              baseToken={baseToken}
+              quoteToken={quoteToken}
               openDepositModal={openDepositModal}
               openSendModal={openSendModal}
             />
@@ -361,6 +367,8 @@ const SelectedPair = (props: *) => {
     quoteTokenBalance,
     baseTokenAvailableBalance,
     quoteTokenAvailableBalance,
+    baseToken,
+    quoteToken,
     openDepositModal,
     openSendModal
   } = props
@@ -385,11 +393,11 @@ const SelectedPair = (props: *) => {
           <h2>{pair}</h2>
           <SmallTextDiv>
           <b>{base} </b> 
-            Balance: {formatNumber(baseTokenAvailableBalance, { precision: 2 })} / {formatNumber(baseTokenBalance, { precision: 2 })}
+            Balance: {round(baseTokenAvailableBalance, baseToken.decimals)} / {round(baseTokenBalance, baseToken.decimals)}
           </SmallTextDiv>
           <SmallTextDiv>
           <b>{quote} </b> 
-            Balance: {formatNumber(quoteTokenAvailableBalance, { precision: 2 }) } / {formatNumber(quoteTokenBalance, { precision: 2 })}
+            Balance: {round(quoteTokenAvailableBalance, quoteToken.decimals) } / {round(quoteTokenBalance, quoteToken.decimals)}
           </SmallTextDiv>
         </TokenPair>
       </Row>

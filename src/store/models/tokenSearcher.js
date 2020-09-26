@@ -69,6 +69,7 @@ export default function tokenSearcherSelector(state: State) {
 
   let tokenData = accountBalancesDomain.getBalances(tokenDomain.tokens(), accountDomain.referenceCurrency)
   let baseToken = tokenData.find((el) => el.symbol === baseTokenSymbol)
+  let quoteToken = tokenData.find((el) => el.symbol === quoteTokenSymbol)
 
   return {
     tokenPairs,
@@ -81,6 +82,7 @@ export default function tokenSearcherSelector(state: State) {
     baseTokenAvailableBalance,
     quoteTokenAvailableBalance,
     baseToken,
+    quoteToken,
     tokenData
   }
 }
