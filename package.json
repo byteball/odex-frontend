@@ -116,6 +116,11 @@
       "git add"
     ]
   },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not op_mini all"
+  ],
   "prettier": {
     "printWidth": 120,
     "tabWidth": 2,
