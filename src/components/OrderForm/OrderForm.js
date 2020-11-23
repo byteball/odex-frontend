@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import OrderFormRenderer from './OrderFormRenderer'
 import { formatNumber, unformat } from 'accounting-js'
 import { Menu, MenuItem, ContextMenuTarget } from '@blueprintjs/core'
-import { MATCHER_FEE } from '../../config/environment';
+import { MATCHER_FEE, AFFILIATE_FEE } from '../../config/environment';
 import RequestConfirmModal from '../RequestConfirmModal'
 import { getWalletFromPhrases, signMessageByWif } from '../../utils/wallet'
 import type { DisplayMode, BrowserWallet } from '../../types/account'
@@ -428,7 +428,7 @@ class OrderForm extends React.PureComponent<Props, State> {
 
     //TODO REFACTOR REFACTOR REFACTOR REFACTOR REFACTOR REFACTOR REFACTOR 
     let maxAmount
-    let quoteTokenFee = unformat(amount) * unformat(price) * MATCHER_FEE;
+    let quoteTokenFee = unformat(amount) * unformat(price) * (MATCHER_FEE + AFFILIATE_FEE); // TODO: apply affiliate fee only when relevant
     let maxQuoteTokenAmount = quoteTokenBalance - Number(quoteTokenFee)
 
     //if (price !== '0.000') {

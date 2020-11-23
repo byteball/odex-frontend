@@ -16,7 +16,8 @@ if (window.env) {
   PAIRING_CODE = process.env.REACT_APP_PAIRING_CODE
 }
 
-export const MATCHER_FEE = 0.001;
+export const MATCHER_FEE = 0.001; // fees must match those on backend side
+export const AFFILIATE_FEE = 0.001;
 export const MAX_PRICE_PRECISION = 8;
 
 export const GA_ID = process.env.REACT_APP_GA_ID;

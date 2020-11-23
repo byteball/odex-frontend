@@ -3,7 +3,7 @@ import React from 'react'
 import styled from 'styled-components'
 import ReactGA from 'react-ga'
 import { formatNumber } from 'accounting-js'
-import { MATCHER_FEE, MAX_PRICE_PRECISION } from '../../config/environment';
+import { MATCHER_FEE, AFFILIATE_FEE, MAX_PRICE_PRECISION } from '../../config/environment';
 import { CHATBOT_URL } from '../../config/urls'
 
 import { 
@@ -308,6 +308,7 @@ const LimitOrderPanel = props => {
   let fAmount = parseFloat(amount);
   let fPrice = parseFloat(price);
   let matcher = operatorAddress;
+  let affiliate, affiliate_fee = 0, affiliate_fee_asset;
   let sell_symbol = (side === 'SELL') ? baseTokenSymbol : quoteTokenSymbol;
   let buy_symbol = (side === 'BUY') ? baseTokenSymbol : quoteTokenSymbol;
   let sell_asset_decimals = (side === 'SELL') ? baseTokenDecimals : quoteTokenDecimals;
@@ -318,8 +319,14 @@ const LimitOrderPanel = props => {
     var price_in_pennies = quote_amount_bought / base_amount_sold;
     var sell_amount = Math.round(base_amount_sold);
     var matcher_fee = Math.round(quote_amount_bought * MATCHER_FEE)
-    if (bidPrice && fPrice <= bidPrice) // inherit matcher from best bid
-      matcher = bestBidMatcher;
+    if (bidPrice && fPrice <= bidPrice) {
+      matcher = bestBidMatcher; // inherit matcher from best bid
+      if (matcher !== operatorAddress){
+        affiliate = operatorAddress;
+        affiliate_fee = Math.round(quote_amount_bought * AFFILIATE_FEE); //TO DO: inherit fee rate from best bid
+        affiliate_fee_asset = tokensBySymbol[quoteTokenSymbol].asset;
+      }
+    }
   }
   else {
     let base_amount_bought = fAmount * Math.pow(10, baseTokenDecimals);
@@ -327,10 +334,16 @@ const LimitOrderPanel = props => {
     var price_in_pennies = base_amount_bought / quote_amount_sold;
     var sell_amount = Math.round(quote_amount_sold);
     var matcher_fee = Math.round(quote_amount_sold * MATCHER_FEE)
-    if (askPrice && fPrice >= askPrice) // inherit matcher from best ask
-      matcher = bestAskMatcher;
+    if (askPrice && fPrice >= askPrice) {
+      matcher = bestAskMatcher; // inherit matcher from best ask
+      if (matcher !== operatorAddress){
+        affiliate = operatorAddress;
+        affiliate_fee = Math.round(quote_amount_sold * AFFILIATE_FEE); //TO DO: inherit fee rate from best ask
+        affiliate_fee_asset = tokensBySymbol[quoteTokenSymbol].asset;
+      }
+    }
   }
-  let fee = matcher_fee / Math.pow(10, quoteTokenDecimals);
+  let fee = (matcher_fee + affiliate_fee) / Math.pow(10, quoteTokenDecimals);
   let order = (tokensBySymbol[sell_symbol] && tokensBySymbol[buy_symbol]) ? {
     sell_asset: tokensBySymbol[sell_symbol].asset,
     buy_asset: tokensBySymbol[buy_symbol].asset,
@@ -340,16 +353,26 @@ const LimitOrderPanel = props => {
     matcher_fee,
     matcher,
     aa: exchangeAddress,
-    address
+    address,
   } : {};
+
+  if (affiliate){
+    order.affiliate = affiliate;
+    order.affiliate_fee = affiliate_fee;
+    order.affiliate_fee_asset = affiliate_fee_asset;  
+  }
   if (order.price > 0){
     // Due to limited precision, the price can only change stepwise.
     // Find the closest allowed price and recalculate matcher_fee
     order.price = getPriceInAllowedPrecision(order);
-		if (order.sell_asset === order.matcher_fee_asset)
-			order.matcher_fee = Math.ceil(order.sell_amount * MATCHER_FEE);
-		else if (order.buy_asset === order.matcher_fee_asset)
-			order.matcher_fee = Math.ceil(order.sell_amount * order.price * MATCHER_FEE);
+    if (order.sell_asset === order.matcher_fee_asset)
+      order.matcher_fee = Math.ceil(order.sell_amount * MATCHER_FEE);
+    else if (order.buy_asset === order.matcher_fee_asset)
+      order.matcher_fee = Math.ceil(order.sell_amount * order.price * MATCHER_FEE);
+    if (order.sell_asset === order.affiliate_fee_asset)
+      order.affiliate_fee = Math.ceil(order.sell_amount * AFFILIATE_FEE);
+    else if (order.buy_asset === order.affiliate_fee_asset)
+      order.matcher_fee = Math.ceil(order.sell_amount * order.price * AFFILIATE_FEE);
   }
   console.log(order);
   let pairing_secret = btoa(JSON.stringify(order));
