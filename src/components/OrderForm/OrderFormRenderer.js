@@ -47,8 +47,10 @@ type Props = {
   tokensBySymbol: Object,
   fraction: number,
   priceType: string,
-  price: string,
+  priceOrOdds: string,
+  fPrice: number,
   amount: string, // formatted
+  fAmount: number,
   maxAmount: string, // formatted
   total: string,
   baseTokenSymbol: string,
@@ -101,7 +103,9 @@ const OrderFormRenderer = (props: Props) => {
     side,
     fraction,
     priceType,
-    price,
+    priceOrOdds,
+    fPrice,
+    fAmount,
     isOpen,
     amount,
     maxAmount,
@@ -200,7 +204,9 @@ const OrderFormRenderer = (props: Props) => {
                 quoteTokenSymbol={quoteTokenSymbol}
                 fraction={fraction}
                 priceType={priceType}
-                price={price}
+                priceOrOdds={priceOrOdds}
+                fPrice={fPrice}
+                fAmount={fAmount}
                 amount={amount}
                 maxAmount={maxAmount}
                 total={total}
@@ -233,7 +239,7 @@ const OrderFormRenderer = (props: Props) => {
                 quoteTokenSymbol={quoteTokenSymbol}
                 fraction={fraction}
                 priceType={priceType}
-                price={price}
+                price={priceOrOdds}
                 amount={amount}
                 maxAmount={maxAmount}
                 insufficientBalance={insufficientBalance}
@@ -256,8 +262,8 @@ const OrderFormRenderer = (props: Props) => {
                 quoteTokenSymbol={quoteTokenSymbol}
                 fraction={fraction}
                 priceType={priceType}
-                price={price}
-                stopPrice={price}
+                price={priceOrOdds}
+                stopPrice={priceOrOdds}
                 amount={amount}
                 insufficientBalance={insufficientBalance}
                 maxAmount={maxAmount}
@@ -279,9 +285,11 @@ const OrderFormRenderer = (props: Props) => {
 
 const LimitOrderPanel = props => {
   const { 
-    price, 
+    priceOrOdds,
+    fPrice, 
     side, 
-    amount, 
+    amount,
+    fAmount,
     maxAmount, 
     fraction, 
     total, 
@@ -305,8 +313,6 @@ const LimitOrderPanel = props => {
     hasBrowserWallet,
   } = props
 
-  let fAmount = parseFloat(amount);
-  let fPrice = parseFloat(price);
   let matcher = operatorAddress;
   let affiliate, affiliate_fee = 0, affiliate_fee_asset;
   let sell_symbol = (side === 'SELL') ? baseTokenSymbol : quoteTokenSymbol;
@@ -393,7 +399,7 @@ const LimitOrderPanel = props => {
         <PriceInputGroup 
           name="price" 
           onChange={onInputChange} 
-          value={price} 
+          value={priceOrOdds} 
           placeholder={displayMode.priceAlias} 
         />
       </InputBox>
@@ -435,7 +441,7 @@ const LimitOrderPanel = props => {
         <ButtonRenderer
           side={side}
           link={link}
-          amount={displayMode.name === 'Price' ? amount : formatNumber(parseFloat(amount) * parseFloat(price), { precision: 3 })}
+          amount={displayMode.name === 'Price' ? amount : formatNumber(parseFloat(amount) * parseFloat(priceOrOdds), { precision: 3 })}
           baseTokenSymbol={baseTokenSymbol}
           quoteTokenSymbol={quoteTokenSymbol}
           handleSendOrder={handleSendOrder}
