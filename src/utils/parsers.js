@@ -186,13 +186,15 @@ export const parseOrderBookData = (data: OrderBookData, pair: TokenPair, precisi
   asks = asks.map(ask => ({
     matcher: ask.matcherAddress,
     price: parsePricepoint(ask.price, pair, precision),
-    amount: parseTokenAmount(Number(ask.amount), pair, precision)
+    amount: parseTokenAmount(Number(ask.amount), pair, precision),
+    matcher_fee_rate: ask.matcherFeeRate,
   }))
 
   bids = bids.map(bid => ({
     matcher: bid.matcherAddress,
     price: parsePricepoint(bid.price, pair, precision),
-    amount: parseTokenAmount(Number(bid.amount), pair, precision)
+    amount: parseTokenAmount(Number(bid.amount), pair, precision),
+    matcher_fee_rate: bid.matcherFeeRate,
   }))
 
   return { asks, bids }

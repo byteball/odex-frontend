@@ -144,7 +144,7 @@ export default function domain(state: OrderBookState) {
           result.push({
             price: item.price,
             amount: item.amount,
-            total: result.length > 0 ? result[result.length - 1].total + item.amount : item.amount
+            total: result.length > 0 ? result[result.length - 1].total + item.amount : item.amount,
           })
           return result
         }, [])
@@ -156,7 +156,7 @@ export default function domain(state: OrderBookState) {
           result.push({
             price: item.price,
             amount: item.amount,
-            total: result.length > 0 ? result[result.length - 1].total + item.amount : item.amount
+            total: result.length > 0 ? result[result.length - 1].total + item.amount : item.amount,
           })
 
           return result
@@ -183,7 +183,9 @@ export default function domain(state: OrderBookState) {
     getBidPrice: () => (state.bids[state.sortedBids[0]] ? state.bids[state.sortedBids[0]].price : 0),
     getAskPrice: () => (state.asks[state.sortedAsks[0]] ? state.asks[state.sortedAsks[0]].price : 0),
     getBestBidMatcher: () => (state.bids[state.sortedBids[0]] ? state.bids[state.sortedBids[0]].matcher : null),
+    getBestBidMatcherFeeRate: () => (state.bids[state.sortedBids[0]] ? state.bids[state.sortedBids[0]].matcher_fee_rate : 0),
     getBestAskMatcher: () => (state.asks[state.sortedAsks[0]] ? state.asks[state.sortedAsks[0]].matcher : null),
+    getBestAskMatcherFeeRate: () => (state.asks[state.sortedAsks[0]] ? state.asks[state.sortedAsks[0]].matcher_fee_rate : 0),
     getQuoteToken: () => state.quoteToken,
     getBaseToken: () => state.baseToken
   }

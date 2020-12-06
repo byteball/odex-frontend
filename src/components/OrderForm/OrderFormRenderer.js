@@ -44,6 +44,8 @@ type Props = {
   bidPrice: number,
   bestAskMatcher: string,
   bestBidMatcher: string,
+  bestAskMatcherFeeRate: number,
+  bestBidMatcherFeeRate: number,
   tokensBySymbol: Object,
   fraction: number,
   priceType: string,
@@ -127,6 +129,8 @@ const OrderFormRenderer = (props: Props) => {
     bidPrice,
     bestAskMatcher,
     bestBidMatcher,
+    bestAskMatcherFeeRate,
+    bestBidMatcherFeeRate,
     tokensBySymbol,
     handleSideChange,
     expand,
@@ -222,6 +226,8 @@ const OrderFormRenderer = (props: Props) => {
                 bidPrice={bidPrice}
                 bestAskMatcher={bestAskMatcher}
                 bestBidMatcher={bestBidMatcher}
+                bestAskMatcherFeeRate={bestAskMatcherFeeRate}
+                bestBidMatcherFeeRate={bestBidMatcherFeeRate}
                 tokensBySymbol={tokensBySymbol}
                 buttonType={buttonType}
                 displayMode={displayMode}
@@ -307,6 +313,8 @@ const LimitOrderPanel = props => {
     bidPrice,
     bestAskMatcher,
     bestBidMatcher,
+    bestAskMatcherFeeRate,
+    bestBidMatcherFeeRate,
     tokensBySymbol,
     buttonType,
     displayMode,
@@ -314,6 +322,7 @@ const LimitOrderPanel = props => {
   } = props
 
   let matcher = operatorAddress;
+  let matcher_fee_rate = MATCHER_FEE;
   let affiliate, affiliate_fee = 0, affiliate_fee_asset;
   let sell_symbol = (side === 'SELL') ? baseTokenSymbol : quoteTokenSymbol;
   let buy_symbol = (side === 'BUY') ? baseTokenSymbol : quoteTokenSymbol;
@@ -324,12 +333,14 @@ const LimitOrderPanel = props => {
     let quote_amount_bought = fAmount * fPrice * Math.pow(10, quoteTokenDecimals);
     var price_in_pennies = quote_amount_bought / base_amount_sold;
     var sell_amount = Math.round(base_amount_sold);
-    var matcher_fee = Math.round(quote_amount_bought * MATCHER_FEE)
+    var matcher_fee = Math.round(quote_amount_bought * matcher_fee_rate)
     if (bidPrice && fPrice <= bidPrice) {
       matcher = bestBidMatcher; // inherit matcher from best bid
+      matcher_fee_rate = bestBidMatcherFeeRate;
+      matcher_fee = Math.round(quote_amount_bought * matcher_fee_rate);
       if (matcher !== operatorAddress){
         affiliate = operatorAddress;
-        affiliate_fee = Math.round(quote_amount_bought * AFFILIATE_FEE); //TO DO: inherit fee rate from best bid
+        affiliate_fee = Math.round(quote_amount_bought * AFFILIATE_FEE);
         affiliate_fee_asset = tokensBySymbol[quoteTokenSymbol].asset;
       }
     }
@@ -339,16 +350,19 @@ const LimitOrderPanel = props => {
     let quote_amount_sold = fAmount * fPrice * Math.pow(10, quoteTokenDecimals);
     var price_in_pennies = base_amount_bought / quote_amount_sold;
     var sell_amount = Math.round(quote_amount_sold);
-    var matcher_fee = Math.round(quote_amount_sold * MATCHER_FEE)
+    var matcher_fee = Math.round(quote_amount_sold * matcher_fee_rate)
     if (askPrice && fPrice >= askPrice) {
       matcher = bestAskMatcher; // inherit matcher from best ask
+      matcher_fee_rate = bestAskMatcherFeeRate;
+      matcher_fee = Math.round(quote_amount_sold * matcher_fee_rate);
       if (matcher !== operatorAddress){
         affiliate = operatorAddress;
-        affiliate_fee = Math.round(quote_amount_sold * AFFILIATE_FEE); //TO DO: inherit fee rate from best ask
+        affiliate_fee = Math.round(quote_amount_sold * AFFILIATE_FEE); 
         affiliate_fee_asset = tokensBySymbol[quoteTokenSymbol].asset;
       }
     }
   }
+
   let fee = (matcher_fee + affiliate_fee) / Math.pow(10, quoteTokenDecimals);
   let order = (tokensBySymbol[sell_symbol] && tokensBySymbol[buy_symbol]) ? {
     sell_asset: tokensBySymbol[sell_symbol].asset,
@@ -372,13 +386,13 @@ const LimitOrderPanel = props => {
     // Find the closest allowed price and recalculate matcher_fee
     order.price = getPriceInAllowedPrecision(order);
     if (order.sell_asset === order.matcher_fee_asset)
-      order.matcher_fee = Math.ceil(order.sell_amount * MATCHER_FEE);
+      order.matcher_fee = Math.ceil(order.sell_amount * matcher_fee_rate);
     else if (order.buy_asset === order.matcher_fee_asset)
-      order.matcher_fee = Math.ceil(order.sell_amount * order.price * MATCHER_FEE);
+      order.matcher_fee = Math.ceil(order.sell_amount * order.price * matcher_fee_rate);
     if (order.sell_asset === order.affiliate_fee_asset)
       order.affiliate_fee = Math.ceil(order.sell_amount * AFFILIATE_FEE);
     else if (order.buy_asset === order.affiliate_fee_asset)
-      order.matcher_fee = Math.ceil(order.sell_amount * order.price * AFFILIATE_FEE);
+      order.affiliate_fee = Math.ceil(order.sell_amount * order.price * AFFILIATE_FEE);
   }
   console.log(order);
   let pairing_secret = btoa(JSON.stringify(order));
