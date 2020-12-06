@@ -36,7 +36,9 @@ export default function getOrderFormSelector(state: State) {
   let askPrice = orderBookDomain.getAskPrice()
   let bidPrice = orderBookDomain.getBidPrice()
   let bestAskMatcher = orderBookDomain.getBestAskMatcher()
+  let bestAskMatcherFeeRate = orderBookDomain.getBestAskMatcherFeeRate()
   let bestBidMatcher = orderBookDomain.getBestBidMatcher()
+  let bestBidMatcherFeeRate = orderBookDomain.getBestBidMatcherFeeRate()
   let selectedOrder = orderBookDomain.getSelectedOrder()
   let tokensBySymbol = tokenDomain.bySymbol()
   
@@ -61,7 +63,9 @@ export default function getOrderFormSelector(state: State) {
     askPrice,
     bidPrice,
     bestAskMatcher,
+    bestAskMatcherFeeRate,
     bestBidMatcher,
+    bestBidMatcherFeeRate,
     address,
     operatorAddress,
     exchangeAddress,

@@ -3,7 +3,7 @@ import React from 'react'
 import styled from 'styled-components'
 import ReactGA from 'react-ga'
 import { formatNumber } from 'accounting-js'
-import { MATCHER_FEE, MAX_PRICE_PRECISION } from '../../config/environment';
+import { MATCHER_FEE, AFFILIATE_FEE, MAX_PRICE_PRECISION } from '../../config/environment';
 import { CHATBOT_URL } from '../../config/urls'
 
 import { 
@@ -44,11 +44,15 @@ type Props = {
   bidPrice: number,
   bestAskMatcher: string,
   bestBidMatcher: string,
+  bestAskMatcherFeeRate: number,
+  bestBidMatcherFeeRate: number,
   tokensBySymbol: Object,
   fraction: number,
   priceType: string,
-  price: string,
+  priceOrOdds: string,
+  fPrice: number,
   amount: string, // formatted
+  fAmount: number,
   maxAmount: string, // formatted
   total: string,
   baseTokenSymbol: string,
@@ -101,7 +105,9 @@ const OrderFormRenderer = (props: Props) => {
     side,
     fraction,
     priceType,
-    price,
+    priceOrOdds,
+    fPrice,
+    fAmount,
     isOpen,
     amount,
     maxAmount,
@@ -123,6 +129,8 @@ const OrderFormRenderer = (props: Props) => {
     bidPrice,
     bestAskMatcher,
     bestBidMatcher,
+    bestAskMatcherFeeRate,
+    bestBidMatcherFeeRate,
     tokensBySymbol,
     handleSideChange,
     expand,
@@ -200,7 +208,9 @@ const OrderFormRenderer = (props: Props) => {
                 quoteTokenSymbol={quoteTokenSymbol}
                 fraction={fraction}
                 priceType={priceType}
-                price={price}
+                priceOrOdds={priceOrOdds}
+                fPrice={fPrice}
+                fAmount={fAmount}
                 amount={amount}
                 maxAmount={maxAmount}
                 total={total}
@@ -216,6 +226,8 @@ const OrderFormRenderer = (props: Props) => {
                 bidPrice={bidPrice}
                 bestAskMatcher={bestAskMatcher}
                 bestBidMatcher={bestBidMatcher}
+                bestAskMatcherFeeRate={bestAskMatcherFeeRate}
+                bestBidMatcherFeeRate={bestBidMatcherFeeRate}
                 tokensBySymbol={tokensBySymbol}
                 buttonType={buttonType}
                 displayMode={displayMode}
@@ -233,7 +245,7 @@ const OrderFormRenderer = (props: Props) => {
                 quoteTokenSymbol={quoteTokenSymbol}
                 fraction={fraction}
                 priceType={priceType}
-                price={price}
+                price={priceOrOdds}
                 amount={amount}
                 maxAmount={maxAmount}
                 insufficientBalance={insufficientBalance}
@@ -256,8 +268,8 @@ const OrderFormRenderer = (props: Props) => {
                 quoteTokenSymbol={quoteTokenSymbol}
                 fraction={fraction}
                 priceType={priceType}
-                price={price}
-                stopPrice={price}
+                price={priceOrOdds}
+                stopPrice={priceOrOdds}
                 amount={amount}
                 insufficientBalance={insufficientBalance}
                 maxAmount={maxAmount}
@@ -279,9 +291,11 @@ const OrderFormRenderer = (props: Props) => {
 
 const LimitOrderPanel = props => {
   const { 
-    price, 
+    priceOrOdds,
+    fPrice, 
     side, 
-    amount, 
+    amount,
+    fAmount,
     maxAmount, 
     fraction, 
     total, 
@@ -299,15 +313,17 @@ const LimitOrderPanel = props => {
     bidPrice,
     bestAskMatcher,
     bestBidMatcher,
+    bestAskMatcherFeeRate,
+    bestBidMatcherFeeRate,
     tokensBySymbol,
     buttonType,
     displayMode,
     hasBrowserWallet,
   } = props
 
-  let fAmount = parseFloat(amount);
-  let fPrice = parseFloat(price);
   let matcher = operatorAddress;
+  let matcher_fee_rate = MATCHER_FEE;
+  let affiliate, affiliate_fee = 0, affiliate_fee_asset;
   let sell_symbol = (side === 'SELL') ? baseTokenSymbol : quoteTokenSymbol;
   let buy_symbol = (side === 'BUY') ? baseTokenSymbol : quoteTokenSymbol;
   let sell_asset_decimals = (side === 'SELL') ? baseTokenDecimals : quoteTokenDecimals;
@@ -317,20 +333,37 @@ const LimitOrderPanel = props => {
     let quote_amount_bought = fAmount * fPrice * Math.pow(10, quoteTokenDecimals);
     var price_in_pennies = quote_amount_bought / base_amount_sold;
     var sell_amount = Math.round(base_amount_sold);
-    var matcher_fee = Math.round(quote_amount_bought * MATCHER_FEE)
-    if (bidPrice && fPrice <= bidPrice) // inherit matcher from best bid
-      matcher = bestBidMatcher;
+    var matcher_fee = Math.round(quote_amount_bought * matcher_fee_rate)
+    if (bidPrice && fPrice <= bidPrice) {
+      matcher = bestBidMatcher; // inherit matcher from best bid
+      matcher_fee_rate = bestBidMatcherFeeRate;
+      matcher_fee = Math.round(quote_amount_bought * matcher_fee_rate);
+      if (matcher !== operatorAddress){
+        affiliate = operatorAddress;
+        affiliate_fee = Math.round(quote_amount_bought * AFFILIATE_FEE);
+        affiliate_fee_asset = tokensBySymbol[quoteTokenSymbol].asset;
+      }
+    }
   }
   else {
     let base_amount_bought = fAmount * Math.pow(10, baseTokenDecimals);
     let quote_amount_sold = fAmount * fPrice * Math.pow(10, quoteTokenDecimals);
     var price_in_pennies = base_amount_bought / quote_amount_sold;
     var sell_amount = Math.round(quote_amount_sold);
-    var matcher_fee = Math.round(quote_amount_sold * MATCHER_FEE)
-    if (askPrice && fPrice >= askPrice) // inherit matcher from best ask
-      matcher = bestAskMatcher;
+    var matcher_fee = Math.round(quote_amount_sold * matcher_fee_rate)
+    if (askPrice && fPrice >= askPrice) {
+      matcher = bestAskMatcher; // inherit matcher from best ask
+      matcher_fee_rate = bestAskMatcherFeeRate;
+      matcher_fee = Math.round(quote_amount_sold * matcher_fee_rate);
+      if (matcher !== operatorAddress){
+        affiliate = operatorAddress;
+        affiliate_fee = Math.round(quote_amount_sold * AFFILIATE_FEE); 
+        affiliate_fee_asset = tokensBySymbol[quoteTokenSymbol].asset;
+      }
+    }
   }
-  let fee = matcher_fee / Math.pow(10, quoteTokenDecimals);
+
+  let fee = (matcher_fee + affiliate_fee) / Math.pow(10, quoteTokenDecimals);
   let order = (tokensBySymbol[sell_symbol] && tokensBySymbol[buy_symbol]) ? {
     sell_asset: tokensBySymbol[sell_symbol].asset,
     buy_asset: tokensBySymbol[buy_symbol].asset,
@@ -340,16 +373,26 @@ const LimitOrderPanel = props => {
     matcher_fee,
     matcher,
     aa: exchangeAddress,
-    address
+    address,
   } : {};
+
+  if (affiliate){
+    order.affiliate = affiliate;
+    order.affiliate_fee = affiliate_fee;
+    order.affiliate_fee_asset = affiliate_fee_asset;  
+  }
   if (order.price > 0){
     // Due to limited precision, the price can only change stepwise.
     // Find the closest allowed price and recalculate matcher_fee
     order.price = getPriceInAllowedPrecision(order);
-		if (order.sell_asset === order.matcher_fee_asset)
-			order.matcher_fee = Math.ceil(order.sell_amount * MATCHER_FEE);
-		else if (order.buy_asset === order.matcher_fee_asset)
-			order.matcher_fee = Math.ceil(order.sell_amount * order.price * MATCHER_FEE);
+    if (order.sell_asset === order.matcher_fee_asset)
+      order.matcher_fee = Math.ceil(order.sell_amount * matcher_fee_rate);
+    else if (order.buy_asset === order.matcher_fee_asset)
+      order.matcher_fee = Math.ceil(order.sell_amount * order.price * matcher_fee_rate);
+    if (order.sell_asset === order.affiliate_fee_asset)
+      order.affiliate_fee = Math.ceil(order.sell_amount * AFFILIATE_FEE);
+    else if (order.buy_asset === order.affiliate_fee_asset)
+      order.affiliate_fee = Math.ceil(order.sell_amount * order.price * AFFILIATE_FEE);
   }
   console.log(order);
   let pairing_secret = btoa(JSON.stringify(order));
@@ -370,7 +413,7 @@ const LimitOrderPanel = props => {
         <PriceInputGroup 
           name="price" 
           onChange={onInputChange} 
-          value={price} 
+          value={priceOrOdds} 
           placeholder={displayMode.priceAlias} 
         />
       </InputBox>
@@ -412,7 +455,7 @@ const LimitOrderPanel = props => {
         <ButtonRenderer
           side={side}
           link={link}
-          amount={displayMode.name === 'Price' ? amount : formatNumber(parseFloat(amount) * parseFloat(price), { precision: 3 })}
+          amount={displayMode.name === 'Price' ? amount : formatNumber(parseFloat(amount) * parseFloat(priceOrOdds), { precision: 3 })}
           baseTokenSymbol={baseTokenSymbol}
           quoteTokenSymbol={quoteTokenSymbol}
           handleSendOrder={handleSendOrder}

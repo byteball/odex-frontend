@@ -19,5 +19,8 @@ export type NewOrder = {
   matcher_fee: number,
   matcher: string,
   aa: string,
-  address: string
+  address: string,
+  affiliate: string,
+  affiliate_fee_asset: string,
+  affiliate_fee: number,
 }

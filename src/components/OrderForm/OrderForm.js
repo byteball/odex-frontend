@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import OrderFormRenderer from './OrderFormRenderer'
 import { formatNumber, unformat } from 'accounting-js'
 import { Menu, MenuItem, ContextMenuTarget } from '@blueprintjs/core'
-import { MATCHER_FEE } from '../../config/environment';
+import { MATCHER_FEE, AFFILIATE_FEE } from '../../config/environment';
 import RequestConfirmModal from '../RequestConfirmModal'
 import { getWalletFromPhrases, signMessageByWif } from '../../utils/wallet'
 import type { DisplayMode, BrowserWallet } from '../../types/account'
@@ -17,6 +17,8 @@ type Props = {
   bidPrice: number,
   bestAskMatcher: string,
   bestBidMatcher: string,
+  bestAskMatcherFeeRate: number,
+  bestBidMatcherFeeRate: number,
   tokensBySymbol: Object,
   baseTokenBalance: number,
   quoteTokenBalance: number,
@@ -46,8 +48,10 @@ type State = {
   priceType: string,
   selectedTabId: string,
   price: string,
+  fPrice: number,
   stopPrice: string,
   amount: string,
+  fAmount: string,
   odds: string,
   stake: string,
   total: string,
@@ -77,10 +81,12 @@ class OrderForm extends React.PureComponent<Props, State> {
       priceType: 'null',
       selectedTabId: 'limit',
       price: formatNumber(bidPrice, { precision: 3 }),
+      fPrice: bidPrice,
       stopPrice: formatNumber(bidPrice, { precision: 3 }),
       odds: formatNumber(bidPrice ? 1 / bidPrice : 0, { precision: 3 }),
       stake: '0.0',
       amount: '0.0',
+      fAmount: 0,
       total: '0.0',
       isModalOpen: false,
       orderToSign: {},
@@ -100,7 +106,9 @@ class OrderForm extends React.PureComponent<Props, State> {
     if (1 || (side === 'BUY' && price > bidPrice) || (side === 'SELL' && price < askPrice)) {
       this.setState({
         price: price,
+        fPrice: unformat(price),
         amount: total,
+        fAmount: unformat(total),
         odds: formatNumber(1 / unformat(price), { precision: 3 }),
         stake: formatNumber(price * Number(total), { precision: 3 }),
         total: (price * Number(total)).toString(),
@@ -177,19 +185,19 @@ class OrderForm extends React.PureComponent<Props, State> {
   }
 
   handleUpdateAmountFraction = (fraction: number) => {
-    const { side, price } = this.state
-    const { quoteTokenBalance, baseTokenBalance } = this.props
+    const { side, fPrice } = this.state
+    const { quoteTokenBalance, baseTokenBalance, bestAskMatcherFeeRate, askPrice } = this.props
 
     let amount, total
-    let numericPrice = unformat(price)
 
     if (side === 'SELL') {
       amount = (baseTokenBalance / 100) * fraction
-      total = numericPrice * amount
+      total = fPrice * amount
 
       this.setState({
         fraction: fraction,
         amount: formatNumber(amount, { precision: 3 }),
+        fAmount: amount,
         stake: formatNumber(total, { precision: 3 }),
         total: formatNumber(total, { precision: 3 })
       })
@@ -197,23 +205,31 @@ class OrderForm extends React.PureComponent<Props, State> {
     } else {
       // Temporary solution to handle the case where price = 0. 
       // In the case orderbooks are full, we do not need to care about this
-      if (numericPrice === 0) {
+      if (fPrice === 0) {
         this.setState({
           fraction: fraction, 
           amount: formatNumber(0, { precision: 3 }),
+          fAmount: 0,
           stake: formatNumber(0, { precision: 3 }),
           total: formatNumber(0, { precision: 3 })
         })
 
         return
       }
-
-      total = (quoteTokenBalance / 100) * fraction
-      amount = total / numericPrice
+      let fee;
+      if (askPrice && fPrice >= askPrice) {
+        fee = AFFILIATE_FEE + bestAskMatcherFeeRate;
+      } else {
+        fee = MATCHER_FEE;
+      }
+      let maxQuoteTokenAmount = quoteTokenBalance * (1 - fee)
+      total = (maxQuoteTokenAmount / 100) * fraction
+      amount = total / fPrice
 
       this.setState({
         fraction: fraction,
         amount: formatNumber(amount, { precision: 3 }),
+        fAmount: amount,
         stake: formatNumber(total, { precision: 3 }),
         total: formatNumber(total, { precision: 3 })
       })
@@ -222,10 +238,13 @@ class OrderForm extends React.PureComponent<Props, State> {
 
   handlePriceChange = (value: string) => {
 
-    let { amount } = this.state
+    let { fAmount, stake } = this.state
     let { displayMode } = this.props;
 
     let fValue = unformat(value);
+    console.log('handlePriceChange')
+    console.log(value)
+    console.log(fValue)
     if (!fValue)
       return this.setState({price: value, odds: value, total: '0', stake: '0'})
     let rounded = fValue.toPrecision(8); // drop the excessive precision
@@ -236,25 +255,26 @@ class OrderForm extends React.PureComponent<Props, State> {
     if(displayMode.name === 'Price') {
       let odds = formatNumber(fValue === 0 ? 0 : 1 / fValue, { precision: 3 });
 
-      amount = unformat(amount)
-      let total = amount * unformat(value)
+      let total = fAmount * unformat(value)
 
       this.setState({
         stake: formatNumber(total, { precision: 3 }),
         total: formatNumber(total, { precision: 3 }),
         price: value,
+        fPrice: fValue,
         odds: odds
       })
     } else {
-      let price = formatNumber(fValue === 0 ? 0 : 1 / fValue, { precision: 3 });
+      let fPrice = fValue === 0 ? 0 : 1 / fValue;
+      let price = formatNumber(fPrice, { precision: 3 });
 
-      amount = unformat(amount)
-      let total = amount * unformat(price)
+
+      fAmount = unformat(stake) / fPrice
 
       this.setState({
-        stake: formatNumber(total, { precision: 3 }),
-        total: formatNumber(total, { precision: 3 }),
+        fAmount: fAmount,
         price: price,
+        fPrice: fPrice,
         odds: value
       })
     }
@@ -269,35 +289,38 @@ class OrderForm extends React.PureComponent<Props, State> {
     let { amount } = this.state
 
     amount = unformat(amount)
-    let total = amount * unformat(stopPrice)
+    let fTotal = amount * unformat(stopPrice)
 
     this.setState({
-      total: formatNumber(total, { precision: 3 }),
+      total: formatNumber(fTotal, { precision: 3 }),
       amount: formatNumber(amount, { precision: 3 }),
       stopPrice: stopPrice
     })
   }
 
   handleAmountChange = (value: string) => {
-    let { price, selectedTabId, stopPrice } = this.state
+    let { fPrice, selectedTabId, stopPrice } = this.state
     const { displayMode } = this.props;
 
     stopPrice = unformat(stopPrice)
-    price = unformat(price)
 
     if(displayMode.name === 'Price') {
-      let total = selectedTabId === 'stop' ? stopPrice * unformat(value) : price * unformat(value);
+      let fTotal = selectedTabId === 'stop' ? stopPrice * unformat(value) : fPrice * unformat(value);
       this.setState({
-        total: formatNumber(total, { precision: 3 }),
-        stake: formatNumber(total, { precision: 3 }),
-        amount: value
+        total: formatNumber(fTotal, { precision: 3 }),
+        stake: formatNumber(fTotal, { precision: 3 }),
+        amount: value,
+        fAmount: unformat(value),
       })
     } else {
-      let amount = price === 0 ? 0 : unformat(value) / price;
-      let total = selectedTabId === 'stop' ? stopPrice * unformat(amount) : price * unformat(amount);
+      let fAmount = fPrice === 0 ? 0 : unformat(value) / fPrice;
+      let fTotal = selectedTabId === 'stop' ? stopPrice * fAmount : fPrice * fAmount;
+
+
       this.setState({
-        total: formatNumber(total, { precision: 3 }),
-        amount: formatNumber(amount, { precision: 3 }),
+        total: formatNumber(fTotal, { precision: 3 }),
+        amount: formatNumber(fAmount, { precision: 3 }),
+        fAmount: fAmount,
         stake: value,
       })
     }
@@ -322,6 +345,7 @@ class OrderForm extends React.PureComponent<Props, State> {
       price: formatNumber(price, { precision: 3 }),
       stopPrice: formatNumber(stopPrice, { precision: 3 }),
       amount: formatNumber(amount, { precision: 3 }),
+      fAmount: amount,
       total: total
     })
   }
@@ -385,9 +409,11 @@ class OrderForm extends React.PureComponent<Props, State> {
         selectedTabId,
         fraction, 
         priceType, 
-        price, 
+        price,
+        fPrice,
         isOpen, 
-        amount, 
+        amount,
+        fAmount,
         total,
         stake,
         odds,
@@ -410,6 +436,8 @@ class OrderForm extends React.PureComponent<Props, State> {
         bidPrice,
         bestAskMatcher,
         bestBidMatcher,
+        bestAskMatcherFeeRate,
+        bestBidMatcherFeeRate,
         tokensBySymbol,
         authenticated,
         displayMode,
@@ -426,22 +454,24 @@ class OrderForm extends React.PureComponent<Props, State> {
     } = this
 
 
-    //TODO REFACTOR REFACTOR REFACTOR REFACTOR REFACTOR REFACTOR REFACTOR 
     let maxAmount
-    let quoteTokenFee = unformat(amount) * unformat(price) * MATCHER_FEE;
+    let fee;
+    if (askPrice && fPrice >= askPrice) {
+      fee = AFFILIATE_FEE + bestAskMatcherFeeRate;
+    } else {
+      fee = MATCHER_FEE;
+    }
+    let quoteTokenFee = fAmount * fPrice * fee;
     let maxQuoteTokenAmount = quoteTokenBalance - Number(quoteTokenFee)
 
-    //if (price !== '0.000') {
-      if (side === 'BUY') {
-        maxAmount = (price !== '0.000') ? formatNumber(maxQuoteTokenAmount / unformat(price), { precision: quoteTokenDecimals }) : '0.000'
-      } else {
-        maxAmount = formatNumber(baseTokenBalance, { precision: baseTokenDecimals })
-      }
-    //} else {
-    //  maxAmount = '0.0'
-    //}
 
-    let insufficientBalance = (unformat(amount) > unformat(maxAmount))
+    if (side === 'BUY') {
+      maxAmount = (price !== '0.000') ? formatNumber(maxQuoteTokenAmount / fPrice, { precision: quoteTokenDecimals }) : '0.000'
+    } else {
+      maxAmount = formatNumber(baseTokenBalance, { precision: baseTokenDecimals })
+    }
+    let amountToPrecision = formatNumber(fAmount, { precision: baseTokenDecimals });
+    let insufficientBalance = unformat(amountToPrecision) > unformat(maxAmount);
     
     let buttonType = authenticated
       ? side === "BUY"
@@ -458,9 +488,11 @@ class OrderForm extends React.PureComponent<Props, State> {
           side={side}
           fraction={fraction}
           priceType={priceType}
-          price={displayMode.name === 'Price' ? price : odds}
+          priceOrOdds={displayMode.name === 'Price' ? price : odds}
+          fPrice={fPrice}
           maxAmount={maxAmount}
           amount={displayMode.name === 'Price' ? amount : stake}
+          fAmount={fAmount}
           total={total}
           isOpen={isOpen}
           baseTokenSymbol={baseTokenSymbol}
@@ -480,6 +512,8 @@ class OrderForm extends React.PureComponent<Props, State> {
           bidPrice={bidPrice}
           bestAskMatcher={bestAskMatcher}
           bestBidMatcher={bestBidMatcher}
+          bestAskMatcherFeeRate={bestAskMatcherFeeRate}
+          bestBidMatcher={bestBidMatcherFeeRate}
           tokensBySymbol={tokensBySymbol}
           handleSideChange={handleSideChange}
           expand={this.expand}
