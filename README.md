@@ -29,7 +29,7 @@ This builds all static files and puts them in `build` folder. Set this folder as
 
 Thank you for considering helping the ODEX project! We accept contributions from anyone and are grateful even for the smallest fixes.
 
-If you want to help ODEX, please fork and setup the development environment of the appropriate repository. In the case you want to submit substantial changes, please get in touch with our development team on #odex channel in [Obyte discord](https://discord.obyte.org) to verify those modifications are in line with the general goal of the project and receive early feedback. Otherwise you are welcome to fix, commit and send a pull request for the maintainers to review and merge into the main code base.
+If you want to help ODEX, please fork and setup the development environment of the appropriate repository. In the case you want to submit substantial changes, please get in touch with our development team on #defi-projects channel in [Obyte discord](https://discord.obyte.org) to verify those modifications are in line with the general goal of the project and receive early feedback. Otherwise you are welcome to fix, commit and send a pull request for the maintainers to review and merge into the main code base.
 
 Please make sure your contributions adhere to our coding guidelines:
 
@@ -40,7 +40,7 @@ Ensure all tests are passing before submitting a pull request
 
 # Contact
 
-If you have questions, ideas or suggestions, you can reach our development team on #odex channel in [Obyte discord](https://discord.obyte.org)
+If you have questions, ideas or suggestions, you can reach our development team on #defi-projects channel in [Obyte discord](https://discord.obyte.org)
 
 ## Credits
 

@@ -113,7 +113,7 @@ const GetStartedSectionRenderer = (props: Props) => {
         <p>• Only invest and trade what you can afford to risk</p>
         <br />
         <Header>❔ Ask for help or join the ODEX community</Header>
-        <p>• If you have any suggestions, or want to get involved with the project, join us on <a href={DISCORD_URL}>Obyte Discord</a> in #odex channel.</p>
+        <p>• If you have any suggestions, or want to get involved with the project, join us on <a href={DISCORD_URL}>Obyte Discord</a> in #defi-projects channel.</p>
         <br />
         </ModalText>
       </ModalBody>
@@ -202,7 +202,7 @@ const NewsSectionRenderer = (props: Props) => {
 
 
           <Header mt={5}>❔ Ask for help or join the ODEX community</Header>
-          <p>• If you have any suggestions, or want to get involved with the project, join us on <Link url={DISCORD_URL}>Discord</Link>, channel #odex.</p>
+          <p>• If you have any suggestions, or want to get involved with the project, join us on <Link url={DISCORD_URL}>Discord</Link>, channel #defi-projects.</p>
           <p>• If you'd like to contribute to ODEX and make it better, or run your own ODEX based exchange, see our <Link url="https://github.com/byteball/odex-wallet">Github</Link>.</p>
         </ModalText>
       </ModalBody>
