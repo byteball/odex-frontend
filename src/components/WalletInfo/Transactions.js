@@ -54,7 +54,7 @@ const TransactionsTable = (props: Props) => {
   
           return (
             <TransactionRow key={unit}>
-              <TransactionLink href={`${EXPLORER_URL}#${unit}`} target="_blank">
+              <TransactionLink href={`${EXPLORER_URL}/${unit}`} target="_blank">
                 <InfoRow>
                   <span>
                     {isDeposit ? 'Deposit' : 'Withdraw'}&nbsp;

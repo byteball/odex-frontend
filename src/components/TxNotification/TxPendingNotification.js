@@ -22,7 +22,7 @@ const TxPendingNotification = ({ hash, title }: Props) => (
     </CalloutText>
     <NotificationBox>
       <Button minimal interactive>
-        <ExplorerLink target="_blank" href={`${EXPLORER_URL}#${hash}`}>
+        <ExplorerLink target="_blank" href={`${EXPLORER_URL}/${hash}`}>
           View on explorer
         </ExplorerLink>
       </Button>

@@ -18,7 +18,7 @@ const CHATBOT_TESTNET_URL = TESTNET_PROTOCOL + env.PAIRING_CODE
 const CHATBOT_LIVENET_URL = LIVENET_PROTOCOL + env.PAIRING_CODE
 
 export const MEDIUM_URLS = {
-    ODEX_INTRODUCTION: 'https://medium.com/obyte/whats-next-for-obyte-a-decentralized-exchange-fd7164569a9d',
+    ODEX_INTRODUCTION: 'https://blog.obyte.org/whats-next-for-obyte-a-decentralized-exchange-fd7164569a9d',
 }
 
 

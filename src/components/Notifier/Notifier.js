@@ -37,7 +37,7 @@ const NotificationFactory = (type, options) => {
     case "orderPending":
       return {
         action: {
-          href: `${EXPLORER_URL}#${options.txHash}`,
+          href: `${EXPLORER_URL}/${options.txHash}`,
           target: "_blank",
           text: <strong>View on Explorer</strong>
         },
@@ -57,7 +57,7 @@ const NotificationFactory = (type, options) => {
     case "orderSuccess":
       return {
         action: {
-          href: `${EXPLORER_URL}#${options.txHash}`,
+          href: `${EXPLORER_URL}/${options.txHash}`,
           target: "_blank",
           text: <strong>View on Explorer</strong>,
         },

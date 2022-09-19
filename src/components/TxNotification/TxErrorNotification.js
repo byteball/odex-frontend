@@ -16,7 +16,7 @@ const TxErrorNotification = ({ error, receipt, title }: Props) => (
   <Callout title="Transaction Failed" icon="info-sign" intent={Intent.DANGER}>
     {/* <p>{error}</p> */}
     <Button minimal interactive>
-      <ExplorerLink href={`${EXPLORER_URL}#${receipt.hash}`} target="_blank">
+      <ExplorerLink href={`${EXPLORER_URL}/${receipt.hash}`} target="_blank">
         View on explorer
       </ExplorerLink>
     </Button>

@@ -67,7 +67,7 @@ class FaqPage extends React.PureComponent {
               <FaqList>
                 <FaqListItem>• Improved usability and bug fixes</FaqListItem>
                 <FaqListItem>• A mobile version of the site</FaqListItem>
-                <FaqListItem>• More tokens pairs including stablecoins, tethered assets and financial instruments (shorts, options)</FaqListItem>
+                <FaqListItem>• More token pairs including stablecoins, tethered assets and financial instruments (shorts, options)</FaqListItem>
                 <FaqListItem>• Prediction Markets</FaqListItem>
                 <FaqListItem>• Enhanced charting</FaqListItem>
               </FaqList>

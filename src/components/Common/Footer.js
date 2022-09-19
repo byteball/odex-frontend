@@ -46,7 +46,7 @@ const Footer = () => (
             </NormalListItem>
             <NormalListItem>
               <LinkText
-                  href="https://medium.com/obyte/whats-next-for-obyte-a-decentralized-exchange-fd7164569a9d" 
+                  href="https://blog.obyte.org/whats-next-for-obyte-a-decentralized-exchange-fd7164569a9d" 
                   target="_blank"
                   rel="noopener"
                 >
@@ -74,7 +74,7 @@ const Footer = () => (
             </NormalListItem>
             <NormalListItem>
               <LinkText
-                  href="" 
+                  href="https://prophet.ooo" 
                   target="_blank"
                   rel="noopener"
                   >
@@ -128,7 +128,7 @@ const Footer = () => (
             </NormalListItem>
             <NormalListItem>
               <LinkText
-                href="https://medium.com/obyte" 
+                href="https://blog.obyte.org" 
                 target="_blank"
                 rel="noopener"
                 >

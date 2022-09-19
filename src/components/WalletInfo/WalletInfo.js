@@ -267,8 +267,8 @@ export default class WalletInfo extends React.PureComponent<Props, State> {
       handleToggleRequestConfirm
     } = this;
 
-    let tokenExplorerUrl = `${EXPLORER_URL}/#${asset}`
-    let accountExplorerUrl = `${EXPLORER_URL}/#${accountAddress}`
+    let tokenExplorerUrl = `${EXPLORER_URL}/asset/${asset}`
+    let accountExplorerUrl = `${EXPLORER_URL}/address/${accountAddress}`
     let tokenIsAdded = userTokens.indexOf(asset) !== -1
     let tokenIsListed = listedTokens.indexOf(asset) !== -1
 

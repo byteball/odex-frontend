@@ -24,7 +24,7 @@ type Props = {
 
 const SmallTxNotification = (props: Props) => {
   const {  status, txName, hash } = props
-  const txUrl = `${EXPLORER_URL}#${hash}`
+  const txUrl = `${EXPLORER_URL}/${hash}`
 
   switch (status) {
     case 'incomplete':

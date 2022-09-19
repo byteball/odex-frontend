@@ -37,7 +37,7 @@ class TradesTable extends React.PureComponent<Props, State> {
   };
 
   openExplorerLink = (txHash: string) => {
-    if (txHash !== "") window.open(`${EXPLORER_URL}#${txHash}`)
+    if (txHash !== "") window.open(`${EXPLORER_URL}/${txHash}`)
   }
 
   toggleCollapse = () => {

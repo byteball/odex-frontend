@@ -14,7 +14,7 @@ type Props = {
 class RecentTxTable extends React.PureComponent<Props> {
 
   openExplorerLink = (txHash: string) => {
-    if (txHash !== "") window.open(`${EXPLORER_URL}#${txHash}`)
+    if (txHash !== "") window.open(`${EXPLORER_URL}/${txHash}`)
   }
 
   render() {

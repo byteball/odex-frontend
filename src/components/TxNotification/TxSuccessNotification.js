@@ -15,7 +15,7 @@ type Props = {
 const TxSuccessNotification = ({ receipt, hash, title }: Props) => (
   <Callout intent={Intent.SUCCESS} title={title}>
     <Button minimal interactive>
-      <ExplorerLink href={`${EXPLORER_URL}#${hash}`} target="_blank">
+      <ExplorerLink href={`${EXPLORER_URL}/${hash}`} target="_blank">
         View on explorer
       </ExplorerLink>
     </Button>
