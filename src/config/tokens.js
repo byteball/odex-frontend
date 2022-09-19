@@ -2,7 +2,7 @@ import { DEFAULT_NETWORK_ID } from './environment.js'
 import assets from './assets.json';
 
 const networkIDs = ['testnet', 'livenet']
-
+/*
 const defaultTokenDecimals = {
   GBYTE: 9,
   AE: 18,
@@ -51,6 +51,23 @@ const defaultTokens = [
   "USDC",
   "OUSD",
 ]
+*/
+
+const defaultTokenDecimals = {
+  testnet: {
+    GBYTE: 9,
+    USDC: 6,
+  },
+  livenet: {
+    GBYTE: 9,
+    USDC: 4,
+  },
+}
+
+const defaultTokens = [
+  "GBYTE",
+  "USDC",
+]
 
 let tokensBySymbolTable = {}
 
@@ -61,7 +78,7 @@ for (let networkID of networkIDs) {
       tokensBySymbolTable[networkID][token] = {
         symbol: token,
         asset: assets[networkID][token],
-        decimals: defaultTokenDecimals[token] || 18
+        decimals: defaultTokenDecimals[networkID][token] || 18
       }
     }
   }
