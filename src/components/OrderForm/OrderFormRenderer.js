@@ -336,7 +336,7 @@ const LimitOrderPanel = props => {
     var matcher_fee = Math.round(quote_amount_bought * matcher_fee_rate)
     if (bidPrice && fPrice <= bidPrice) {
       matcher = bestBidMatcher; // inherit matcher from best bid
-      matcher_fee_rate = bestBidMatcherFeeRate;
+      //matcher_fee_rate = bestBidMatcherFeeRate; // not always defined
       matcher_fee = Math.round(quote_amount_bought * matcher_fee_rate);
       if (matcher !== operatorAddress){
         affiliate = operatorAddress;
@@ -353,7 +353,7 @@ const LimitOrderPanel = props => {
     var matcher_fee = Math.round(quote_amount_sold * matcher_fee_rate)
     if (askPrice && fPrice >= askPrice) {
       matcher = bestAskMatcher; // inherit matcher from best ask
-      matcher_fee_rate = bestAskMatcherFeeRate;
+      //matcher_fee_rate = bestAskMatcherFeeRate; // not always defined
       matcher_fee = Math.round(quote_amount_sold * matcher_fee_rate);
       if (matcher !== operatorAddress){
         affiliate = operatorAddress;

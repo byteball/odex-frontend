@@ -218,7 +218,7 @@ class OrderForm extends React.PureComponent<Props, State> {
       }
       let fee;
       if (askPrice && fPrice >= askPrice) {
-        fee = AFFILIATE_FEE + bestAskMatcherFeeRate;
+        fee = AFFILIATE_FEE + MATCHER_FEE;// bestAskMatcherFeeRate;
       } else {
         fee = MATCHER_FEE;
       }
@@ -457,7 +457,7 @@ class OrderForm extends React.PureComponent<Props, State> {
     let maxAmount
     let fee;
     if (askPrice && fPrice >= askPrice) {
-      fee = AFFILIATE_FEE + bestAskMatcherFeeRate;
+      fee = AFFILIATE_FEE + MATCHER_FEE;// bestAskMatcherFeeRate;
     } else {
       fee = MATCHER_FEE;
     }
