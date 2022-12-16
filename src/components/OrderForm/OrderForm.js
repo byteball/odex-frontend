@@ -513,7 +513,7 @@ class OrderForm extends React.PureComponent<Props, State> {
           bestAskMatcher={bestAskMatcher}
           bestBidMatcher={bestBidMatcher}
           bestAskMatcherFeeRate={bestAskMatcherFeeRate}
-          bestBidMatcher={bestBidMatcherFeeRate}
+          bestBidMatcherFeeRate={bestBidMatcherFeeRate}
           tokensBySymbol={tokensBySymbol}
           handleSideChange={handleSideChange}
           expand={this.expand}
